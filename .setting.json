@@ -1,0 +1,15 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeLens": false,
+
+  "[typescript]": {
+    "editor.codeLens": false
+  },
+  "[javascript]": {
+    "editor.codeLens": false
+  },
+
+  "gitlens.currentLine.enabled": false,
+  "git.inlineBlame": false
+}

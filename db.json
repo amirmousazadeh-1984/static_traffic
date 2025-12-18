@@ -1,0 +1,55 @@
+{
+  "users": [
+    {
+      "id": "user1",
+      "username": "Traffic_Company_Administrator",
+      "email": "admin@traffic.local",
+      "firstName": "Admin",
+      "lastName": "User",
+      "companyID": "comp_traffic",
+      "groupIDs": ["1"],
+      "isAdmin": true,
+      "avatar": "/images/admin-avatar.png"
+    },
+    {
+      "id": "user2",
+      "username": "john_doe",
+      "email": "john@traffic.local",
+      "firstName": "John",
+      "lastName": "Doe",
+      "companyID": "comp_traffic",
+      "groupIDs": ["2"],
+      "isAdmin": false,
+      "avatar": "/images/john-avatar.png"
+    },
+    {
+      "id": "user3",
+      "username": "jane_smith",
+      "email": "jane@traffic.local",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "companyID": "comp_traffic",
+      "groupIDs": ["2"],
+      "isAdmin": false,
+      "avatar": "/images/jane-avatar.png"
+    }
+  ],
+  "groups": [
+    {
+      "id": "1",
+      "title": "Traffic_Base_Group",
+      "companyID": "comp_traffic",
+      "parentID": "0",
+      "plevel": 1,
+      "hasAdmin": true
+    },
+    {
+      "id": "2",
+      "title": "Operators",
+      "companyID": "comp_traffic",
+      "parentID": "1",
+      "plevel": 2,
+      "hasAdmin": false
+    }
+  ]
+}
