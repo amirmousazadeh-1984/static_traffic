@@ -6,14 +6,12 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Slider } from './ui/slider';
 import { 
-  ArrowRight,
   ArrowUp,
   ArrowDown,
   ArrowLeft,
   ArrowRight as ArrowRightIcon,
   ZoomIn,
   ZoomOut,
-  Focus,
   Save,
   Camera,
   Compass,
@@ -21,20 +19,19 @@ import {
   Home,
   Play,
   Eye,
-  Trash2,
-  Plus
+  Trash2
 } from 'lucide-react';
 import { PTZPreset, Intersection } from '../types';
+import { mockPTZPresets } from '../data/mockDatabase';
+import { toast } from 'sonner';
 
 interface PTZCalibrationProps {
   intersection: Intersection;
-  onBack: () => void;
-  onComplete: () => void;
 }
 
 type SelectedDirection = 'north' | 'south' | 'east' | 'west';
 
-export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrationProps) {
+export function PTZCalibration({ intersection }: PTZCalibrationProps) {
   const [selectedDirection, setSelectedDirection] = useState<SelectedDirection>('north');
   const [position, setPosition] = useState({ pan: 0, tilt: 0 });
   const [zoom, setZoom] = useState(1);
@@ -42,26 +39,8 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
   const [presetName, setPresetName] = useState('');
   const [isLivePreview, setIsLivePreview] = useState(false);
 
-  const [presets, setPresets] = useState<PTZPreset[]>([
-    {
-      id: 'preset-north-1',
-      name: 'پیش‌فرض شمال',
-      direction: 'north',
-      pan: 0,
-      tilt: 10,
-      zoom: 8,
-      focus: 60
-    },
-    {
-      id: 'preset-south-1',
-      name: 'پیش‌فرض جنوب',
-      direction: 'south',
-      pan: 180,
-      tilt: 10,
-      zoom: 8,
-      focus: 60
-    }
-  ]);
+  // بارگذاری preset های موجود از دیتابیس
+  const [presets, setPresets] = useState<PTZPreset[]>(mockPTZPresets[intersection.id] || []);
 
   const directions = [
     { value: 'north' as const, label: 'شمال', icon: '↑', defaultPan: 0 },
@@ -133,6 +112,7 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
         focus
       };
       setPresets(updated);
+      toast.success('Preset بروزرسانی شد');
     } else {
       // Create new
       const newPreset: PTZPreset = {
@@ -145,6 +125,7 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
         focus
       };
       setPresets([...presets, newPreset]);
+      toast.success('Preset جدید ذخیره شد');
     }
   };
 
@@ -154,11 +135,16 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
     setZoom(preset.zoom);
     setFocus(preset.focus);
     setIsLivePreview(true);
-    setTimeout(() => setIsLivePreview(false), 3000);
+    toast.info('در حال تست Preset...');
+    setTimeout(() => {
+      setIsLivePreview(false);
+      toast.success('تست Preset تکمیل شد');
+    }, 3000);
   };
 
   const deletePreset = (id: string) => {
     setPresets(presets.filter(p => p.id !== id));
+    toast.success('Preset حذف شد');
   };
 
   const currentPreset = presets.find(p => p.direction === selectedDirection);
@@ -166,13 +152,13 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
   const completedDirections = [...new Set(presets.map(p => p.direction))].length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-[calc(100vh-140px)]">
+      <div className="max-w-[1800px] mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={onBack}>
-              <ArrowRight className="w-5 h-5" />
+            <Button variant="outline" size="icon" onClick={() => window.history.back()}>
+              <ArrowRightIcon className="w-5 h-5" />
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
@@ -183,7 +169,10 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
               </p>
             </div>
           </div>
-          <Button className="gap-2 bg-green-600 hover:bg-green-700" onClick={onComplete}>
+          <Button className="gap-2 bg-green-600 hover:bg-green-700" onClick={() => {
+            mockPTZPresets[intersection.id] = presets;
+            toast.success('کالیبراسیون ذخیره شد');
+          }}>
             <Save className="w-4 h-4" />
             ذخیره و اتمام
           </Button>
@@ -402,7 +391,7 @@ export function PTZCalibration({ intersection, onBack, onComplete }: PTZCalibrat
                         </div>
                         <div>
                           <div className="flex items-center justify-between text-xs mb-1">
-                            <span>ف��کوس</span>
+                            <span>فکوس</span>
                             <span>{focus}%</span>
                           </div>
                           <Slider

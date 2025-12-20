@@ -1,476 +1,320 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Intersection } from '../types';
+import { mockCameras, mockDirections, mockViolations, mockPTZPresets } from '../data/mockDatabase';
 import { 
-  ArrowRight,
-  Camera,
-  Compass,
+  Camera, 
+  MapPin, 
+  Activity, 
+  AlertTriangle, 
+  Monitor,
+  Wifi,
+  WifiOff,
   Settings,
-  Activity,
-  Eye,
-  MapPin,
-  CheckCircle,
-  XCircle,
-  AlertCircle
+  Grid3x3,
+  Video,
+  CheckCircle2,
+  Clock,
+  XCircle
 } from 'lucide-react';
-import { Intersection, Camera as CameraType, Direction } from '../types';
 
 interface IntersectionDetailsProps {
   intersection: Intersection;
-  onBack: () => void;
-  onStartCalibration: (type: 'zones' | 'ptz') => void;
+  onStartZoneCalibration: () => void;
+  onStartPTZCalibration: () => void;
   onOpenDashboard: () => void;
 }
 
-export function IntersectionDetails({ 
-  intersection, 
-  onBack, 
-  onStartCalibration,
-  onOpenDashboard 
+export function IntersectionDetails({
+  intersection,
+  onStartZoneCalibration,
+  onStartPTZCalibration,
+  onOpenDashboard
 }: IntersectionDetailsProps) {
-  const cameras: CameraType[] = [
-    {
-      id: 'cam-001',
-      name: 'دوربین ثابت شمال',
-      type: 'fixed',
-      direction: 'north',
-      status: 'active',
-      ipAddress: '192.168.1.101'
-    },
-    {
-      id: 'cam-002',
-      name: 'دوربین ثابت جنوب',
-      type: 'fixed',
-      direction: 'south',
-      status: 'active',
-      ipAddress: '192.168.1.102'
-    },
-    {
-      id: 'cam-003',
-      name: 'دوربین ثابت شرق',
-      type: 'fixed',
-      direction: 'east',
-      status: 'active',
-      ipAddress: '192.168.1.103'
-    },
-    {
-      id: 'cam-004',
-      name: 'دوربین ثابت غرب',
-      type: 'fixed',
-      direction: 'west',
-      status: 'active',
-      ipAddress: '192.168.1.104'
-    },
-    {
-      id: 'cam-ptz',
-      name: 'دوربین چرخان PTZ',
-      type: 'ptz',
-      direction: 'north',
-      status: 'active',
-      ipAddress: '192.168.1.105'
-    }
-  ];
+  const cameras = mockCameras[intersection.id] || [];
+  const directions = mockDirections[intersection.id] || [];
+  const ptzPresets = mockPTZPresets[intersection.id] || [];
+  const violations = mockViolations.filter(v => v.intersectionId === intersection.id);
 
-  const directions: Direction[] = [
-    {
-      id: 'dir-north',
-      name: 'شمال',
-      direction: 'north',
-      maskDefined: true,
-      violationZonesCount: 3
-    },
-    {
-      id: 'dir-south',
-      name: 'جنوب',
-      direction: 'south',
-      maskDefined: true,
-      violationZonesCount: 2
-    },
-    {
-      id: 'dir-east',
-      name: 'شرق',
-      direction: 'east',
-      maskDefined: false,
-      violationZonesCount: 0
-    },
-    {
-      id: 'dir-west',
-      name: 'غرب',
-      direction: 'west',
-      maskDefined: true,
-      violationZonesCount: 2
-    }
-  ];
+  const recentViolations = violations.slice(0, 5);
+  const verifiedCount = violations.filter(v => v.status === 'verified').length;
+  const pendingCount = violations.filter(v => v.status === 'pending').length;
 
-  const getDirectionIcon = (direction: string) => {
-    const rotation: Record<string, string> = {
-      north: '0',
-      east: '90',
-      south: '180',
-      west: '270'
-    };
-    return <Compass className="w-5 h-5" style={{ transform: `rotate(${rotation[direction]}deg)` }} />;
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'verified':
+        return <CheckCircle2 className="w-4 h-4 text-green-600" />;
+      case 'pending':
+        return <Clock className="w-4 h-4 text-orange-600" />;
+      case 'rejected':
+        return <XCircle className="w-4 h-4 text-red-600" />;
+      default:
+        return null;
+    }
   };
 
-  const fixedCameras = cameras.filter(c => c.type === 'fixed');
-  const ptzCamera = cameras.find(c => c.type === 'ptz');
-  const activeCameras = cameras.filter(c => c.status === 'active').length;
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'verified':
+        return 'تایید شده';
+      case 'pending':
+        return 'در انتظار';
+      case 'rejected':
+        return 'رد شده';
+      default:
+        return status;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onBack}
-            >
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+    <div className="min-h-[calc(100vh-140px)]">
+      <div className="max-w-[1800px] mx-auto px-6 py-8">
+        {/* هدر */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {intersection.name}
-              </h1>
-              <p className="text-gray-600 mt-1 flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{intersection.name}</h2>
+              <div className="flex items-center gap-2 text-slate-600">
                 <MapPin className="w-4 h-4" />
-                {intersection.location}
-              </p>
+                <span>{intersection.location}</span>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-3">
             <Button
-              variant="outline"
-              className="gap-2"
               onClick={onOpenDashboard}
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-blue-700"
             >
-              <Eye className="w-4 h-4" />
-              نمایش داشبورد
+              <Monitor className="w-5 h-5 ml-2" />
+              باز کردن داشبورد نظارت
             </Button>
           </div>
         </div>
 
-        {/* Main Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">وضعیت سیستم</p>
-                  <p className="text-lg font-bold mt-1 text-green-600">فعال</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-500 opacity-20" />
+        {/* آمار سریع */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-700 mb-1">دوربین‌ها</p>
+                <p className="text-3xl font-bold text-blue-900">{cameras.length}</p>
               </div>
-            </CardContent>
+              <Camera className="w-10 h-10 text-blue-600 opacity-50" />
+            </div>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">دوربین‌های فعال</p>
-                  <p className="text-2xl font-bold mt-1">{activeCameras}/{cameras.length}</p>
-                </div>
-                <Camera className="w-8 h-8 text-blue-500 opacity-20" />
+          <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-700 mb-1">تخلفات تایید شده</p>
+                <p className="text-3xl font-bold text-green-900">{verifiedCount}</p>
               </div>
-            </CardContent>
+              <CheckCircle2 className="w-10 h-10 text-green-600 opacity-50" />
+            </div>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">جهات کالیبره شده</p>
-                  <p className="text-2xl font-bold mt-1">
-                    {directions.filter(d => d.maskDefined).length}/4
-                  </p>
-                </div>
-                <Compass className="w-8 h-8 text-purple-500 opacity-20" />
+          <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-orange-700 mb-1">در انتظار بررسی</p>
+                <p className="text-3xl font-bold text-orange-900">{pendingCount}</p>
               </div>
-            </CardContent>
+              <Clock className="w-10 h-10 text-orange-600 opacity-50" />
+            </div>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">تخلفات امروز</p>
-                  <p className="text-2xl font-bold mt-1 text-orange-600">
-                    {intersection.todayViolations}
-                  </p>
-                </div>
-                <Activity className="w-8 h-8 text-orange-500 opacity-20" />
+          <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-700 mb-1">Preset های PTZ</p>
+                <p className="text-3xl font-bold text-purple-900">{ptzPresets.length}</p>
               </div>
-            </CardContent>
+              <Video className="w-10 h-10 text-purple-600 opacity-50" />
+            </div>
           </Card>
         </div>
 
-        {/* Intersection Diagram */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Compass className="w-5 h-5" />
-              نقشه چهارراه و جهات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative bg-gray-900 rounded-lg p-8 aspect-square max-w-2xl mx-auto">
-              {/* Intersection Visual */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                {/* Roads */}
-                <div className="relative w-full h-full flex items-center justify-center">
-                  {/* Vertical Road */}
-                  <div className="absolute w-1/3 h-full bg-gray-700"></div>
-                  {/* Horizontal Road */}
-                  <div className="absolute w-full h-1/3 bg-gray-700"></div>
-                  {/* Center Square */}
-                  <div className="absolute w-1/3 h-1/3 bg-gray-600 border-4 border-yellow-400"></div>
-                  
-                  {/* Direction Labels */}
-                  {directions.map((dir) => {
-                    const positions: Record<string, { top?: string; bottom?: string; left?: string; right?: string }> = {
-                      north: { top: '8%', left: '50%' },
-                      south: { bottom: '8%', left: '50%' },
-                      east: { right: '8%', top: '50%' },
-                      west: { left: '8%', top: '50%' }
-                    };
-                    
-                    return (
-                      <div
-                        key={dir.id}
-                        className="absolute -translate-x-1/2 -translate-y-1/2"
-                        style={positions[dir.direction]}
-                      >
-                        <div className={`px-4 py-3 rounded-lg text-white text-center ${
-                          dir.maskDefined ? 'bg-green-500' : 'bg-red-500/80'
-                        }`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            {getDirectionIcon(dir.direction)}
-                            <span className="font-bold">{dir.name}</span>
-                          </div>
-                          <div className="text-xs">
-                            {dir.maskDefined ? (
-                              <span>{dir.violationZonesCount} منطقه تخلف</span>
-                            ) : (
-                              <span>نیاز به کالیبراسیون</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Fixed Cameras Indicators */}
-                  {fixedCameras.map((cam) => {
-                    const positions: Record<string, { top?: string; bottom?: string; left?: string; right?: string }> = {
-                      north: { top: '2%', left: '50%' },
-                      south: { bottom: '2%', left: '50%' },
-                      east: { right: '2%', top: '50%' },
-                      west: { left: '2%', top: '50%' }
-                    };
-                    
-                    return (
-                      <div
-                        key={cam.id}
-                        className="absolute -translate-x-1/2 -translate-y-1/2"
-                        style={positions[cam.direction]}
-                      >
-                        <div className="bg-blue-500 p-2 rounded-full">
-                          <Camera className="w-4 h-4 text-white" />
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* PTZ Camera in Center */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="bg-purple-500 p-3 rounded-full border-4 border-white shadow-lg">
-                      <Camera className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs bg-purple-500 text-white px-2 py-1 rounded">
-                      PTZ
-                    </div>
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ستون چپ - دوربین‌ها و جهات */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* دوربین‌ها */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-blue-600" />
+                  دوربین‌های نصب شده
+                </h3>
               </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Cameras List */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="w-5 h-5" />
-                دوربین‌های نصب شده
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cameras.map((camera) => (
                   <div
                     key={camera.id}
-                    className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors"
+                    className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-300 transition-colors"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          camera.type === 'ptz' ? 'bg-purple-100' : 'bg-blue-100'
-                        }`}>
-                          <Camera className={`w-5 h-5 ${
-                            camera.type === 'ptz' ? 'text-purple-600' : 'text-blue-600'
-                          }`} />
-                        </div>
-                        <div>
-                          <p className="font-medium">{camera.name}</p>
-                          <p className="text-xs text-gray-500">{camera.ipAddress}</p>
-                        </div>
-                      </div>
+                    <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        {camera.type === 'ptz' && (
-                          <Badge className="bg-purple-500">PTZ</Badge>
+                        {camera.type === 'ptz' ? (
+                          <Video className="w-5 h-5 text-purple-600" />
+                        ) : (
+                          <Camera className="w-5 h-5 text-blue-600" />
                         )}
-                        <Badge className={camera.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
-                          {camera.status === 'active' ? 'فعال' : 'غیرفعال'}
-                        </Badge>
+                        <div>
+                          <p className="font-semibold text-slate-900">{camera.name}</p>
+                          <p className="text-xs text-slate-500">{camera.type === 'ptz' ? 'دوربین چرخان' : 'دوربین ثابت'}</p>
+                        </div>
                       </div>
+                      {camera.status === 'active' ? (
+                        <Wifi className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <WifiOff className="w-5 h-5 text-red-600" />
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      {getDirectionIcon(camera.direction)}
-                      <span>جهت: {
-                        camera.direction === 'north' ? 'شمال' :
-                        camera.direction === 'south' ? 'جنوب' :
-                        camera.direction === 'east' ? 'شرق' : 'غرب'
-                      }</span>
+                    <div className="text-sm text-slate-600 space-y-1">
+                      <p className="flex items-center gap-2">
+                        <span className="text-slate-500">IP:</span>
+                        <span className="font-mono">{camera.ipAddress}</span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <span className="text-slate-500">جهت:</span>
+                        <Badge variant="outline" className="text-xs">
+                          {camera.direction === 'north' && 'شمال'}
+                          {camera.direction === 'south' && 'جنوب'}
+                          {camera.direction === 'east' && 'شرق'}
+                          {camera.direction === 'west' && 'غرب'}
+                        </Badge>
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </Card>
 
-          {/* Directions Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Compass className="w-5 h-5" />
-                وضعیت جهات چهارراه
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            {/* جهات و مناطق */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  <Grid3x3 className="w-5 h-5 text-blue-600" />
+                  جهات و مناطق تعریف شده
+                </h3>
+                <Button onClick={onStartZoneCalibration} variant="outline" size="sm">
+                  <Settings className="w-4 h-4 ml-2" />
+                  کالیبراسیون مناطق
+                </Button>
+              </div>
+
               <div className="space-y-3">
                 {directions.map((direction) => (
                   <div
                     key={direction.id}
-                    className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    className="p-4 bg-slate-50 rounded-lg border border-slate-200"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          direction.maskDefined ? 'bg-green-100' : 'bg-red-100'
-                        }`}>
-                          {getDirectionIcon(direction.direction)}
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Activity className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-medium">{direction.name}</p>
-                          <p className="text-xs text-gray-500">
-                            {direction.maskDefined 
-                              ? `${direction.violationZonesCount} منطقه تخلف تعریف شده`
-                              : 'نیاز به کالیبراسیون'
-                            }
+                          <p className="font-semibold text-slate-900">{direction.name}</p>
+                          <p className="text-sm text-slate-600">
+                            {direction.violationZonesCount} منطقه تخلف تعریف شده
                           </p>
                         </div>
                       </div>
                       {direction.maskDefined ? (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <Badge className="bg-green-100 text-green-700">
+                          <CheckCircle2 className="w-3 h-3 ml-1" />
+                          کالیبره شده
+                        </Badge>
                       ) : (
-                        <AlertCircle className="w-5 h-5 text-red-500" />
+                        <Badge className="bg-orange-100 text-orange-700">
+                          <AlertTriangle className="w-3 h-3 ml-1" />
+                          نیاز به کالیبراسیون
+                        </Badge>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </Card>
+
+            {/* کالیبراسیون PTZ */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  <Video className="w-5 h-5 text-purple-600" />
+                  Preset های دوربین PTZ
+                </h3>
+                <Button onClick={onStartPTZCalibration} variant="outline" size="sm">
+                  <Settings className="w-4 h-4 ml-2" />
+                  کالیبراسیون PTZ
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {ptzPresets.map((preset) => (
+                  <div
+                    key={preset.id}
+                    className="p-3 bg-purple-50 rounded-lg border border-purple-200"
+                  >
+                    <p className="font-semibold text-sm text-slate-900 mb-2">{preset.name}</p>
+                    <div className="text-xs text-slate-600 space-y-1">
+                      <p>Pan: {preset.pan}° | Tilt: {preset.tilt}°</p>
+                      <p>Zoom: {preset.zoom}x | Focus: {(preset.focus * 100).toFixed(0)}%</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* ستون راست - تخلفات اخیر */}
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h3 className="font-bold text-lg flex items-center gap-2 mb-6">
+                <AlertTriangle className="w-5 h-5 text-orange-600" />
+                تخلفات اخیر
+              </h3>
+
+              <div className="space-y-3">
+                {recentViolations.map((violation) => (
+                  <div
+                    key={violation.id}
+                    className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-300 transition-colors"
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      <img
+                        src={violation.imageUrl}
+                        alt="تخلف"
+                        className="w-16 h-16 rounded object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-slate-900 mb-1 truncate">
+                          {violation.plateNumber}
+                        </p>
+                        <p className="text-xs text-slate-600 mb-1">{violation.violationType}</p>
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(violation.status)}
+                          <span className="text-xs text-slate-600">{getStatusText(violation.status)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-slate-500 pt-2 border-t">
+                      <p>{violation.date} - {violation.time}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {recentViolations.length === 0 && (
+                  <div className="text-center py-8 text-slate-500">
+                    <AlertTriangle className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                    <p>تخلفی ثبت نشده است</p>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
         </div>
-
-        {/* Calibration Actions */}
-        <Card className="border-2 border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              تنظیمات و کالیبراسیون
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-6 bg-white rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Compass className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-2">کالیبراسیون مناطق تخلف</h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      تعریف جهات چهارراه و مناطق تخلف در هر جهت
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                        مرحله اول: ماسک‌بندی جهات
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                        مرحله دوم: تعریف مناطق تخلف
-                      </li>
-                    </ul>
-                    <Button
-                      className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
-                      onClick={() => onStartCalibration('zones')}
-                    >
-                      <Settings className="w-4 h-4" />
-                      شروع کالیبراسیون مناطق
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 bg-white rounded-lg border-2 border-gray-200 hover:border-purple-400 transition-colors">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <Camera className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-2">کالیبراسیون دوربین PTZ</h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      تعریف Preset‌ها برای هر جهت با زوم و فوکوس دلخواه
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                        تنظیم زاویه برای هر جهت
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                        تنظیم زوم و فوکوس
-                      </li>
-                    </ul>
-                    <Button
-                      className="w-full gap-2 bg-purple-600 hover:bg-purple-700"
-                      onClick={() => onStartCalibration('ptz')}
-                    >
-                      <Camera className="w-4 h-4" />
-                      شروع کالیبراسیون PTZ
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
