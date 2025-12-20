@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 import { IntersectionList } from './components/IntersectionList';
@@ -30,7 +31,6 @@ function App() {
     setActiveTab('dashboard');
   };
 
-  // غیرفعال کردن تب‌ها اگر چهارراهی انتخاب نشده
   const isIntersectionSelected = selectedIntersection !== null;
 
   return (

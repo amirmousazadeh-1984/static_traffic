@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
@@ -38,12 +39,10 @@ export function IntersectionDashboard({ intersection }: IntersectionDashboardPro
   const verifiedCount = violations.filter(v => v.status === 'verified').length;
   const pendingCount = violations.filter(v => v.status === 'pending').length;
 
-  // شبیه‌سازی تشخیص تخلف زنده
   useEffect(() => {
     if (!liveMonitoring) return;
 
     const interval = setInterval(() => {
-      // هر 10-30 ثانیه تخلف جدید شبیه‌سازی می‌شود
       if (Math.random() > 0.7) {
         toast.warning('تخلف جدید شناسایی شد!', {
           description: 'دوربین PTZ در حال ضبط جزئیات است...'
