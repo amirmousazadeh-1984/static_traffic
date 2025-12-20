@@ -579,7 +579,6 @@ export const mockViolations: Violation[] = [
   }
 ];
 
-// آمار تخلفات
 export const violationStats = {
   today: {
     total: 47,
@@ -618,7 +617,6 @@ export const violationStats = {
   }
 };
 
-// انواع تخلفات
 export const violationTypes = [
   { id: 'red-light', name: 'عبور از چراغ قرمز', color: '#ef4444', icon: 'alert-circle' },
   { id: 'crosswalk', name: 'تجاوز به خط عابر پیاده', color: '#f59e0b', icon: 'user-x' },
