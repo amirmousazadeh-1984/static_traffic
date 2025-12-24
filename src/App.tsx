@@ -72,15 +72,6 @@ function App() {
                 داشبورد
               </TabsTrigger>
              
-              <TabsTrigger
-                value="ptz-calibration"
-                disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50  cursor-pointer data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Camera className="w-4 h-4 ml-2" />
-                کالیبراسیون PTZ
-              </TabsTrigger>
-
                 
               <TabsTrigger
                 value="zone-calibration"
@@ -92,6 +83,16 @@ function App() {
                 </svg>
                 کالیبراسیون مناطق
               </TabsTrigger>
+              <TabsTrigger
+                value="ptz-calibration"
+                disabled={!isIntersectionSelected}
+                className="data-[state=active]:bg-blue-50  cursor-pointer data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Camera className="w-4 h-4 ml-2" />
+                کالیبراسیون PTZ
+              </TabsTrigger>
+
+
                <TabsTrigger
                 value="dashboard"
                 disabled={!isIntersectionSelected}
@@ -117,7 +118,7 @@ function App() {
               <IntersectionList onSelectIntersection={handleSelectIntersection} />
             </TabsContent>
 
-            <TabsContent value="details" className="mt-0">
+            {/* <TabsContent value="details" className="mt-0">
               {selectedIntersection && (
                 <IntersectionDetails
                   intersection={selectedIntersection}
@@ -126,7 +127,7 @@ function App() {
                   onOpenDashboard={handleOpenDashboard}
                 />
               )}
-            </TabsContent>
+            </TabsContent> */}
 
             <TabsContent value="zone-calibration" className="mt-0">
               {selectedIntersection && (
@@ -144,12 +145,11 @@ function App() {
               {selectedIntersection && (
                 <IntersectionDashboard intersection={selectedIntersection} />
               )}
-            </TabsContent>
+            </TabsContent> 
           </Tabs>
         </div>
       </div>
       
-      {/* Toaster برای نمایش پیام‌ها */}
       <Toaster position="top-center" richColors dir="rtl" />
     </div>
   );
