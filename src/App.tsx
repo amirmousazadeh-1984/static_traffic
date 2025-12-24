@@ -16,7 +16,7 @@ function App() {
 
   const handleSelectIntersection = (intersection: Intersection) => {
     setSelectedIntersection(intersection);
-    setActiveTab('details');
+    setActiveTab('zone-calibration');
   };
 
   const handleStartZoneCalibration = () => {
