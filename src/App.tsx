@@ -63,51 +63,54 @@ function App() {
         <div className="max-w-[1800px] mx-auto px-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start border-0 bg-transparent h-12 p-0 gap-1">
+              
               <TabsTrigger
                 value="intersections"
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg rounded-b-none px-6"
+                className="data-[state=active]:bg-blue-50 cursor-pointer data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6"
               >
                 <MapPin className="w-4 h-4 ml-2" />
-                چهارراه‌ها
+                داشبورد
               </TabsTrigger>
-              
+             
               <TabsTrigger
-                value="details"
+                value="ptz-calibration"
                 disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg rounded-b-none px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="data-[state=active]:bg-blue-50  cursor-pointer data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <Settings className="w-4 h-4 ml-2" />
-                جزئیات و تنظیمات
+                <Camera className="w-4 h-4 ml-2" />
+                کالیبراسیون PTZ
               </TabsTrigger>
-              
+
+                
               <TabsTrigger
                 value="zone-calibration"
                 disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg rounded-b-none px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="data-[state=active]:bg-blue-50  cursor-pointer data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
                 </svg>
                 کالیبراسیون مناطق
               </TabsTrigger>
-              
-              <TabsTrigger
-                value="ptz-calibration"
-                disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg rounded-b-none px-6 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Camera className="w-4 h-4 ml-2" />
-                کالیبراسیون PTZ
-              </TabsTrigger>
-              
-              <TabsTrigger
+               <TabsTrigger
                 value="dashboard"
                 disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg rounded-b-none px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 cursor-pointer data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Monitor className="w-4 h-4 ml-2" />
-                داشبورد نظارت
-              </TabsTrigger>
+داشبورد نظارت چهارراه              </TabsTrigger>
+              
+              
+              {/* <TabsTrigger
+                value="details"
+                disabled={!isIntersectionSelected}
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Settings className="w-4 h-4 ml-2" />
+                جزئیات و تنظیمات
+              </TabsTrigger> */}
+            
+              
             </TabsList>
 
             <TabsContent value="intersections" className="mt-0">
