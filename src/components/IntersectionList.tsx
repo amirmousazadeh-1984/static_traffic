@@ -345,8 +345,10 @@ const showCamerasModal = (intersection: Intersection) => {
                     </AvatarFallback>
                   </Avatar>
 
-                  <div className="flex flex-col items-end gap-2">
-                    <Button
+                  <div className="flex align-items-center justify-content-center items-end gap-2">
+               
+                    {getStatusBadge(intersection.status)}
+                         <Button
                       size="icon"
                       variant="ghost"
                       className="h-8 w-8 text-red-600 hover:bg-red-50"
@@ -357,7 +359,6 @@ const showCamerasModal = (intersection: Intersection) => {
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                    {getStatusBadge(intersection.status)}
                   </div>
                 </div>
 
@@ -374,6 +375,12 @@ const showCamerasModal = (intersection: Intersection) => {
                   <div className="flex items-center gap-2 text-red-600 text-sm font-medium mb-4">
                     <AlertTriangle className="w-4 h-4" />
                     {intersection.todayViolations} تخلف امروز
+                  </div>
+                )}
+                 {intersection.todayViolations === 0 && (
+                  <div className="flex items-center gap-2 text-red-600 text-sm font-medium mb-4">
+                    <AlertTriangle className="w-4 h-4" />
+                  امکان ثبت تخلف وجود ندارد
                   </div>
                 )}
 
