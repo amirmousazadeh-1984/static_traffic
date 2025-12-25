@@ -661,3 +661,24 @@ export const predefinedCameraModels = [
   { brand: 'Uniview', model: 'IPC2324EBR-DPZ28', type: 'fixed' as const, defaultUsername: 'admin', defaultPassword: '123456' },
   { brand: 'Milesight', model: 'MS-C2964-RPC', type: 'ptz' as const, defaultUsername: 'admin', defaultPassword: 'ms123456' },
 ];
+
+export const removeIntersection = (id: string) => {
+  mockIntersections = mockIntersections.filter(int => int.id !== id);
+  delete mockCameras[id];
+};
+
+export const removeCameraFromIntersection = (intersectionId: string, cameraId: string) => {
+  if (mockCameras[intersectionId]) {
+    mockCameras[intersectionId] = mockCameras[intersectionId].filter(cam => cam.id !== cameraId);
+    const int = mockIntersections.find(i => i.id === intersectionId);
+    if (int) int.camerasCount = mockCameras[intersectionId].length;
+  }
+};
+
+export const updateCameraInIntersection = (intersectionId: string, updatedCamera: Camera) => {
+  if (mockCameras[intersectionId]) {
+    mockCameras[intersectionId] = mockCameras[intersectionId].map(cam =>
+      cam.id === updatedCamera.id ? updatedCamera : cam
+    );
+  }
+};

@@ -22,23 +22,34 @@ import {
 } from './ui/select';
 import { Label } from './ui/label';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './ui/accordion';
 import { toast } from 'sonner';
-import { Intersection } from '../types';
+import { Intersection, Camera } from '../types';
 import {
   mockIntersections,
   addIntersection,
   addCameraToIntersection,
+  removeIntersection,
+  removeCameraFromIntersection,
+  updateCameraInIntersection,
   predefinedCameraModels,
 } from '../data/mockDatabase';
 import {
   Search,
   MapPin,
-  Camera,
+  Camera as CameraIcon,
   AlertTriangle,
   Activity,
   Plus,
   Video,
   Settings,
+  Trash2,
+  Edit2,
 } from 'lucide-react';
 
 interface IntersectionListProps {
@@ -61,6 +72,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   // مدال اضافه کردن دوربین
   const [openAddCamera, setOpenAddCamera] = useState(false);
   const [currentIntersectionId, setCurrentIntersectionId] = useState<string | null>(null);
+  const [cameraType, setCameraType] = useState<'fixed' | 'ptz'>('fixed');
   const [selectedModelIndex, setSelectedModelIndex] = useState('');
   const [cameraName, setCameraName] = useState('');
   const [cameraDirection, setCameraDirection] = useState<'north' | 'south' | 'east' | 'west'>('north');
@@ -68,7 +80,11 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   const [cameraUsername, setCameraUsername] = useState('');
   const [cameraPassword, setCameraPassword] = useState('');
 
-  // فیلتر چهارراه‌ها
+  // مدال ویرایش دوربین
+  const [openEditCamera, setOpenEditCamera] = useState(false);
+  const [editingIntersectionId, setEditingIntersectionId] = useState<string | null>(null);
+  const [editingCamera, setEditingCamera] = useState<Camera | null>(null);
+
   const filteredIntersections = mockIntersections.filter((intersection) => {
     const matchesSearch =
       intersection.name.includes(searchQuery) ||
@@ -92,12 +108,11 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   const activeIntersections = mockIntersections.filter(int => int.status === 'active').length;
   const totalCameras = mockIntersections.reduce((sum, int) => sum + int.camerasCount, 0);
 
-  // توابع مدیریت
+  // توابع مدیریت چهارراه
   const handleAddIntersection = () => {
     if (!newIntName.trim() || !newIntLocation.trim() || !newIntLat || !newIntLng) {
-toast.error('همه فیلدهای الزامی را پر کنید', {
-  description: 'نام، آدرس، طول و عرض جغرافیایی اجباری هستند.',
-});      return;
+      toast.error('همه فیلدهای الزامی را پر کنید');
+      return;
     }
 
     addIntersection({
@@ -118,33 +133,87 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
     setOpenAddIntersection(false);
   };
 
+  const handleDeleteIntersection = (id: string) => {
+    if (window.confirm('آیا از حذف این چهارراه و تمام دوربین‌های آن مطمئن هستید؟')) {
+      removeIntersection(id);
+      setUpdateTrigger({});
+      toast.success('چهارراه حذف شد');
+    }
+  };
+
+  // توابع مدیریت دوربین
   const handleAddCamera = () => {
-    if (!currentIntersectionId || selectedModelIndex === '' || !cameraIP.trim()) {
-     toast.error('مدل دوربین و آدرس IP الزامی هستند');
+    if (!currentIntersectionId || !cameraIP.trim()) {
+      toast.error('آدرس IP الزامی است');
       return;
     }
 
-    const model = predefinedCameraModels[parseInt(selectedModelIndex)];
+    const selectedModel = selectedModelIndex ? predefinedCameraModels[parseInt(selectedModelIndex)] : null;
 
     addCameraToIntersection(currentIntersectionId, {
-      name: cameraName.trim() || `${model.brand} ${model.model}`,
-      type: model.type,
+      name: cameraName.trim() || (selectedModel ? `${selectedModel.brand} ${selectedModel.model}` : 'دوربین جدید'),
+      type: cameraType,
       direction: cameraDirection,
       status: 'active',
       ipAddress: cameraIP.trim(),
-      username: cameraUsername.trim() || model.defaultUsername,
-      password: cameraPassword.trim() || model.defaultPassword,
+      username: cameraUsername.trim() || (selectedModel?.defaultUsername || 'admin'),
+      password: cameraPassword.trim() || (selectedModel?.defaultPassword || ''),
     });
 
     setUpdateTrigger({});
     toast.success('دوربین با موفقیت اضافه شد');
 
+    // ریست فرم
+    setCameraType('fixed');
     setSelectedModelIndex('');
     setCameraName('');
+    setCameraDirection('north');
     setCameraIP('');
     setCameraUsername('');
     setCameraPassword('');
     setOpenAddCamera(false);
+  };
+
+  const handleDeleteCamera = (intersectionId: string, cameraId: string) => {
+    if (window.confirm('آیا از حذف این دوربین مطمئن هستید؟')) {
+      removeCameraFromIntersection(intersectionId, cameraId);
+      setUpdateTrigger({});
+      toast.success('دوربین حذف شد');
+    }
+  };
+
+  const openEditCameraModal = (intersectionId: string, camera: Camera) => {
+    setEditingIntersectionId(intersectionId);
+    setEditingCamera(camera);
+    setCameraType(camera.type);
+    setCameraName(camera.name);
+    setCameraDirection(camera.direction);
+    setCameraIP(camera.ipAddress);
+    setCameraUsername(camera.username || '');
+    setCameraPassword(camera.password || '');
+    setSelectedModelIndex(''); // اختیاری
+    setOpenEditCamera(true);
+  };
+
+  const handleUpdateCamera = () => {
+    if (!editingIntersectionId || !editingCamera || !cameraIP.trim()) {
+      toast.error('آدرس IP الزامی است');
+      return;
+    }
+
+    updateCameraInIntersection(editingIntersectionId, {
+      ...editingCamera,
+      name: cameraName.trim() || editingCamera.name,
+      type: cameraType,
+      direction: cameraDirection,
+      ipAddress: cameraIP.trim(),
+      username: cameraUsername.trim(),
+      password: cameraPassword.trim(),
+    });
+
+    setUpdateTrigger({});
+    toast.success('دوربین به‌روزرسانی شد');
+    setOpenEditCamera(false);
   };
 
   const openCameraModal = (intersectionId: string) => {
@@ -152,7 +221,6 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
     setOpenAddCamera(true);
   };
 
-  // ساخت حرف اول برای آواتار
   const getInitials = (name: string) => {
     return name.split(' ').map(word => word[0]?.toUpperCase() || '').join('').slice(0, 2);
   };
@@ -160,8 +228,7 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
-
-        {/* آمار کلی - مینیمال */}
+        {/* آمار کلی */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <Card className="p-5 border-0 shadow-sm bg-white/80 backdrop-blur">
             <div className="flex items-center justify-between">
@@ -199,12 +266,12 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
                 <p className="text-sm text-slate-600">دوربین‌ها</p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">{totalCameras}</p>
               </div>
-              <Camera className="w-8 h-8 text-purple-600" />
+              <CameraIcon className="w-8 h-8 text-purple-600" />
             </div>
           </Card>
         </div>
 
-        {/* جستجو، فیلتر و دکمه اضافه کردن */}
+        {/* جستجو، فیلتر و اضافه کردن چهارراه */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
             <div className="relative">
@@ -278,67 +345,132 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
           </Dialog>
         </div>
 
-        {/* لیست چهارراه‌ها - مینیمال و شیک */}
+        {/* لیست چهارراه‌ها */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredIntersections.map((intersection) => (
-            <Card
-              key={intersection.id}
-              className="group cursor-pointer transition-all duration-300 hover:shadow-md hover:border-slate-300 border border-slate-200 bg-white overflow-hidden"
-              onClick={() => onSelectIntersection(intersection)}
-            >
-              <div className="p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <Avatar className="h-12 w-12 border-2 border-slate-200">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-lg">
-                      {getInitials(intersection.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-end gap-2">
-                    {getStatusBadge(intersection.status)}
-                    {intersection.todayViolations > 0 && (
-                      <span className="text-xs text-red-600 font-medium flex items-center gap-1">
-                        <AlertTriangle className="w-3 h-3" />
-                        {intersection.todayViolations} تخلف
-                      </span>
-                    )}
+          {filteredIntersections.map((intersection) => {
+            const cameras = mockIntersections.find(i => i.id === intersection.id)?.cameras || [];
+
+            return (
+              <Card
+                key={intersection.id}
+                className="group cursor-pointer transition-all duration-300 hover:shadow-md hover:border-slate-300 border border-slate-200 bg-white overflow-hidden"
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <Avatar className="h-12 w-12 border-2 border-slate-200">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-lg">
+                        {getInitials(intersection.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteIntersection(intersection.id);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      {getStatusBadge(intersection.status)}
+                    </div>
                   </div>
-                </div>
 
-                <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {intersection.name}
-                </h3>
+                  <h3
+                    className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2"
+                    onClick={() => onSelectIntersection(intersection)}
+                  >
+                    {intersection.name}
+                  </h3>
 
-                <p className="text-sm text-slate-600 mt-2 flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {intersection.location}
-                </p>
+                  <p className="text-sm text-slate-600 flex items-center gap-1 mb-4">
+                    <MapPin className="w-4 h-4" />
+                    {intersection.location}
+                  </p>
 
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
-                  <span className="text-sm text-slate-600 flex items-center gap-1">
-                    <Camera className="w-4 h-4" />
-                    {intersection.camerasCount} دوربین
-                  </span>
+                  {intersection.todayViolations > 0 && (
+                    <div className="text-xs text-red-600 font-medium flex items-center gap-1 mb-3">
+                      <AlertTriangle className="w-3 h-3" />
+                      {intersection.todayViolations} تخلف امروز
+                    </div>
+                  )}
 
-                  <div className="flex gap-2">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <span className="text-sm text-slate-600 flex items-center gap-1">
+                      <CameraIcon className="w-4 h-4" />
+                      {intersection.camerasCount} دوربین
+                    </span>
+
                     <Button
                       size="sm"
-                      variant="ghost"
-                      className="h-8 px-3 text-xs"
+                      variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();
                         openCameraModal(intersection.id);
                       }}
                     >
-                      <Video className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" className="h-8 px-3 text-xs">
-                      <Settings className="w-4 h-4" />
+                      <Plus className="w-4 h-4 ml-1" />
+                      دوربین
                     </Button>
                   </div>
+
+                  {/* لیست دوربین‌ها */}
+                  {cameras.length > 0 && (
+                    <Accordion type="single" collapsible className="mt-4">
+                      <AccordionItem value="cameras" className="border-none">
+                        <AccordionTrigger className="text-xs py-2 hover:no-underline">
+                          نمایش دوربین‌ها ({cameras.length})
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-2 pt-2">
+                            {cameras.map((cam) => (
+                              <div
+                                key={cam.id}
+                                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm border border-slate-200"
+                              >
+                                <div className="flex-1">
+                                  <div className="font-medium text-slate-900">{cam.name}</div>
+                                  <div className="text-xs text-slate-500 mt-1">
+                                    {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان (PTZ)' : 'ثابت'} • جهت: {cam.direction === 'north' ? 'شمال' : cam.direction === 'south' ? 'جنوب' : cam.direction === 'east' ? 'شرق' : 'غرب'}
+                                  </div>
+                                </div>
+                                <div className="flex gap-1 ml-3">
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openEditCameraModal(intersection.id, cam);
+                                    }}
+                                  >
+                                    <Edit2 className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8 text-red-600 hover:bg-red-50"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteCamera(intersection.id, cam.id);
+                                    }}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
 
         {/* حالت خالی */}
@@ -360,10 +492,23 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
             </DialogHeader>
             <div className="grid gap-5 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">مدل دوربین</Label>
+                <Label className="text-right">نوع دوربین</Label>
+                <Select value={cameraType} onValueChange={(v: 'fixed' | 'ptz') => setCameraType(v)}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fixed">ثابت (Fixed)</SelectItem>
+                    <SelectItem value="ptz">چرخان (PTZ)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="cam-model" className="text-right">مدل پیشنهادی (اختیاری)</Label>
                 <Select value={selectedModelIndex} onValueChange={setSelectedModelIndex}>
                   <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="یک مدل انتخاب کنید" />
+                    <SelectValue placeholder="انتخاب مدل" />
                   </SelectTrigger>
                   <SelectContent>
                     {predefinedCameraModels.map((model, index) => (
@@ -377,13 +522,7 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="cam-name" className="text-right">نام دوربین</Label>
-                <Input
-                  id="cam-name"
-                  value={cameraName}
-                  onChange={(e) => setCameraName(e.target.value)}
-                  className="col-span-3"
-                  placeholder="اختیاری - در غیر این صورت از مدل استفاده می‌شود"
-                />
+                <Input id="cam-name" value={cameraName} onChange={(e) => setCameraName(e.target.value)} className="col-span-3" placeholder="اختیاری" />
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
@@ -401,40 +540,80 @@ toast.error('همه فیلدهای الزامی را پر کنید', {
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="cam-ip" className="text-right">آدرس IP</Label>
-                <Input
-                  id="cam-ip"
-                  value={cameraIP}
-                  onChange={(e) => setCameraIP(e.target.value)}
-                  className="col-span-3"
-                  placeholder="مثال: 192.168.1.101"
-                />
+                <Input id="cam-ip" value={cameraIP} onChange={(e) => setCameraIP(e.target.value)} className="col-span-3" placeholder="مثال: 192.168.1.101" />
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="cam-user" className="text-right">نام کاربری</Label>
-                <Input
-                  id="cam-user"
-                  value={cameraUsername}
-                  onChange={(e) => setCameraUsername(e.target.value)}
-                  className="col-span-3"
-                  placeholder="اختیاری - پیش‌فرض از مدل"
-                />
+                <Input id="cam-user" value={cameraUsername} onChange={(e) => setCameraUsername(e.target.value)} className="col-span-3" placeholder="اختیاری" />
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="cam-pass" className="text-right">رمز عبور</Label>
-                <Input
-                  id="cam-pass"
-                  type="password"
-                  value={cameraPassword}
-                  onChange={(e) => setCameraPassword(e.target.value)}
-                  className="col-span-3"
-                  placeholder="اختیاری - پیش‌فرض از مدل"
-                />
+                <Input id="cam-pass" type="password" value={cameraPassword} onChange={(e) => setCameraPassword(e.target.value)} className="col-span-3" placeholder="اختیاری" />
               </div>
             </div>
             <DialogFooter>
               <Button onClick={handleAddCamera}>اضافه کردن دوربین</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* مدال ویرایش دوربین */}
+        <Dialog open={openEditCamera} onOpenChange={setOpenEditCamera}>
+          <DialogContent className="sm:max-w-[600px]" dir="rtl">
+            <DialogHeader>
+              <DialogTitle>ویرایش دوربین: {editingCamera?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-5 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">نوع دوربین</Label>
+                <Select value={cameraType} onValueChange={(v: 'fixed' | 'ptz') => setCameraType(v)}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fixed">ثابت (Fixed)</SelectItem>
+                    <SelectItem value="ptz">چرخان (PTZ)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-name" className="text-right">نام دوربین</Label>
+                <Input id="edit-name" value={cameraName} onChange={(e) => setCameraName(e.target.value)} className="col-span-3" />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">جهت</Label>
+                <Select value={cameraDirection} onValueChange={(v: any) => setCameraDirection(v)}>
+                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="north">شمال</SelectItem>
+                    <SelectItem value="south">جنوب</SelectItem>
+                    <SelectItem value="east">شرق</SelectItem>
+                    <SelectItem value="west">غرب</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-ip" className="text-right">آدرس IP</Label>
+                <Input id="edit-ip" value={cameraIP} onChange={(e) => setCameraIP(e.target.value)} className="col-span-3" />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-user" className="text-right">نام کاربری</Label>
+                <Input id="edit-user" value={cameraUsername} onChange={(e) => setCameraUsername(e.target.value)} className="col-span-3" />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-pass" className="text-right">رمز عبور</Label>
+                <Input id="edit-pass" type="password" value={cameraPassword} onChange={(e) => setCameraPassword(e.target.value)} className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleUpdateCamera}>ذخیره تغییرات</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
