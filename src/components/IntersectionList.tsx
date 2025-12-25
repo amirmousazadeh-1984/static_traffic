@@ -92,7 +92,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
       case 'inactive':
         return <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs">غیرفعال</Badge>;
       case 'maintenance':
-        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs">تعمیر</Badge>;
+        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs">در حال تعمیر</Badge>;
     }
   };
 
@@ -229,7 +229,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider">چهارراه‌ها</p>
+                <p className="text-xs text-slate-600 uppercase tracking-wider">تعداد چهارراه ها</p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">{mockIntersections.length}</p>
               </div>
               <MapPin className="w-9 h-9 text-blue-600" />
@@ -239,7 +239,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider">فعال</p>
+                <p className="text-xs text-slate-600 uppercase tracking-wider">چهارراههای فعال</p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">{activeIntersections}</p>
               </div>
               <Activity className="w-9 h-9 text-green-600" />
@@ -249,7 +249,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider">تخلف امروز</p>
+                <p className="text-xs text-slate-600 uppercase tracking-wider">تخلفات ثبت شده امروز</p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">{totalViolations}</p>
               </div>
               <AlertTriangle className="w-9 h-9 text-amber-600" />
@@ -259,7 +259,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider">دوربین‌ها</p>
+                <p className="text-xs text-slate-600 uppercase tracking-wider">تعداد کل دوربین ها</p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">{totalCameras}</p>
               </div>
               <CameraIcon className="w-9 h-9 text-purple-600" />
@@ -270,8 +270,8 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
         {/* جستجو و فیلتر */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
-            <div className="relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <div className="relative ">
+              <Search className="absolute right-3 top-1/3 -translate-y-1/3 w-5 h-5 text-slate-400" />
               <Input
                 placeholder="جستجو..."
                 value={searchQuery}
@@ -288,7 +288,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                   size="sm"
                   onClick={() => setStatusFilter(filter)}
                 >
-                  {filter === 'all' ? 'همه' : filter === 'active' ? 'فعال' : filter === 'inactive' ? 'غیرفعال' : 'تعمیر'}
+                  {filter === 'all' ? 'همه' : filter === 'active' ? 'فعال' : filter === 'inactive' ? 'غیرفعال' : 'در حال تعمیر'}
                 </Button>
               ))}
             </div>
@@ -329,7 +329,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                     <SelectContent>
                       <SelectItem value="active">فعال</SelectItem>
                       <SelectItem value="inactive">غیرفعال</SelectItem>
-                      <SelectItem value="maintenance">تعمیر</SelectItem>
+                      <SelectItem value="maintenance">در حال تعمیر</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
