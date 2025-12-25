@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from './ui/select';
 import { Label } from './ui/label';
-import { toast } from 'sonner'; // یا از sonner استفاده کنید: import { toast } from './components/ui/sonner'
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { toast } from 'sonner';
 import { Intersection } from '../types';
 import {
   mockIntersections,
@@ -35,9 +36,9 @@ import {
   Camera,
   AlertTriangle,
   Activity,
-  Settings,
   Plus,
   Video,
+  Settings,
 } from 'lucide-react';
 
 interface IntersectionListProps {
@@ -47,8 +48,6 @@ interface IntersectionListProps {
 export function IntersectionList({ onSelectIntersection }: IntersectionListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'maintenance'>('all');
-
-  // برای re-render بعد از اضافه کردن
   const [, setUpdateTrigger] = useState({});
 
   // مدال اضافه کردن چهارراه
@@ -81,22 +80,24 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   const getStatusBadge = (status: Intersection['status']) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">فعال</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">فعال</Badge>;
       case 'inactive':
-        return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">غیرفعال</Badge>;
+        return <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs">غیرفعال</Badge>;
       case 'maintenance':
-        return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">در تعمیر</Badge>;
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">در تعمیر</Badge>;
     }
   };
 
   const totalViolations = mockIntersections.reduce((sum, int) => sum + int.todayViolations, 0);
   const activeIntersections = mockIntersections.filter(int => int.status === 'active').length;
+  const totalCameras = mockIntersections.reduce((sum, int) => sum + int.camerasCount, 0);
 
   // توابع مدیریت
   const handleAddIntersection = () => {
     if (!newIntName.trim() || !newIntLocation.trim() || !newIntLat || !newIntLng) {
-      toast({ title: 'خطا', description: 'همه فیلدهای الزامی را پر کنید', variant: 'destructive' });
-      return;
+toast.error('همه فیلدهای الزامی را پر کنید', {
+  description: 'نام، آدرس، طول و عرض جغرافیایی اجباری هستند.',
+});      return;
     }
 
     addIntersection({
@@ -107,9 +108,8 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
     });
 
     setUpdateTrigger({});
-    toast({ title: 'موفقیت', description: 'چهارراه جدید با موفقیت اضافه شد' });
+    toast.success('چهارراه جدید با موفقیت اضافه شد');
 
-    // ریست فرم
     setNewIntName('');
     setNewIntLocation('');
     setNewIntLat('');
@@ -120,7 +120,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
 
   const handleAddCamera = () => {
     if (!currentIntersectionId || selectedModelIndex === '' || !cameraIP.trim()) {
-      toast({ title: 'خطا', description: 'مدل دوربین و آدرس IP الزامی هستند', variant: 'destructive' });
+     toast.error('مدل دوربین و آدرس IP الزامی هستند');
       return;
     }
 
@@ -132,15 +132,13 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
       direction: cameraDirection,
       status: 'active',
       ipAddress: cameraIP.trim(),
-      // اگر کاربر چیزی وارد نکرده، از پیش‌فرض مدل استفاده کن
       username: cameraUsername.trim() || model.defaultUsername,
       password: cameraPassword.trim() || model.defaultPassword,
     });
 
     setUpdateTrigger({});
-    toast({ title: 'موفقیت', description: 'دوربین با موفقیت اضافه شد' });
+    toast.success('دوربین با موفقیت اضافه شد');
 
-    // ریست فرم دوربین
     setSelectedModelIndex('');
     setCameraName('');
     setCameraIP('');
@@ -154,114 +152,90 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
     setOpenAddCamera(true);
   };
 
+  // ساخت حرف اول برای آواتار
+  const getInitials = (name: string) => {
+    return name.split(' ').map(word => word[0]?.toUpperCase() || '').join('').slice(0, 2);
+  };
+
   return (
-    <div className="min-h-[calc(100vh-140px)]">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
-        {/* آمار کلی */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+
+        {/* آمار کلی - مینیمال */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <Card className="p-5 border-0 shadow-sm bg-white/80 backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-700 mb-1">کل چهارراه‌ها</p>
-                <p className="text-3xl font-bold text-blue-900">{mockIntersections.length}</p>
+                <p className="text-sm text-slate-600">کل چهارراه‌ها</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{mockIntersections.length}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                <MapPin className="w-6 h-6 text-white" />
-              </div>
+              <MapPin className="w-8 h-8 text-blue-600" />
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+          <Card className="p-5 border-0 shadow-sm bg-white/80 backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-700 mb-1">چهارراه‌های فعال</p>
-                <p className="text-3xl font-bold text-green-900">{activeIntersections}</p>
+                <p className="text-sm text-slate-600">فعال</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{activeIntersections}</p>
               </div>
-              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
+              <Activity className="w-8 h-8 text-green-600" />
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+          <Card className="p-5 border-0 shadow-sm bg-white/80 backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-700 mb-1">تخلفات امروز</p>
-                <p className="text-3xl font-bold text-orange-900">{totalViolations}</p>
+                <p className="text-sm text-slate-600">تخلفات امروز</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{totalViolations}</p>
               </div>
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-white" />
-              </div>
+              <AlertTriangle className="w-8 h-8 text-orange-600" />
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+          <Card className="p-5 border-0 shadow-sm bg-white/80 backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-700 mb-1">دوربین‌های فعال</p>
-                <p className="text-3xl font-bold text-purple-900">
-                  {mockIntersections.reduce((sum, int) => sum + int.camerasCount, 0)}
-                </p>
+                <p className="text-sm text-slate-600">دوربین‌ها</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{totalCameras}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
+              <Camera className="w-8 h-8 text-purple-600" />
             </div>
           </Card>
         </div>
 
-        {/* جستجو، فیلتر و دکمه اضافه کردن چهارراه */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        {/* جستجو، فیلتر و دکمه اضافه کردن */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
             <div className="relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
-                type="text"
                 placeholder="جستجوی چهارراه..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 w-full sm:w-80"
+                className="pr-10 w-full sm:w-96"
               />
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                variant={statusFilter === 'all' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('all')}
-                size="sm"
-              >
-                همه
-              </Button>
-              <Button
-                variant={statusFilter === 'active' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('active')}
-                size="sm"
-              >
-                فعال
-              </Button>
-              <Button
-                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('inactive')}
-                size="sm"
-              >
-                غیرفعال
-              </Button>
-              <Button
-                variant={statusFilter === 'maintenance' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('maintenance')}
-                size="sm"
-              >
-                در تعمیر
-              </Button>
+            <div className="flex gap-2 flex-wrap">
+              {(['all', 'active', 'inactive', 'maintenance'] as const).map((filter) => (
+                <Button
+                  key={filter}
+                  variant={statusFilter === filter ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter(filter)}
+                >
+                  {filter === 'all' ? 'همه' : filter === 'active' ? 'فعال' : filter === 'inactive' ? 'غیرفعال' : 'در تعمیر'}
+                </Button>
+              ))}
             </div>
           </div>
 
-          {/* دکمه اضافه کردن چهارراه */}
           <Dialog open={openAddIntersection} onOpenChange={setOpenAddIntersection}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 ml-2" />
-                اضافه کردن چهارراه
+                چهارراه جدید
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[550px]" dir="rtl">
@@ -271,54 +245,24 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
               <div className="grid gap-5 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="int-name" className="text-right">نام چهارراه</Label>
-                  <Input
-                    id="int-name"
-                    value={newIntName}
-                    onChange={(e) => setNewIntName(e.target.value)}
-                    className="col-span-3"
-                    placeholder="مثال: چهارراه ولیعصر - انقلاب"
-                  />
+                  <Input id="int-name" value={newIntName} onChange={(e) => setNewIntName(e.target.value)} className="col-span-3" placeholder="مثال: چهارراه ولیعصر - انقلاب" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="int-location" className="text-right">آدرس</Label>
-                  <Input
-                    id="int-location"
-                    value={newIntLocation}
-                    onChange={(e) => setNewIntLocation(e.target.value)}
-                    className="col-span-3"
-                    placeholder="مثال: تهران، میدان ولیعصر"
-                  />
+                  <Input id="int-location" value={newIntLocation} onChange={(e) => setNewIntLocation(e.target.value)} className="col-span-3" placeholder="مثال: تهران، میدان ولیعصر" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="int-lat" className="text-right">عرض جغرافیایی</Label>
-                  <Input
-                    id="int-lat"
-                    type="number"
-                    step="any"
-                    value={newIntLat}
-                    onChange={(e) => setNewIntLat(e.target.value)}
-                    className="col-span-3"
-                    placeholder="مثال: 35.6892"
-                  />
+                  <Input id="int-lat" type="number" step="any" value={newIntLat} onChange={(e) => setNewIntLat(e.target.value)} className="col-span-3" placeholder="مثال: 35.6892" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="int-lng" className="text-right">طول جغرافیایی</Label>
-                  <Input
-                    id="int-lng"
-                    type="number"
-                    step="any"
-                    value={newIntLng}
-                    onChange={(e) => setNewIntLng(e.target.value)}
-                    className="col-span-3"
-                    placeholder="مثال: 51.3890"
-                  />
+                  <Input id="int-lng" type="number" step="any" value={newIntLng} onChange={(e) => setNewIntLng(e.target.value)} className="col-span-3" placeholder="مثال: 51.3890" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">وضعیت اولیه</Label>
                   <Select value={newIntStatus} onValueChange={(v: any) => setNewIntStatus(v)}>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue />
-                    </SelectTrigger>
+                    <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">فعال</SelectItem>
                       <SelectItem value="inactive">غیرفعال</SelectItem>
@@ -334,60 +278,61 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           </Dialog>
         </div>
 
-        {/* لیست چهارراه‌ها */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* لیست چهارراه‌ها - مینیمال و شیک */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filteredIntersections.map((intersection) => (
             <Card
               key={intersection.id}
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              className="group cursor-pointer transition-all duration-300 hover:shadow-md hover:border-slate-300 border border-slate-200 bg-white overflow-hidden"
               onClick={() => onSelectIntersection(intersection)}
             >
-              <div className="relative h-48 overflow-hidden bg-slate-200">
-                <img
-                  src={intersection.imageUrl}
-                  alt={intersection.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">{getStatusBadge(intersection.status)}</div>
-                {intersection.todayViolations > 0 && (
-                  <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-                    <AlertTriangle className="w-4 h-4" />
-                    {intersection.todayViolations} تخلف
-                  </div>
-                )}
-              </div>
-
               <div className="p-5">
-                <h3 className="font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-600 transition-colors">
+                <div className="flex items-start justify-between mb-4">
+                  <Avatar className="h-12 w-12 border-2 border-slate-200">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-lg">
+                      {getInitials(intersection.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-end gap-2">
+                    {getStatusBadge(intersection.status)}
+                    {intersection.todayViolations > 0 && (
+                      <span className="text-xs text-red-600 font-medium flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        {intersection.todayViolations} تخلف
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                   {intersection.name}
                 </h3>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
+                <p className="text-sm text-slate-600 mt-2 flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
-                  <span>{intersection.location}</span>
-                </div>
+                  {intersection.location}
+                </p>
 
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+                  <span className="text-sm text-slate-600 flex items-center gap-1">
                     <Camera className="w-4 h-4" />
-                    <span>{intersection.camerasCount} دوربین</span>
-                  </div>
+                    {intersection.camerasCount} دوربین
+                  </span>
 
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="ghost"
+                      className="h-8 px-3 text-xs"
                       onClick={(e) => {
                         e.stopPropagation();
                         openCameraModal(intersection.id);
                       }}
                     >
-                      <Video className="w-4 h-4 ml-1" />
-                      دوربین‌ها
+                      <Video className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" variant="ghost">
-                      <Settings className="w-4 h-4 ml-1" />
-                      مشاهده
+                    <Button size="sm" variant="ghost" className="h-8 px-3 text-xs">
+                      <Settings className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -396,12 +341,14 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           ))}
         </div>
 
+        {/* حالت خالی */}
         {filteredIntersections.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-slate-400" />
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-10 h-10 text-slate-400" />
             </div>
-            <p className="text-slate-600">هیچ چهارراهی یافت نشد</p>
+            <p className="text-slate-600 text-lg">هیچ چهارراهی یافت نشد</p>
+            <p className="text-slate-500 text-sm mt-2">فیلترها را تغییر دهید یا چهارراه جدید اضافه کنید</p>
           </div>
         )}
 
@@ -421,8 +368,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                   <SelectContent>
                     {predefinedCameraModels.map((model, index) => (
                       <SelectItem key={index} value={index.toString()}>
-                        {model.brand} - {model.model}{' '}
-                        ({model.type === 'fixed' ? 'ثابت' : 'PTZ'})
+                        {model.brand} - {model.model} ({model.type === 'fixed' ? 'ثابت' : 'PTZ'})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -443,9 +389,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">جهت</Label>
                 <Select value={cameraDirection} onValueChange={(v: any) => setCameraDirection(v)}>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="north">شمال</SelectItem>
                     <SelectItem value="south">جنوب</SelectItem>
