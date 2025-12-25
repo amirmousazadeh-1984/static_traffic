@@ -351,12 +351,10 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-<div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg ring-1 ring-slate-200">
-  <svg className="w-10 h-10 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2v10m0 0v10m0-10h10m-10 0H2" />
-    <circle cx="12" cy="12" r="4" stroke="currentColor" fill="none" />
-  </svg>
-</div>
+<h3 className="text-base font-bold text-slate-900 mb-2">
+                  {intersection.name}
+                </h3>
+
 
                   <div className="flex items-center gap-2">
                     <Button
@@ -374,24 +372,21 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 mb-2">
-                  {intersection.name}
-                </h3>
-
+                
                 <p className="text-xs text-slate-600 flex items-center gap-2 mb-4">
                   <MapPin className="w-4 h-4" />
                   {intersection.location}
                 </p>
 
                 {intersection.todayViolations > 0 ? (
-                  <div className="text-xs text-red-600 font-medium flex items-center gap-1 mb-4">
+                  <div className="text-xs text-red-600 font-medium flex items-center gap-2 mb-4">
                     <AlertTriangle className="w-4 h-4" />
-                    {intersection.todayViolations} تخلف
+                    <span>تعداد تخلف  ثبت شده </span>
+                    {intersection.todayViolations} 
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-500 mb-4">
-                    بدون تخلف
-                  </div>
+                  <div className="text-xs text-slate-400 mb-4">
+امکان ثبت تخلف وجود ندارد                  </div>
                 )}
 
                 {/* بخش دوربین‌ها */}
