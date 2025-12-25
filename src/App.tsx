@@ -16,7 +16,7 @@ function App() {
 
   const handleSelectIntersection = (intersection: Intersection) => {
     setSelectedIntersection(intersection);
-    setActiveTab('zone-calibration');
+    setActiveTab('dashboard');
   };
 
   const handleStartZoneCalibration = () => {
@@ -72,6 +72,14 @@ function App() {
                 داشبورد
               </TabsTrigger>
              
+              
+               <TabsTrigger
+                value="dashboard"
+                disabled={!isIntersectionSelected}
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 cursor-pointer data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Monitor className="w-4 h-4 ml-2" />
+داشبورد نظارت چهارراه              </TabsTrigger>
                 
               <TabsTrigger
                 value="zone-calibration"
@@ -93,13 +101,6 @@ function App() {
               </TabsTrigger>
 
 
-               <TabsTrigger
-                value="dashboard"
-                disabled={!isIntersectionSelected}
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 cursor-pointer data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-t-lg  px-6 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Monitor className="w-4 h-4 ml-2" />
-داشبورد نظارت چهارراه              </TabsTrigger>
               
               
               {/* <TabsTrigger
