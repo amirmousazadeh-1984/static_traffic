@@ -1,8 +1,8 @@
-// دیتابیس Mock کامل سیستم نظارت ترافیکی
 
 import { Intersection, Camera, Direction, Mask, PTZPreset, Violation } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
-// چهارراه‌ها
+
 export const mockIntersections: Intersection[] = [
   {
     id: 'int-001',
@@ -56,7 +56,6 @@ export const mockIntersections: Intersection[] = [
   }
 ];
 
-// دوربین‌ها برای هر چهارراه
 export const mockCameras: { [intersectionId: string]: Camera[] } = {
   'int-001': [
     {
@@ -144,7 +143,6 @@ export const mockCameras: { [intersectionId: string]: Camera[] } = {
   ]
 };
 
-// جهات چهارراه‌ها
 export const mockDirections: { [intersectionId: string]: Direction[] } = {
   'int-001': [
     {
@@ -208,7 +206,6 @@ export const mockDirections: { [intersectionId: string]: Direction[] } = {
   ]
 };
 
-// ماسک‌های تعریف شده
 export const mockMasks: { [intersectionId: string]: Mask[] } = {
   'int-001': [
     // ماسک جهت شمالی
@@ -375,7 +372,6 @@ export const mockMasks: { [intersectionId: string]: Mask[] } = {
   ]
 };
 
-// Preset‌های PTZ
 export const mockPTZPresets: { [intersectionId: string]: PTZPreset[] } = {
   'int-001': [
     {
@@ -455,7 +451,6 @@ export const mockPTZPresets: { [intersectionId: string]: PTZPreset[] } = {
   ]
 };
 
-// تخلفات ثبت شده
 export const mockViolations: Violation[] = [
   {
     id: 'viol-001',
@@ -623,4 +618,46 @@ export const violationTypes = [
   { id: 'speed', name: 'سرعت غیرمجاز', color: '#8b5cf6', icon: 'gauge' },
   { id: 'lane-change', name: 'تغییر خط ممنوع', color: '#ec4899', icon: 'git-branch' },
   { id: 'illegal-parking', name: 'پارک در محل ممنوع', color: '#10b981', icon: 'parking-circle-off' }
+];
+
+export const addIntersection = (newIntersection: Omit<Intersection, 'id' | 'camerasCount' | 'todayViolations'> & { imageUrl?: string }) => {
+  const intersection: Intersection = {
+    ...newIntersection,
+    id: uuidv4(),
+    camerasCount: 0,
+    todayViolations: 0,
+    imageUrl: newIntersection.imageUrl || 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
+  };
+  mockIntersections.push(intersection);
+  mockCameras[intersection.id] = [];
+  return intersection;
+};
+
+export const addCameraToIntersection = (intersectionId: string, newCamera: Omit<Camera, 'id'>) => {
+  const camera: Camera = {
+    ...newCamera,
+    id: uuidv4(),
+  };
+  if (!mockCameras[intersectionId]) {
+    mockCameras[intersectionId] = [];
+  }
+  mockCameras[intersectionId].push(camera);
+
+  const intersection = mockIntersections.find(int => int.id === intersectionId);
+  if (intersection) {
+    intersection.camerasCount = mockCameras[intersectionId].length;
+  }
+
+  return camera;
+};
+
+export const predefinedCameraModels = [
+  { brand: 'Hikvision', model: 'DS-2CD2043G0-I', type: 'fixed' as const, defaultUsername: 'admin', defaultPassword: 'admin123' },
+  { brand: 'Hikvision', model: 'DS-2DE4A425IW-DE', type: 'ptz' as const, defaultUsername: 'admin', defaultPassword: 'admin123' },
+  { brand: 'Dahua', model: 'IPC-HFW5442E-ZE', type: 'fixed' as const, defaultUsername: 'admin', defaultPassword: 'admin' },
+  { brand: 'Dahua', model: 'SD6AL445XA-HNR', type: 'ptz' as const, defaultUsername: 'admin', defaultPassword: 'admin' },
+  { brand: 'Axis', model: 'P1448-LE', type: 'fixed' as const, defaultUsername: 'root', defaultPassword: 'root' },
+  { brand: 'Axis', model: 'Q6075-E', type: 'ptz' as const, defaultUsername: 'root', defaultPassword: 'root' },
+  { brand: 'Uniview', model: 'IPC2324EBR-DPZ28', type: 'fixed' as const, defaultUsername: 'admin', defaultPassword: '123456' },
+  { brand: 'Milesight', model: 'MS-C2964-RPC', type: 'ptz' as const, defaultUsername: 'admin', defaultPassword: 'ms123456' },
 ];

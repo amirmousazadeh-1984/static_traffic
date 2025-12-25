@@ -1,17 +1,12 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import eslint from "vite-plugin-eslint";
+import react from "@vitejs/plugin-react";  // اگر از SWC استفاده می‌کنی، این رو عوض کن (پایین توضیح دادم)
 import path from "path";
+
 const rootDir = new URL(".", import.meta.url).pathname;
+
 export default defineConfig({
   plugins: [
-    react(),
-    // eslint({
-    //   cache: false,
-    //   fix: true,
-    //   lintOnStart: true,
-    //   failOnError: false,
-    // }),
+    react(),  // فقط این کافیه
   ],
   resolve: {
     alias: {
