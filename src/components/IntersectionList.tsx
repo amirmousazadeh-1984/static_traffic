@@ -38,6 +38,7 @@ import {
   removeCameraFromIntersection,
   updateCameraInIntersection,
   predefinedCameraModels,
+  mockCameras,
 } from '../data/mockDatabase';
 import {
   Search,
@@ -46,11 +47,10 @@ import {
   AlertTriangle,
   Activity,
   Plus,
-  Video,
-  Settings,
   Trash2,
   Edit2,
 } from 'lucide-react';
+
 
 interface IntersectionListProps {
   onSelectIntersection: (intersection: Intersection) => void;
@@ -108,7 +108,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   const activeIntersections = mockIntersections.filter(int => int.status === 'active').length;
   const totalCameras = mockIntersections.reduce((sum, int) => sum + int.camerasCount, 0);
 
-  // توابع مدیریت چهارراه
+  // توابع مدیریت
   const handleAddIntersection = () => {
     if (!newIntName.trim() || !newIntLocation.trim() || !newIntLat || !newIntLng) {
       toast.error('همه فیلدهای الزامی را پر کنید');
@@ -141,7 +141,6 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
     }
   };
 
-  // توابع مدیریت دوربین
   const handleAddCamera = () => {
     if (!currentIntersectionId || !cameraIP.trim()) {
       toast.error('آدرس IP الزامی است');
@@ -163,7 +162,6 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
     setUpdateTrigger({});
     toast.success('دوربین با موفقیت اضافه شد');
 
-    // ریست فرم
     setCameraType('fixed');
     setSelectedModelIndex('');
     setCameraName('');
@@ -191,7 +189,6 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
     setCameraIP(camera.ipAddress);
     setCameraUsername(camera.username || '');
     setCameraPassword(camera.password || '');
-    setSelectedModelIndex(''); // اختیاری
     setOpenEditCamera(true);
   };
 
@@ -223,6 +220,16 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
 
   const getInitials = (name: string) => {
     return name.split(' ').map(word => word[0]?.toUpperCase() || '').join('').slice(0, 2);
+  };
+
+  const getDirectionLabel = (dir: string) => {
+    switch (dir) {
+      case 'north': return 'شمال';
+      case 'south': return 'جنوب';
+      case 'east': return 'شرق';
+      case 'west': return 'غرب';
+      default: return dir;
+    }
   };
 
   return (
@@ -305,6 +312,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                 چهارراه جدید
               </Button>
             </DialogTrigger>
+            {/* مدال اضافه کردن چهارراه - همان قبلی */}
             <DialogContent className="sm:max-w-[550px]" dir="rtl">
               <DialogHeader>
                 <DialogTitle>اضافه کردن چهارراه جدید</DialogTitle>
@@ -348,7 +356,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
         {/* لیست چهارراه‌ها */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filteredIntersections.map((intersection) => {
-            const cameras = mockIntersections.find(i => i.id === intersection.id)?.cameras || [];
+            const cameras = mockCameras[intersection.id] || [];
 
             return (
               <Card
@@ -397,57 +405,33 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <span className="text-sm text-slate-600 flex items-center gap-1">
-                      <CameraIcon className="w-4 h-4" />
-                      {intersection.camerasCount} دوربین
-                    </span>
-
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openCameraModal(intersection.id);
-                      }}
-                    >
-                      <Plus className="w-4 h-4 ml-1" />
-                      دوربین
-                    </Button>
-                  </div>
-
-                  {/* لیست دوربین‌ها */}
-                  {cameras.length > 0 && (
-                    <Accordion type="single" collapsible className="mt-4">
-                      <AccordionItem value="cameras" className="border-none">
-                        <AccordionTrigger className="text-xs py-2 hover:no-underline">
-                          نمایش دوربین‌ها ({cameras.length})
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {cameras.map((cam) => (
+                  {/* قسمت قابل کلیک برای نمایش دوربین‌ها */}
+                  <Accordion type="single" collapsible className="mt-4">
+                    <AccordionItem value="cameras" className="border-none">
+                      <AccordionTrigger className="py-2 hover:no-underline">
+                        <span className="text-sm text-slate-600 flex items-center gap-1">
+                          <CameraIcon className="w-4 h-4" />
+                          {intersection.camerasCount} دوربین
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-2 pt-2">
+                          {cameras.length === 0 ? (
+                            <p className="text-xs text-slate-500 text-center py-4">هنوز دوربینی اضافه نشده</p>
+                          ) : (
+                            cameras.map((cam) => (
                               <div
                                 key={cam.id}
-                                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm border border-slate-200"
+                                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors"
+                                onClick={() => openEditCameraModal(intersection.id, cam)}
                               >
                                 <div className="flex-1">
                                   <div className="font-medium text-slate-900">{cam.name}</div>
                                   <div className="text-xs text-slate-500 mt-1">
-                                    {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان (PTZ)' : 'ثابت'} • جهت: {cam.direction === 'north' ? 'شمال' : cam.direction === 'south' ? 'جنوب' : cam.direction === 'east' ? 'شرق' : 'غرب'}
+                                    {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان (PTZ)' : 'ثابت'} • جهت: {getDirectionLabel(cam.direction)}
                                   </div>
                                 </div>
                                 <div className="flex gap-1 ml-3">
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-8 w-8"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openEditCameraModal(intersection.id, cam);
-                                    }}
-                                  >
-                                    <Edit2 className="w-4 h-4" />
-                                  </Button>
                                   <Button
                                     size="icon"
                                     variant="ghost"
@@ -461,12 +445,28 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                                   </Button>
                                 </div>
                               </div>
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  )}
+                            ))
+                          )}
+                        </div>
+
+                        {/* دکمه اضافه کردن دوربین در داخل Accordion */}
+                        <div className="mt-4 pt-3 border-t border-slate-200">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openCameraModal(intersection.id);
+                            }}
+                          >
+                            <Plus className="w-4 h-4 ml-1" />
+                            اضافه کردن دوربین جدید
+                          </Button>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               </Card>
             );
