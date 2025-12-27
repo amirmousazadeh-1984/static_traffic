@@ -263,7 +263,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
             {/* انتخاب دید */}
             <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
               <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
-                دیدهای موجود ({availableViews.length})
+               جهات موجود برای کالیبراسیون
               </Label>
               {availableViews.length > 0 ? (
                 <div className="grid grid-cols-1 gap-2">
@@ -278,7 +278,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                       {view.label}
                       {view.type === 'ptz' && (
                         <Badge className="mr-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                          PTZ
+                          Preset (PTZ)
                         </Badge>
                       )}
                     </Button>
