@@ -9,22 +9,21 @@ import { Textarea } from './ui/textarea';
 import { AlertCircle, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// ساختار تخلف جدید
 interface ViolationType {
-  code: number;
+  id: string;
   name: string;
   description: string;
-  validDuration: number; // به روز
+  validDuration: number;
   color: string;
 }
 
-// لیست اولیه (که قبلاً در mockDatabase بود)
+// ⚠️ این موقت است — باید به API یا Redux منتقل شود
 const initialViolationTypes: ViolationType[] = [
-  { code: 1, name: 'عبور از چراغ قرمز', description: 'عبور از خط توقف پس از قرمز شدن چراغ', validDuration: 30, color: '#ef4444' },
-  { code: 2, name: 'تجاوز به خط عابر', description: 'عبور از خط عابر پیاده در زمان ممنوع', validDuration: 15, color: '#f97316' },
-  { code: 3, name: 'سرعت غیرمجاز', description: 'تجاوز از حد مجاز سرعت', validDuration: 60, color: '#8b5cf6' },
-  { code: 4, name: 'تغییر خط ممنوع', description: 'تغییر خط در محل ممنوع', validDuration: 30, color: '#ec4899' },
-  { code: 5, name: 'پارک ممنوع', description: 'توقف در محل پارک ممنوع', validDuration: 7, color: '#10b981' },
+  { id: '1', name: 'عبور از چراغ قرمز', description: 'عبور از خط توقف پس از قرمز شدن چراغ', validDuration: 30, color: '#ef4444' },
+  { id: '2', name: 'تجاوز به خط عابر', description: 'عبور از خط عابر پیاده در زمان ممنوع', validDuration: 15, color: '#f97316' },
+  { id: '3', name: 'سرعت غیرمجاز', description: 'تجاوز از حد مجاز سرعت', validDuration: 60, color: '#8b5cf6' },
+  { id: '4', name: 'تغییر خط ممنوع', description: 'تغییر خط در محل ممنوع', validDuration: 30, color: '#ec4899' },
+  { id: '5', name: 'پارک ممنوع', description: 'توقف در محل پارک ممنوع', validDuration: 7, color: '#10b981' },
 ];
 
 export function ViolationTypesManager() {
@@ -41,12 +40,15 @@ export function ViolationTypesManager() {
       return;
     }
 
+    const newId = String(Math.max(...violationTypes.map(v => Number(v.id)), 0) + 1);
+    const newColor = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+
     const newViolation: ViolationType = {
-      code: Math.max(...violationTypes.map(v => v.code), 0) + 1,
+      id: newId,
       name: formData.name,
       description: formData.description,
       validDuration: formData.validDuration,
-      color: `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`, // رنگ تصادفی
+      color: newColor,
     };
 
     setViolationTypes([...violationTypes, newViolation]);
@@ -54,16 +56,13 @@ export function ViolationTypesManager() {
     toast.success('تخلف جدید با موفقیت اضافه شد');
   };
 
-  const handleDelete = (code: number) => {
-    setViolationTypes(violationTypes.filter(v => v.code !== code));
+  const handleDelete = (id: string) => {
+    setViolationTypes(violationTypes.filter(v => v.id !== id));
     toast.success('تخلف حذف شد');
   };
 
-  // این تابع رو export می‌کنیم تا در جاهای دیگه استفاده بشه
-  (ViolationTypesManager as any).getViolationTypes = () => violationTypes;
-
   return (
-    <div className="space-y-8">
+    <div className="max-w-[1200px] mx-auto px-6 py-8 space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">مدیریت انواع تخلفات</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400">
@@ -71,12 +70,12 @@ export function ViolationTypesManager() {
         </p>
       </div>
 
-      {/* فرم افزودن تخلف جدید */}
-      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">افزودن تخلف جدید</h3>
+      {/* فرم افزودن */}
+      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>نام تخلف</Label>
+            <Label className="text-slate-700 dark:text-slate-300">نام تخلف</Label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -85,7 +84,7 @@ export function ViolationTypesManager() {
             />
           </div>
           <div>
-            <Label>مدت اعتبار جریمه (روز)</Label>
+            <Label className="text-slate-700 dark:text-slate-300">مدت اعتبار جریمه (روز)</Label>
             <Input
               type="number"
               value={formData.validDuration}
@@ -95,7 +94,7 @@ export function ViolationTypesManager() {
             />
           </div>
           <div className="md:col-span-2">
-            <Label>توضیحات</Label>
+            <Label className="text-slate-700 dark:text-slate-300">توضیحات</Label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -105,7 +104,10 @@ export function ViolationTypesManager() {
             />
           </div>
           <div className="md:col-span-2">
-            <Button onClick={handleAdd} className="gap-2">
+            <Button
+              onClick={handleAdd}
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+            >
               <Plus className="w-4 h-4" />
               افزودن تخلف جدید
             </Button>
@@ -113,21 +115,23 @@ export function ViolationTypesManager() {
         </div>
       </Card>
 
-      {/* لیست تخلفات موجود */}
-      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">تخلفات تعریف شده ({violationTypes.length})</h3>
+      {/* لیست تخلفات */}
+      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+          تخلفات تعریف شده ({violationTypes.length})
+        </h3>
         <div className="space-y-3">
           {violationTypes.map((v) => (
             <div
-              key={v.code}
-              className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700"
+              key={v.id}
+              className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
             >
               <div className="flex items-center gap-4">
                 <div
                   className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
                   style={{ backgroundColor: v.color }}
                 >
-                  {v.code}
+                  {v.id}
                 </div>
                 <div>
                   <p className="font-medium text-slate-900 dark:text-slate-100">{v.name}</p>
@@ -141,7 +145,7 @@ export function ViolationTypesManager() {
                 variant="ghost"
                 size="icon"
                 className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
-                onClick={() => handleDelete(v.code)}
+                onClick={() => handleDelete(v.id)}
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
