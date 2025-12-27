@@ -204,32 +204,31 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
                   </Button>
                 ))}
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {cameras.filter(c => c.type === 'fixed').length === 0 ? (
-                  <p className="col-span-2 text-center text-slate-500 dark:text-slate-400 py-8">
-                    دوربین ثابتی برای این جهت موجود نیست
-                  </p>
-                ) : (
-                  cameras
-                    .filter(c => c.type === 'fixed' && c.direction === selectedDirection)
-                    .map((camera) => (
-                      <div
-                        key={camera.id}
-                        className="relative bg-slate-100 dark:bg-slate-800 rounded-xl aspect-video flex items-center justify-center border border-slate-200 dark:border-slate-700"
-                      >
-                        <Camera className="w-12 h-12 text-slate-400" />
-                        <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-medium shadow">
-                          {camera.name}
-                        </div>
-                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded text-xs">
-                          <Wifi className="w-3 h-3" />
-                          زنده
-                        </div>
-                      </div>
-                    ))
-                )}
-              </div>
+<div className="grid grid-cols-2 gap-4">
+  {cameras.filter(c => c.type === 'fixed').length === 0 ? (
+    <p className="col-span-2 text-center text-slate-500 dark:text-slate-400 py-8">
+      هیچ دوربین ثابتی برای این چهارراه موجود نیست
+    </p>
+  ) : (
+    cameras
+      .filter(c => c.type === 'fixed')
+      .map((camera) => (
+        <div
+          key={camera.id}
+          className="relative bg-slate-100 dark:bg-slate-800 rounded-xl aspect-video flex items-center justify-center border border-slate-200 dark:border-slate-700"
+        >
+          <Camera className="w-12 h-12 text-slate-400" />
+          <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-medium shadow">
+            {camera.name}
+          </div>
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded text-xs">
+            <Wifi className="w-3 h-3" />
+            زنده
+          </div>
+        </div>
+      ))
+  )}
+</div>
             </Card>
 
             {/* دوربین PTZ */}
