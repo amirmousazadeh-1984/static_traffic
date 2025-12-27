@@ -2,10 +2,12 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import violationReducer from './violationSlice';
+import ptzPresetReducer from './ptzPresetSlice'; // ✅ اضافه شد
 
 export const store = configureStore({
   reducer: {
     violations: violationReducer,
+    ptzPresets: ptzPresetReducer, // ✅ اضافه شد
   },
 });
 

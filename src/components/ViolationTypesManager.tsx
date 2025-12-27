@@ -11,32 +11,46 @@ import { toast } from 'sonner';
 
 interface ViolationType {
   id: string;
+  code: string; // ✅ فیلد جدید: کد تخلف
   name: string;
   description: string;
   validDuration: number;
   color: string;
 }
 
-// ⚠️ این موقت است — باید به API یا Redux منتقل شود
 const initialViolationTypes: ViolationType[] = [
-  { id: '1', name: 'عبور از چراغ قرمز', description: 'عبور از خط توقف پس از قرمز شدن چراغ', validDuration: 30, color: '#ef4444' },
-  { id: '2', name: 'تجاوز به خط عابر', description: 'عبور از خط عابر پیاده در زمان ممنوع', validDuration: 15, color: '#f97316' },
-  { id: '3', name: 'سرعت غیرمجاز', description: 'تجاوز از حد مجاز سرعت', validDuration: 60, color: '#8b5cf6' },
-  { id: '4', name: 'تغییر خط ممنوع', description: 'تغییر خط در محل ممنوع', validDuration: 30, color: '#ec4899' },
-  { id: '5', name: 'پارک ممنوع', description: 'توقف در محل پارک ممنوع', validDuration: 7, color: '#10b981' },
+  { id: '1', code: '101', name: 'عبور از چراغ قرمز', description: 'عبور از خط توقف پس از قرمز شدن چراغ', validDuration: 30, color: '#ef4444' },
+  { id: '2', code: '102', name: 'تجاوز به خط عابر', description: 'عبور از خط عابر پیاده در زمان ممنوع', validDuration: 15, color: '#f97316' },
+  { id: '3', code: '103', name: 'سرعت غیرمجاز', description: 'تجاوز از حد مجاز سرعت', validDuration: 60, color: '#8b5cf6' },
+  { id: '4', code: '104', name: 'تغییر خط ممنوع', description: 'تغییر خط در محل ممنوع', validDuration: 30, color: '#ec4899' },
+  { id: '5', code: '105', name: 'پارک ممنوع', description: 'توقف در محل پارک ممنوع', validDuration: 7, color: '#10b981' },
 ];
 
 export function ViolationTypesManager() {
   const [violationTypes, setViolationTypes] = useState<ViolationType[]>(initialViolationTypes);
   const [formData, setFormData] = useState({
+    code: '',
     name: '',
     description: '',
     validDuration: 30,
   });
 
   const handleAdd = () => {
-    if (!formData.name.trim()) {
+    const { code, name } = formData;
+
+    if (!code.trim()) {
+      toast.error('کد تخلف الزامی است');
+      return;
+    }
+
+    if (!name.trim()) {
       toast.error('نام تخلف الزامی است');
+      return;
+    }
+
+    // بررسی منحصربه‌فرد بودن کد
+    if (violationTypes.some(v => v.code === code)) {
+      toast.error('کد تخلف تکراری است. لطفاً کد دیگری وارد کنید.');
       return;
     }
 
@@ -45,14 +59,15 @@ export function ViolationTypesManager() {
 
     const newViolation: ViolationType = {
       id: newId,
-      name: formData.name,
-      description: formData.description,
+      code: code.trim(),
+      name: name.trim(),
+      description: formData.description.trim(),
       validDuration: formData.validDuration,
       color: newColor,
     };
 
     setViolationTypes([...violationTypes, newViolation]);
-    setFormData({ name: '', description: '', validDuration: 30 });
+    setFormData({ code: '', name: '', description: '', validDuration: 30 });
     toast.success('تخلف جدید با موفقیت اضافه شد');
   };
 
@@ -75,6 +90,15 @@ export function ViolationTypesManager() {
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <Label className="text-slate-700 dark:text-slate-300">کد تخلف</Label>
+            <Input
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              placeholder="مثال: 101"
+              className="mt-1"
+            />
+          </div>
+          <div>
             <Label className="text-slate-700 dark:text-slate-300">نام تخلف</Label>
             <Input
               value={formData.name}
@@ -84,7 +108,7 @@ export function ViolationTypesManager() {
             />
           </div>
           <div>
-            <Label className="text-slate-700 dark:text-slate-300">مدت اعتبار جریمه (روز)</Label>
+            <Label className="text-slate-700 dark:text-slate-300">مدت زمان توقف جریمه (ثانیه)</Label>
             <Input
               type="number"
               value={formData.validDuration}
@@ -131,13 +155,13 @@ export function ViolationTypesManager() {
                   className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
                   style={{ backgroundColor: v.color }}
                 >
-                  {v.id}
+                  {v.code}
                 </div>
                 <div>
                   <p className="font-medium text-slate-900 dark:text-slate-100">{v.name}</p>
                   <p className="text-sm text-slate-600 dark:text-slate-400">{v.description}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                    اعتبار جریمه: {v.validDuration} روز
+                    کد تخلف: {v.code} | مدت زمان توقف جریمه: {v.validDuration} ثانیه
                   </p>
                 </div>
               </div>
