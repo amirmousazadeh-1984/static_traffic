@@ -7,9 +7,10 @@ import { ZoneCalibration } from './components/ZoneCalibration';
 import { PTZCalibration } from './components/PTZCalibration';
 import { IntersectionDashboard } from './components/IntersectionDashboard';
 import { Intersection } from './types';
-import { Camera, MapPin, Monitor, Moon, Sun } from 'lucide-react';
+import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
+import { ViolationTypesManager } from './components/ViolationTypesManager';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
@@ -109,6 +110,15 @@ function App() {
                 مشخصات دوربین‌های چهارراه
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-200" />
               </TabsTrigger>
+               <TabsTrigger
+                value="ptz-calibration"
+                disabled={!isIntersectionSelected}
+                className="relative px-1 pb-3 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 transition-colors disabled:opacity-40"
+              >
+                <Camera className="w-4 h-4 ml-2" />
+                کالیبراسیون دوربین چرخان
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-200" />
+              </TabsTrigger>
 
               <TabsTrigger
                 value="zone-calibration"
@@ -121,16 +131,16 @@ function App() {
                 کالیبراسیون مناطق
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-200" />
               </TabsTrigger>
-
               <TabsTrigger
-                value="ptz-calibration"
-                disabled={!isIntersectionSelected}
-                className="relative px-1 pb-3 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 transition-colors disabled:opacity-40"
-              >
-                <Camera className="w-4 h-4 ml-2" />
-                کالیبراسیون PTZ
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-200" />
-              </TabsTrigger>
+  value="violations"
+  className="relative px-1 pb-3 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 transition-colors"
+>
+  <AlertTriangle className="w-4 h-4 ml-2" />
+  تخلفات
+  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-200" />
+</TabsTrigger>
+
+             
             </TabsList>
           </Tabs>
         </div>
@@ -147,13 +157,24 @@ function App() {
             {selectedIntersection && <IntersectionDashboard intersection={selectedIntersection} />}
           </TabsContent>
 
-          <TabsContent value="zone-calibration" className="mt-0">
-            {selectedIntersection && <ZoneCalibration intersection={selectedIntersection} />}
-          </TabsContent>
+     <TabsContent value="zone-calibration" className="mt-0">
+  {selectedIntersection && (
+    <ZoneCalibration
+      intersection={selectedIntersection}
+      onChangeTab={setActiveTab}
+    />
+  )}
+</TabsContent>
 
           <TabsContent value="ptz-calibration" className="mt-0">
             {selectedIntersection && <PTZCalibration intersection={selectedIntersection} />}
           </TabsContent>
+
+<TabsContent value="violations" className="mt-0">
+  <div className="max-w-[1200px] mx-auto px-6 py-8">
+    <ViolationTypesManager />
+  </div>
+</TabsContent>
         </Tabs>
       </main>
 
