@@ -53,11 +53,11 @@ export function IntersectionDashboard({ intersection }: IntersectionDashboardPro
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge className="bg-green-100 text-green-800 text-xs">تایید شده</Badge>;
+        return <Badge className="bg-green-100 text-green-800 text-xs">تخلفات تایید شده</Badge>;
       case 'pending':
-        return <Badge className="bg-amber-100 text-amber-800 text-xs">در انتظار</Badge>;
+        return <Badge className="bg-amber-100 text-amber-800 text-xs">تخلفات در انتظار</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-800 text-xs">رد شده</Badge>;
+        return <Badge className="bg-red-100 text-red-800 text-xs">تخلفات رد شده</Badge>;
       default:
         return null;
     }
@@ -112,22 +112,22 @@ export function IntersectionDashboard({ intersection }: IntersectionDashboardPro
           </Card>
 
           <Card className="p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow">
-            <p className="text-xs text-green-700 uppercase tracking-wider">تایید شده</p>
+            <p className="text-xs text-green-700 uppercase tracking-wider">تخلفات تایید شده</p>
             <p className="text-2xl font-bold text-green-900 mt-2">{stats.byStatus.verified}</p>
           </Card>
 
           <Card className="p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow">
-            <p className="text-xs text-amber-700 uppercase tracking-wider">در انتظار</p>
+            <p className="text-xs text-amber-700 uppercase tracking-wider">تخلفات در انتظار</p>
             <p className="text-2xl font-bold text-amber-900 mt-2">{stats.byStatus.pending}</p>
           </Card>
 
           <Card className="p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow">
-            <p className="text-xs text-red-700 uppercase tracking-wider">رد شده</p>
+            <p className="text-xs text-red-700 uppercase tracking-wider">تخلفات رد شده</p>
             <p className="text-2xl font-bold text-red-900 mt-2">{stats.byStatus.rejected}</p>
           </Card>
 
           <Card className="p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow">
-            <p className="text-xs text-purple-700 uppercase tracking-wider">PTZ</p>
+            <p className="text-xs text-purple-700 uppercase tracking-wider">حالت دوربین چرخان  </p>
             <p className="text-xl font-bold text-purple-900 mt-2">{ptzTracking ? 'فعال' : 'غیرفعال'}</p>
           </Card>
         </div>
@@ -235,8 +235,8 @@ export function IntersectionDashboard({ intersection }: IntersectionDashboardPro
               <Tabs defaultValue="all" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 mb-5">
                   <TabsTrigger value="all">همه</TabsTrigger>
-                  <TabsTrigger value="verified">تایید</TabsTrigger>
-                  <TabsTrigger value="pending">انتظار</TabsTrigger>
+                  <TabsTrigger value="verified">تخلفات تایید شده</TabsTrigger>
+                  <TabsTrigger value="pending">تخلفات در حال انتظار</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all" className="space-y-4 max-h-96 overflow-y-auto">
