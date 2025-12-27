@@ -94,28 +94,26 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-[1800px] mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              کالیبراسیون PTZ — {intersection.name}
-            </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              تنظیم دید دوربین چرخان و ذخیره presetهای دلخواه
-            </p>
-          </div>
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+      <div className="max-w-[1800px] mx-auto">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            کالیبراسیون PTZ — {intersection.name}
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            تنظیم دید دوربین چرخان و ذخیره presetهای دلخواه
+          </p>
         </div>
 
-        {/* سه ستون اصلی */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ستون 1: تصویر واقعی (چپ) */}
+        {/* سه ستون با نسبت 50% / 30% / 20% */}
+        <div className="grid grid-cols-1 lg:grid-cols-[50%_30%_20%] gap-6">
+          {/* ستون 1: تصویر (50%) */}
           <div>
-            <Card className="p-4 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+            <Card className="p-4 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">نمای دوربین</h3>
                 {isTesting && (
-                  <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded">
+                  <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">
                     تست فعال
                   </span>
                 )}
@@ -123,7 +121,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
 
               <div
                 className="relative overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-900"
-                style={{ width: '100%', height: 500 }}
+                style={{ width: '100%', height: 520 }}
               >
                 {intersection.imageUrl ? (
                   <img
@@ -143,132 +141,134 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                 )}
               </div>
 
-              <div className="mt-2 text-xs text-slate-600 dark:text-slate-400 flex gap-4">
-                <span>Pan: {offset.x.toFixed(1)}</span>
-                <span>Tilt: {offset.y.toFixed(1)}</span>
-                <span>Zoom: {scale.toFixed(1)}x</span>
+              <div className="mt-3 text-xs text-slate-600 dark:text-slate-400 flex gap-4">
+                <span>پان: {offset.x.toFixed(1)}</span>
+                <span>تیلت: {offset.y.toFixed(1)}</span>
+                <span>زوم: {scale.toFixed(1)}x</span>
               </div>
             </Card>
           </div>
 
-          {/* ستون 2: کنترل‌ها (وسط) */}
+          {/* ستون 2: کنترل‌ها (30%) */}
           <div className="space-y-6">
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">حرکت</h3>
-              <div className="grid grid-cols-3 gap-2 w-full max-w-[200px] mx-auto">
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
+              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">حرکت</h3>
+              <div className="grid grid-cols-3 gap-2 w-full max-w-[180px] mx-auto">
                 <div />
-                <Button size="icon" variant="outline" onClick={() => moveView(0, -25)}>
+                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(0, -30)}>
                   <ArrowUp className="w-5 h-5" />
                 </Button>
                 <div />
-                <Button size="icon" variant="outline" onClick={() => moveView(-25, 0)}>
+                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(-30, 0)}>
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <Button size="icon" variant="outline" onClick={resetView}>
+                <Button size="icon" variant="outline" className="h-10 w-10" onClick={resetView}>
                   <Home className="w-5 h-5" />
                 </Button>
-                <Button size="icon" variant="outline" onClick={() => moveView(25, 0)}>
+                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(30, 0)}>
                   <ArrowRightIcon className="w-5 h-5" />
                 </Button>
                 <div />
-                <Button size="icon" variant="outline" onClick={() => moveView(0, 25)}>
+                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(0, 30)}>
                   <ArrowDown className="w-5 h-5" />
                 </Button>
                 <div />
               </div>
             </Card>
 
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">زوم</h3>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
+              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">زوم</h3>
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="outline" onClick={() => handleZoom('out')}>
+                <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => handleZoom('out')}>
                   <ZoomOut className="w-4 h-4" />
                 </Button>
                 <Slider value={[scale]} onValueChange={([v]) => setScale(v)} min={0.5} max={3} step={0.1} className="flex-1" />
-                <Button size="icon" variant="outline" onClick={() => handleZoom('in')}>
+                <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => handleZoom('in')}>
                   <ZoomIn className="w-4 h-4" />
                 </Button>
               </div>
             </Card>
 
-            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">ذخیره Preset جدید</h3>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
+              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">ذخیره Preset جدید</h3>
               <div className="space-y-4">
                 <div>
                   <Label className="text-xs text-slate-700 dark:text-slate-300">نام Preset *</Label>
                   <Input
                     value={presetName}
                     onChange={(e) => setPresetName(e.target.value)}
-                    placeholder="مثلاً: دید جنوبی با زوم بالا"
-                    className="mt-1"
+                    placeholder="مثلاً: دید جنوبی"
+                    className="mt-1 text-sm"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-sm">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-xs text-slate-600 dark:text-slate-400">Pan</p>
-                    <p className="font-bold text-slate-900 dark:text-slate-100">{offset.x.toFixed(1)}</p>
+                    <p className="text-[10px] text-slate-600 dark:text-slate-400">پان</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{offset.x.toFixed(1)}</p>
                   </div>
                   <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-xs text-slate-600 dark:text-slate-400">Tilt</p>
-                    <p className="font-bold text-slate-900 dark:text-slate-100">{offset.y.toFixed(1)}</p>
+                    <p className="text-[10px] text-slate-600 dark:text-slate-400">تیلت</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{offset.y.toFixed(1)}</p>
                   </div>
                   <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-xs text-slate-600 dark:text-slate-400">Zoom</p>
-                    <p className="font-bold text-slate-900 dark:text-slate-100">{scale.toFixed(1)}x</p>
+                    <p className="text-[10px] text-slate-600 dark:text-slate-400">زوم</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{scale.toFixed(1)}x</p>
                   </div>
                 </div>
-                <Button className="w-full" onClick={savePreset}>
-                  <Save className="w-4 h-4 ml-2" /> ذخیره Preset
+                <Button className="w-full text-sm" onClick={savePreset}>
+                  <Save className="w-4 h-4 ml-1" /> ذخیره Preset
                 </Button>
               </div>
             </Card>
           </div>
 
-          {/* ستون 3: Presetهای ذخیره‌شده (راست) */}
+          {/* ستون 3: Presetها (20%) */}
           <div>
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 h-full flex flex-col">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Preset‌های ذخیره‌شده ({presets.length})
+            <Card className="p-4 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl h-full flex flex-col">
+              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-3">
+                Preset‌ها ({presets.length})
               </h3>
               
-              <div className="overflow-y-auto space-y-3 pr-1 flex-1 max-h-[500px]">
+              <div className="overflow-y-auto space-y-2 pr-1 flex-1 max-h-[520px] text-xs">
                 {presets.length === 0 ? (
-                  <p className="text-center text-slate-500 dark:text-slate-400 py-6 text-sm">
-                    هیچ Presetی تعریف نشده است
-                  </p>
+                  <div className="flex items-center justify-center h-full text-slate-500 dark:text-slate-400 text-center px-2">
+                    <p>هیچ presetی تعریف نشده است</p>
+                  </div>
                 ) : (
                   presets.map((preset) => (
                     <div
                       key={preset.id}
-                      className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                      className="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <p className="font-medium text-xs text-slate-900 dark:text-slate-100">{preset.name}</p>
+                      <div className="flex items-start justify-between mb-1.5">
+                        <p className="font-medium text-[11px] text-slate-900 dark:text-slate-200 line-clamp-1">
+                          {preset.name}
+                        </p>
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-6 w-6"
+                          className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
                           onClick={() => deletePreset(preset.id)}
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-3 gap-1 text-[10px] mb-2">
-                        <div className="bg-white dark:bg-slate-900 px-1 py-0.5 rounded text-center">Pan: {preset.pan.toFixed(1)}</div>
-                        <div className="bg-white dark:bg-slate-900 px-1 py-0.5 rounded text-center">Tilt: {preset.tilt.toFixed(1)}</div>
-                        <div className="bg-white dark:bg-slate-900 px-1 py-0.5 rounded text-center">Zoom: {preset.zoom.toFixed(1)}x</div>
+                      <div className="grid grid-cols-3 gap-1 mb-2">
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">پان: {preset.pan.toFixed(0)}</div>
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">تیلت: {preset.tilt.toFixed(0)}</div>
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">زوم: {preset.zoom.toFixed(1)}x</div>
                       </div>
                       <div className="flex gap-1">
-                        <Button size="sm" variant="outline" className="flex-1 text-[10px] px-2 py-1 h-auto" onClick={() => testPreset(preset)}>
-                          <Play className="w-2.5 h-2.5 ml-1" /> تست
+                        <Button size="sm" variant="outline" className="flex-1 text-[9px] px-1.5 py-0.5 h-auto" onClick={() => testPreset(preset)}>
+                          <Play className="w-2 h-2 ml-0.5" /> تست
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="flex-1 text-[10px] px-2 py-1 h-auto"
+                          className="flex-1 text-[9px] px-1.5 py-0.5 h-auto"
                           onClick={() => loadPreset(preset)}
                         >
-                          <Eye className="w-2.5 h-2.5 ml-1" /> بارگذاری
+                          <Eye className="w-2 h-2 ml-0.5" /> بارگذاری
                         </Button>
                       </div>
                     </div>
