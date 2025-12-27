@@ -257,7 +257,48 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
+     
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+       
+        {/* کانواس */}
+          <div className="lg:col-span-3">
+            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  کالیبراسیون — {currentView?.label || 'هیچ دیدی انتخاب نشده'}
+                </h3>
+                <Badge variant="outline" className="text-xs">
+                  {activeTool === 'select' ? 'انتخاب' : 'مستطیل'}
+                </Badge>
+              </div>
+
+              {selectedViewId ? (
+                <div className="relative bg-slate-900 rounded-xl overflow-hidden" style={{ height: '700px' }}>
+                  <canvas
+                    ref={canvasRef}
+                    width={1200}
+                    height={700}
+                    onClick={handleCanvasClick}
+                    className="absolute inset-0 cursor-crosshair select-none"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-[700px] bg-slate-100 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
+                  <p className="text-slate-500 dark:text-slate-400">ابتدا یک دید انتخاب کنید</p>
+                </div>
+              )}
+
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-xs text-slate-700 dark:text-slate-300">
+                  <strong>راهنما:</strong>{' '}
+                  {activeTool === 'select' && 'روی یک منطقه کلیک کنید تا آن را انتخاب کنید'}
+                  {activeTool === 'rectangle' && 'دو بار کلیک کنید تا مستطیل ایجاد شود'}
+                </p>
+              </div>
+            </Card>
+          </div>
+       
           {/* ستون ابزارها */}
           <div className="space-y-6">
             {/* انتخاب دید */}
@@ -468,44 +509,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
             </Card>
           </div>
 
-          {/* کانواس */}
-          <div className="lg:col-span-3">
-            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  کالیبراسیون — {currentView?.label || 'هیچ دیدی انتخاب نشده'}
-                </h3>
-                <Badge variant="outline" className="text-xs">
-                  {activeTool === 'select' ? 'انتخاب' : 'مستطیل'}
-                </Badge>
-              </div>
-
-              {selectedViewId ? (
-                <div className="relative bg-slate-900 rounded-xl overflow-hidden" style={{ height: '700px' }}>
-                  <canvas
-                    ref={canvasRef}
-                    width={1200}
-                    height={700}
-                    onClick={handleCanvasClick}
-                    className="absolute inset-0 cursor-crosshair select-none"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-[700px] bg-slate-100 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
-                  <p className="text-slate-500 dark:text-slate-400">ابتدا یک دید انتخاب کنید</p>
-                </div>
-              )}
-
-              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-slate-700 dark:text-slate-300">
-                  <strong>راهنما:</strong>{' '}
-                  {activeTool === 'select' && 'روی یک منطقه کلیک کنید تا آن را انتخاب کنید'}
-                  {activeTool === 'rectangle' && 'دو بار کلیک کنید تا مستطیل ایجاد شود'}
-                </p>
-              </div>
-            </Card>
-          </div>
+         
         </div>
       </div>
     </div>
