@@ -40,7 +40,7 @@ interface Shape {
   points: { x: number; y: number }[];
   color: string;
   name: string;
-  viewId: string;
+  viewD: string;
   layer: 'direction' | 'violation';
 }
 
@@ -50,7 +50,6 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     state.ptzPresets[intersection.id] || []
   );
 
-  // استخراج دوربین‌های ثابت از mockCameras
   const cameras = mockCameras[intersection.id] || [];
   const fixedDirections = Array.from(
     new Set(
@@ -60,20 +59,17 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     )
   );
 
-  // presetها را اول از Redux بگیر، اگر نبود از mock استفاده کن (برای سازگاری)
   const ptzPresets = ptzPresetsFromRedux.length > 0
     ? ptzPresetsFromRedux
     : mockPTZPresets[intersection.id] || [];
 
   const availableViews: View[] = [
-    // دوربین‌های ثابت
     ...fixedDirections.map(dir => ({
       id: dir,
       label: dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب',
       type: 'fixed' as const,
       direction: dir,
     })),
-    // presetهای PTZ
     ...ptzPresets.map(preset => ({
       id: preset.id,
       label: preset.name,
@@ -95,7 +91,6 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const [showDirectionMasks, setShowDirectionMasks] = useState(true);
   const [showViolationMasks, setShowViolationMasks] = useState(true);
 
-  // لیست انواع تخلف (برای مرحله violation)
   const [violationTypes] = useState([
     { id: 'red-light', name: 'عبور از چراغ قرمز', color: '#ef4444' },
     { id: 'crosswalk', name: 'تجاوز به خط عابر', color: '#f97316' },
@@ -105,7 +100,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   ]);
   const [selectedViolationType, setSelectedViolationType] = useState(violationTypes[0].id);
 
-  // بارگذاری ماسکهای ذخیره‌شده
+  // بارگذاری ماسک‌ها
   useEffect(() => {
     const existingMasks = mockMasks[intersection.id] || [];
     const loadedShapes: Shape[] = existingMasks.map(mask => {
@@ -134,7 +129,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     setShapes(loadedShapes);
   }, [intersection.id]);
 
-  // رسم روی کانواس
+  // رسم کانواس
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -164,49 +159,39 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     // رسم شکل‌ها
     shapes.forEach(shape => {
       if (shape.viewId !== selectedViewId) return;
-
-      const shouldShow =
-        (shape.layer === 'direction' && showDirectionMasks) ||
-        (shape.layer === 'violation' && showViolationMasks);
-
+      const shouldShow = (shape.layer === 'direction' && showDirectionMasks) ||
+                         (shape.layer === 'violation' && showViolationMasks);
       if (!shouldShow) return;
 
       ctx.save();
       ctx.scale(zoom, zoom);
 
       if (shape.points.length === 2) {
-        const x1 = shape.points[0].x;
-        const y1 = shape.points[0].y;
-        const x2 = shape.points[1].x;
-        const y2 = shape.points[1].y;
-        const x = Math.min(x1, x2);
-        const y = Math.min(y1, y2);
-        const w = Math.abs(x2 - x1);
-        const h = Math.abs(y2 - y1);
+        const [p1, p2] = shape.points;
+        const x = Math.min(p1.x, p2.x);
+        const y = Math.min(p1.y, p2.y);
+        const w = Math.abs(p2.x - p1.x);
+        const h = Math.abs(p2.y - p1.y);
 
         ctx.fillStyle = shape.color + '40';
         ctx.fillRect(x, y, w, h);
 
         ctx.strokeStyle = shape.color;
-        ctx.lineWidth = shape.id === selectedShapeId ? 3 : 2;
-        ctx.setLineDash(shape.id === selectedShapeId ? [6, 4] : []);
+        ctx.lineWidth = shape.id === selectedShapeId ? 2.5 : 1.5;
+        ctx.setLineDash(shape.id === selectedShapeId ? [5, 3] : []);
         ctx.strokeRect(x, y, w, h);
 
         ctx.fillStyle = shape.color;
-        ctx.font = '14px Vazirmatn, sans-serif';
-        ctx.fillText(shape.name, x + 8, y + 8);
+        ctx.font = '12px Vazirmatn, sans-serif';
+        ctx.fillText(shape.name, x + 6, y + 14);
       }
 
       ctx.restore();
     });
-  }, [
-    shapes, selectedShapeId, zoom, selectedViewId,
-    showDirectionMasks, showViolationMasks
-  ]);
+  }, [shapes, selectedShapeId, zoom, selectedViewId, showDirectionMasks, showViolationMasks]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (activeTool !== 'rectangle') return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -223,7 +208,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
         : violationTypes.find(v => v.id === selectedViolationType)?.color || '#ef4444';
 
       const name = calibrationStep === 'direction'
-        ? `منطقه اصلی (${availableViews.find(v => v.id === selectedViewId)?.label || 'نامشخص'})`
+        ? `منطقه اصلی (${availableViews.find(v => v.id === selectedViewId)?.label || '—'})`
         : violationTypes.find(v => v.id === selectedViolationType)?.name || 'تخلف';
 
       const newShape: Shape = {
@@ -239,7 +224,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
       setShapes([...shapes, newShape]);
       setIsDrawing(false);
       setCurrentStartPoint(null);
-      toast.success('منطقه جدید اضافه شد');
+      toast.success('منطقه اضافه شد');
     }
   };
 
@@ -255,125 +240,118 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const violationShapes = shapes.filter(s => s.viewId === selectedViewId && s.layer === 'violation');
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-[1800px] mx-auto px-6 py-8">
-     
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-       
-        {/* کانواس */}
-          <div className="lg:col-span-3">
-            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  کالیبراسیون — {currentView?.label || 'هیچ دیدی انتخاب نشده'}
-                </h3>
-                <Badge variant="outline" className="text-xs">
-                  {activeTool === 'select' ? 'انتخاب' : 'مستطیل'}
-                </Badge>
-              </div>
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+      <div className="max-w-[1800px] mx-auto">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          کالیبراسیون مناطق — {intersection.name}
+        </h2>
 
-              {selectedViewId ? (
-                <div className="relative bg-slate-900 rounded-xl overflow-hidden" style={{ height: '700px' }}>
-                  <canvas
-                    ref={canvasRef}
-                    width={1200}
-                    height={700}
-                    onClick={handleCanvasClick}
-                    className="absolute inset-0 cursor-crosshair select-none"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-[700px] bg-slate-100 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
-                  <p className="text-slate-500 dark:text-slate-400">ابتدا یک دید انتخاب کنید</p>
-                </div>
-              )}
+        {/* سه ستون: 50% | 25% | 25% */}
+        <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4 h-[calc(100vh-200px)]">
+          {/* کانوس — 50% */}
+          <Card className="p-3 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                {currentView?.label || 'هیچ دیدی انتخاب نشده'}
+              </h3>
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5">
+                {activeTool === 'select' ? 'انتخاب' : 'مستطیل'}
+              </Badge>
+            </div>
 
-              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-slate-700 dark:text-slate-300">
-                  <strong>راهنما:</strong>{' '}
-                  {activeTool === 'select' && 'روی یک منطقه کلیک کنید تا آن را انتخاب کنید'}
-                  {activeTool === 'rectangle' && 'دو بار کلیک کنید تا مستطیل ایجاد شود'}
-                </p>
+            {selectedViewId ? (
+              <div className="relative bg-slate-900 rounded flex-1 overflow-hidden">
+                <canvas
+                  ref={canvasRef}
+                  width={1000}
+                  height={600}
+                  onClick={handleCanvasClick}
+                  className="w-full h-full cursor-crosshair"
+                />
               </div>
-            </Card>
-          </div>
-       
-          {/* ستون ابزارها */}
-          <div className="space-y-6">
+            ) : (
+              <div className="flex items-center justify-center flex-1 bg-slate-100 dark:bg-slate-800 rounded border border-dashed border-slate-300 dark:border-slate-600">
+                <p className="text-slate-500 dark:text-slate-400 text-sm">ابتدا یک دید انتخاب کنید</p>
+              </div>
+            )}
+
+          
+          </Card>
+
+          {/* ستون 1 (چپ) — 25% */}
+          <div className="space-y-3 overflow-y-auto pr-1">
             {/* انتخاب دید */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
-               جهات موجود برای کالیبراسیون
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+                جهات قابل کالیبراسیون
               </Label>
               {availableViews.length > 0 ? (
-                <div className="grid grid-cols-1 gap-2">
+                <div className="space-y-1.5">
                   {availableViews.map(view => (
                     <Button
                       key={view.id}
                       variant={selectedViewId === view.id ? 'default' : 'outline'}
                       size="sm"
-                      className="justify-start text-right"
+                      className="text-[11px] justify-start h-8 px-2"
                       onClick={() => setSelectedViewId(view.id)}
                     >
                       {view.label}
                       {view.type === 'ptz' && (
-                        <Badge className="mr-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                          Preset (PTZ)
+                        <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
+                          PTZ
                         </Badge>
                       )}
                     </Button>
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                  <AlertTriangle className="w-4 h-4" />
-                  هیچ دوربین یا presetی موجود نیست
+                <p className="text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> هیچ دیدی موجود نیست
                 </p>
               )}
             </Card>
 
-            {/* مرحله کالیبراسیون */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
+            {/* مرحله */}
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 مرحله
               </Label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button
                   variant={calibrationStep === 'direction' ? 'default' : 'outline'}
                   size="sm"
-                  className="flex-1"
+                  className="text-[10px] h-7 flex-1 px-1"
                   onClick={() => setCalibrationStep('direction')}
                 >
-                  منطقه اصلی
+                  اصلی
                 </Button>
                 <Button
                   variant={calibrationStep === 'violation' ? 'default' : 'outline'}
                   size="sm"
-                  className="flex-1"
+                  className="text-[10px] h-7 flex-1 px-1"
                   onClick={() => setCalibrationStep('violation')}
                 >
-                  مناطق تخلف
+                  تخلف
                 </Button>
               </div>
 
               {calibrationStep === 'violation' && (
-                <div className="mt-4 space-y-2">
-                  <Label className="text-xs text-slate-700 dark:text-slate-300">نوع تخلف</Label>
+                <div className="mt-2 space-y-1">
+                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">نوع تخلف</Label>
                   {violationTypes.map(vType => (
                     <Button
                       key={vType.id}
                       variant={selectedViolationType === vType.id ? 'default' : 'outline'}
                       size="sm"
-                      className="w-full justify-start text-xs"
+                      className="w-full justify-start text-[10px] h-7 px-1.5"
                       style={{
-                        backgroundColor: selectedViolationType === vType.id ? vType.color + '20' : undefined,
+                        backgroundColor: selectedViolationType === vType.id ? vType.color + '15' : undefined,
                         borderColor: vType.color,
                         color: selectedViolationType === vType.id ? vType.color : undefined,
                       }}
                       onClick={() => setSelectedViolationType(vType.id)}
                     >
-                      <div className="w-3 h-3 rounded-full ml-2" style={{ backgroundColor: vType.color }} />
+                      <div className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: vType.color }} />
                       {vType.name}
                     </Button>
                   ))}
@@ -381,78 +359,89 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               )}
             </Card>
 
-            {/* ابزار رسم */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
-                ابزار رسم
+            {/* ابزارها */}
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+                ابزار
               </Label>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Button
                   variant={activeTool === 'select' ? 'default' : 'outline'}
                   size="sm"
-                  className="w-full justify-start"
+                  className="w-full text-[11px] justify-start h-8"
                   onClick={() => setActiveTool('select')}
                 >
-                  <MousePointer2 className="w-4 h-4 ml-2" /> انتخاب
+                  <MousePointer2 className="w-3 h-3 ml-1 mr-1" /> انتخاب
                 </Button>
                 <Button
                   variant={activeTool === 'rectangle' ? 'default' : 'outline'}
                   size="sm"
-                  className="w-full justify-start"
+                  className="w-full text-[11px] justify-start h-8"
                   onClick={() => setActiveTool('rectangle')}
                 >
                   مستطیل
                 </Button>
               </div>
             </Card>
+          </div>
 
-            {/* نمایش و زوم */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
+          {/* ستون 2 (راست) — 25% */}
+          <div className="space-y-3 overflow-y-auto pr-1">
+            {/* نمایش/زوم */}
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 نمایش
               </Label>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-slate-700 dark:text-slate-300">منطقه اصلی</Label>
-                  <Switch checked={showDirectionMasks} onCheckedChange={setShowDirectionMasks} />
+                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">منطقه اصلی</Label>
+                  <Switch
+                    checked={showDirectionMasks}
+                    onCheckedChange={setShowDirectionMasks}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-slate-700 dark:text-slate-300">مناطق تخلف</Label>
-                  <Switch checked={showViolationMasks} onCheckedChange={setShowViolationMasks} />
+                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">مناطق تخلف</Label>
+                  <Switch
+                    checked={showViolationMasks}
+                    onCheckedChange={setShowViolationMasks}
+                    className="data-[state=checked]:bg-red-600"
+                  />
                 </div>
-              </div>
 
-              <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <Label className="text-xs mb-2 block text-slate-700 dark:text-slate-300">
-                  بزرگنمایی {zoom.toFixed(1)}x
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Button size="icon" variant="outline" onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}>
-                    <ZoomOut className="w-4 h-4" />
-                  </Button>
-                  <Slider value={[zoom]} onValueChange={([v]) => setZoom(v)} min={0.5} max={2} step={0.1} className="flex-1" />
-                  <Button size="icon" variant="outline" onClick={() => setZoom(Math.min(2, zoom + 0.1))}>
-                    <ZoomIn className="w-4 h-4" />
-                  </Button>
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+                  <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">
+                    زوم: {zoom.toFixed(1)}x
+                  </Label>
+                  <div className="flex items-center gap-1">
+                    <Button size="icon" variant="outline" className="h-6 w-6 p-0" onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}>
+                      <ZoomOut className="w-3 h-3" />
+                    </Button>
+                    <Slider value={[zoom]} onValueChange={([v]) => setZoom(v)} min={0.5} max={2} step={0.1} className="flex-1" />
+                    <Button size="icon" variant="outline" className="h-6 w-6 p-0" onClick={() => setZoom(Math.min(2, zoom + 0.1))}>
+                      <ZoomIn className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </Card>
 
             {/* عملیات */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <div className="space-y-2">
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+              <div className="space-y-1.5">
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="w-full"
+                  className="w-full text-[11px] h-8"
                   disabled={!selectedShapeId}
                   onClick={deleteSelectedShape}
                 >
-                  <Trash2 className="w-4 h-4 ml-2" /> حذف منطقه
+                  <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
                 </Button>
                 <Button
                   size="sm"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
                   onClick={() => {
                     const masksToSave: Mask[] = shapes.map(shape => ({
                       id: shape.id,
@@ -468,48 +457,45 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                       direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
                       ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
                     }));
-
                     mockMasks[intersection.id] = masksToSave;
-                    toast.success('کالیبراسیون ذخیره شد');
+                    toast.success('ذخیره شد');
                   }}
                 >
-                  <Save className="w-4 h-4 ml-2" /> ذخیره کالیبراسیون
+                  <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
                 </Button>
               </div>
             </Card>
 
             {/* لیست مناطق */}
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-              <Label className="text-sm font-medium mb-3 block text-slate-900 dark:text-slate-100">
+            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex-1 flex flex-col">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 مناطق ({directionShapes.length + violationShapes.length})
               </Label>
-              <div className="space-y-2 text-xs max-h-96 overflow-y-auto">
+              <div className="overflow-y-auto space-y-1 flex-1 text-[10px]">
                 {[...directionShapes, ...violationShapes].map(shape => (
                   <div
                     key={shape.id}
-                    className={`p-2 rounded cursor-pointer ${
+                    className={`p-1.5 rounded cursor-pointer ${
                       selectedShapeId === shape.id 
-                        ? 'bg-blue-100 dark:bg-blue-900/30' 
+                        ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700' 
                         : 'bg-slate-100 dark:bg-slate-700'
                     }`}
                     onClick={() => setSelectedShapeId(shape.id)}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded" style={{ backgroundColor: shape.color }} />
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
                       <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
                     </div>
                   </div>
                 ))}
                 {directionShapes.length + violationShapes.length === 0 && (
-                  <p className="text-center text-slate-500 dark:text-slate-400 py-8 text-sm">
-                    هنوز منطقه‌ای تعریف نشده
+                  <p className="text-center text-slate-500 dark:text-slate-400 py-2">
+                    منطقه‌ای تعریف نشده
                   </p>
                 )}
               </div>
             </Card>
           </div>
-
-         
         </div>
       </div>
     </div>
