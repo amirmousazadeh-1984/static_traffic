@@ -65,8 +65,9 @@ export function ZoneCalibration({ intersection, onChangeTab }: ZoneCalibrationPr
   const [zoom, setZoom] = useState(1);
   const [showDirectionMasks, setShowDirectionMasks] = useState(true);
   const [showViolationMasks, setShowViolationMasks] = useState(true);
-const [selectedViolationType, setSelectedViolationType] = useState<string>('');
+  const [selectedViolationType, setSelectedViolationType] = useState<string>(violationTypes[0]?.id || '');
 
+  // بارگذاری ماسک‌های موجود برای این چهارراه
   useEffect(() => {
     const existingMasks = mockMasks[intersection.id] || [];
     const loadedShapes: Shape[] = existingMasks.map(mask => ({
@@ -85,16 +86,12 @@ const [selectedViolationType, setSelectedViolationType] = useState<string>('');
     setShapes(loadedShapes);
   }, [intersection.id]);
 
- useEffect(() => {
-  if (violationTypes.length > 0) {
-    // اگر هیچ تخلفی انتخاب نشده یا انتخاب قبلی دیگه وجود نداره
-    if (!selectedViolationType || !violationTypes.find(v => v.id === selectedViolationType)) {
+  // به‌روزرسانی selectedViolationType وقتی لیست تغییر کرد
+  useEffect(() => {
+    if (violationTypes.length > 0 && !violationTypes.find(v => v.id === selectedViolationType)) {
       setSelectedViolationType(violationTypes[0].id);
     }
-  } else {
-    setSelectedViolationType('');
-  }
-}, [violationTypes, selectedViolationType]);
+  }, [violationTypes, selectedViolationType]);
 
   // رسم روی کانواس
   useEffect(() => {
@@ -335,51 +332,45 @@ const [selectedViolationType, setSelectedViolationType] = useState<string>('');
                 </TabsList>
               </Tabs>
 
-             {calibrationStep === 'violation' && (
-  <div className="mt-4 space-y-3">
-    <div className="flex items-center justify-between mb-2">
-      <Label className="text-xs">نوع تخلف</Label>
-      <Button
-        size="sm"
-        variant="outline"
-        className="gap-1 text-xs"
-        onClick={() => onChangeTab?.('violations')}
-      >
-        <Plus className="w-3 h-3" />
-        تخلف جدید
-      </Button>
-    </div>
+              {calibrationStep === 'violation' && (
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-xs">نوع تخلف</Label>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-1 text-xs"
+                      onClick={() => onChangeTab?.('violations')}
+                    >
+                      <Plus className="w-3 h-3" />
+                      تخلف جدید
+                    </Button>
+                  </div>
 
-    {violationTypes.length === 0 ? (
-      <div className="text-center py-8 text-muted-foreground">
-        <AlertTriangle className="w-10 h-10 mx-auto mb-3 opacity-50" />
-        <p className="text-sm mb-4">هیچ تخلفی تعریف نشده</p>
-        <Button size="sm" onClick={() => onChangeTab?.('violations')}>
-          افزودن اولین تخلف
-        </Button>
-      </div>
-    ) : (
-      <div className="space-y-2">
-        {violationTypes.map((vType) => (
-          <Button
-            key={vType.id}
-            variant={selectedViolationType === vType.id ? 'default' : 'outline'}
-            size="sm"
-            className="w-full justify-start text-xs"
-            style={{
-              backgroundColor: selectedViolationType === vType.id ? vType.color + '20' : undefined,
-              borderColor: vType.color,
-            }}
-            onClick={() => setSelectedViolationType(vType.id)}
-          >
-            <div className="w-3 h-3 rounded-full ml-2" style={{ backgroundColor: vType.color }} />
-            {vType.name}
-          </Button>
-        ))}
-      </div>
-    )}
-  </div>
-)}
+                  {violationTypes.length === 0 ? (
+                    <p className="text-xs text-muted-foreground text-center py-4">
+                      هنوز هیچ تخلفی تعریف نشده. ابتدا یک تخلف اضافه کنید.
+                    </p>
+                  ) : (
+                    violationTypes.map((vType) => (
+                      <Button
+                        key={vType.id}
+                        variant={selectedViolationType === vType.id ? 'default' : 'outline'}
+                        size="sm"
+                        className="w-full justify-start text-xs"
+                        style={{
+                          backgroundColor: selectedViolationType === vType.id ? vType.color + '20' : undefined,
+                          borderColor: vType.color
+                        }}
+                        onClick={() => setSelectedViolationType(vType.id)}
+                      >
+                        <div className="w-3 h-3 rounded-full ml-2" style={{ backgroundColor: vType.color }} />
+                        {vType.name}
+                      </Button>
+                    ))
+                  )}
+                </div>
+              )}
             </Card>
 
             {/* ابزارهای رسم */}

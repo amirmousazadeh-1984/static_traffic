@@ -152,10 +152,14 @@ function App() {
           <TabsContent value="intersections" className="mt-0">
             <IntersectionList onSelectIntersection={handleSelectIntersection} />
           </TabsContent>
-
-          <TabsContent value="dashboard" className="mt-0">
-            {selectedIntersection && <IntersectionDashboard intersection={selectedIntersection} />}
-          </TabsContent>
+<TabsContent value="dashboard" className="mt-0">
+  {selectedIntersection && (
+    <IntersectionDashboard
+      intersection={selectedIntersection}
+      onChangeTab={setActiveTab}
+    />
+  )}
+</TabsContent>
 
      <TabsContent value="zone-calibration" className="mt-0">
   {selectedIntersection && (
