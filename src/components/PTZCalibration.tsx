@@ -148,13 +148,13 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
   const directionLabel = directions.find(d => d.value === selectedDirection)?.label;
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-background">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-xl font-bold text-foreground">کالیبراسیون PTZ — {intersection.name}</h2>
-            <p className="text-sm text-muted-foreground mt-1">تنظیم جهت و زوم برای هر چهارراه</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">کالیبراسیون PTZ — {intersection.name}</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">تنظیم جهت و زوم برای هر چهارراه</p>
           </div>
           <Button
             className="gap-2"
@@ -168,11 +168,11 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
           </Button>
         </div>
 
-        <Card className="p-5 border border-input shadow-sm mb-8">
+        <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-8 bg-white dark:bg-slate-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">پیشرفت کالیبراسیون</p>
-              <p className="text-xl font-bold text-foreground mt-1">{completedDirections} از ۴ جهت</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">پیشرفت کالیبراسیون</p>
+              <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">{completedDirections} از ۴ جهت</p>
             </div>
             <div className="flex gap-3">
               {directions.map((dir) => {
@@ -183,7 +183,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                     className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold border-2 ${
                       hasPreset 
                         ? 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-700 dark:text-green-300' 
-                        : 'bg-muted dark:bg-muted/50 border-input text-muted-foreground'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400'
                     }`}
                   >
                     {hasPreset ? <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" /> : dir.icon}
@@ -198,8 +198,8 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
 
           <div className="lg:col-span-2 space-y-6">
 
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">جهت فعلی</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">جهت فعلی</Label>
               <div className="grid grid-cols-4 gap-3">
                 {directions.map((dir) => {
                   const hasPreset = presets.some(p => p.direction === dir.value);
@@ -220,15 +220,15 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-6 border border-input shadow-sm">
+            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-semibold text-foreground">نمای PTZ — {directionLabel}</h3>
-                {isTesting && <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">در حال تست</Badge>}
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">نمای PTZ — {directionLabel}</h3>
+                {isTesting && <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">در حال تست</Badge>}
               </div>
 
-              <div className="relative bg-muted/30 rounded-xl aspect-video flex items-center justify-center border border-input">
-                <Camera className="w-20 h-20 text-muted-foreground" />
-                <div className="absolute top-3 left-3 bg-background/90 backdrop-blur px-4 py-2 rounded-lg shadow text-sm">
+              <div className="relative bg-slate-100 dark:bg-slate-800/50 rounded-xl aspect-video flex items-center justify-center border border-slate-300 dark:border-slate-600">
+                <Camera className="w-20 h-20 text-slate-400 dark:text-slate-500" />
+                <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-4 py-2 rounded-lg shadow text-sm">
                   <div>Pan: {position.pan}°</div>
                   <div>Tilt: {position.tilt}°</div>
                   <div>Zoom: {zoom}x</div>
@@ -236,8 +236,8 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-5 mt-6">
-                <Card className="p-5 border border-input">
-                  <p className="text-sm font-medium text-center mb-4">جهت</p>
+                <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <p className="text-sm font-medium text-center mb-4 text-slate-700 dark:text-slate-300">جهت</p>
                   <div className="grid grid-cols-3 gap-2">
                     <div />
                     <Button size="icon" variant="outline" onClick={() => handleMove('up')}>
@@ -264,13 +264,13 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                   </div>
                 </Card>
 
-                <Card className="p-5 border border-input">
-                  <p className="text-sm font-medium text-center mb-4">زوم و فوکوس</p>
+                <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <p className="text-sm font-medium text-center mb-4 text-slate-700 dark:text-slate-300">زوم و فوکوس</p>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span>زوم</span>
-                        <span>{zoom}x</span>
+                        <span className="text-slate-600 dark:text-slate-400">زوم</span>
+                        <span className="text-slate-900 dark:text-slate-100">{zoom}x</span>
                       </div>
                       <div className="flex gap-2">
                         <Button size="icon" variant="outline" onClick={() => handleZoom('out')}>
@@ -284,8 +284,8 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                     </div>
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span>فوکوس</span>
-                        <span>{focus}%</span>
+                        <span className="text-slate-600 dark:text-slate-400">فوکوس</span>
+                        <span className="text-slate-900 dark:text-slate-100">{focus}%</span>
                       </div>
                       <Slider value={[focus]} onValueChange={([v]) => setFocus(v)} min={0} max={100} step={5} />
                     </div>
@@ -294,11 +294,11 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-6 border border-input shadow-sm">
-              <h3 className="text-base font-semibold text-foreground mb-4">ذخیره Preset برای {directionLabel}</h3>
+            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">ذخیره Preset برای {directionLabel}</h3>
               <div className="space-y-4">
                 <div>
-                  <Label className="text-xs">نام Preset (اختیاری)</Label>
+                  <Label className="text-xs text-slate-700 dark:text-slate-300">نام Preset (اختیاری)</Label>
                   <Input
                     value={presetName}
                     onChange={(e) => setPresetName(e.target.value)}
@@ -307,17 +307,22 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                   />
                 </div>
                 <div className="grid grid-cols-4 gap-3 text-sm">
-                  {[
-                    { label: 'Pan', value: `${position.pan}°` },
-                    { label: 'Tilt', value: `${position.tilt}°` },
-                    { label: 'Zoom', value: `${zoom}x` },
-                    { label: 'Focus', value: `${focus}%` }
-                  ].map((item, i) => (
-                    <div key={i} className="p-3 bg-muted/30 rounded-lg text-center">
-                      <p className="text-xs text-muted-foreground">{item.label}</p>
-                      <p className="font-bold text-foreground">{item.value}</p>
-                    </div>
-                  ))}
+                  <div className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-center">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">Pan</p>
+                    <p className="font-bold text-slate-900 dark:text-slate-100">{position.pan}°</p>
+                  </div>
+                  <div className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-center">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">Tilt</p>
+                    <p className="font-bold text-slate-900 dark:text-slate-100">{position.tilt}°</p>
+                  </div>
+                  <div className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-center">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">Zoom</p>
+                    <p className="font-bold text-slate-900 dark:text-slate-100">{zoom}x</p>
+                  </div>
+                  <div className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-center">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">Focus</p>
+                    <p className="font-bold text-slate-900 dark:text-slate-100">{focus}%</p>
+                  </div>
                 </div>
                 <Button className="w-full" onClick={savePreset}>
                   <Save className="w-4 h-4 ml-2" />
@@ -328,25 +333,25 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
           </div>
 
           <div className="space-y-6">
-            <Card className="p-6 border border-input shadow-sm">
-              <h3 className="text-base font-semibold text-foreground mb-5">Presetهای ذخیره شده</h3>
+            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-5">Presetهای ذخیره شده</h3>
               <div className="space-y-4">
                 {presets.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8 text-sm">هیچ Preset ذخیره نشده</p>
+                  <p className="text-center text-slate-500 dark:text-slate-400 py-8 text-sm">هیچ Preset ذخیره نشده</p>
                 ) : (
                   presets.map((preset) => {
                     const dir = directions.find(d => d.value === preset.direction);
                     return (
                       <div
                         key={preset.id}
-                        className="p-4 bg-muted/30 rounded-lg border border-input hover:border-accent transition-colors"
+                        className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <span className="text-2xl">{dir?.icon}</span>
                             <div>
-                              <p className="font-medium text-sm text-foreground">{preset.name}</p>
-                              <p className="text-xs text-muted-foreground">{dir?.label}</p>
+                              <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{preset.name}</p>
+                              <p className="text-xs text-slate-600 dark:text-slate-400">{dir?.label}</p>
                             </div>
                           </div>
                           <Button
@@ -359,16 +364,10 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                           </Button>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-                          {[
-                            { label: 'Pan', value: `${preset.pan}°` },
-                            { label: 'Tilt', value: `${preset.tilt}°` },
-                            { label: 'Zoom', value: `${preset.zoom}x` },
-                            { label: 'Focus', value: `${preset.focus}%` }
-                          ].map((item, i) => (
-                            <div key={i} className="bg-background px-3 py-1 rounded">
-                              {item.label}: {item.value}
-                            </div>
-                          ))}
+                          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded">Pan: {preset.pan}°</div>
+                          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded">Tilt: {preset.tilt}°</div>
+                          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded">Zoom: {preset.zoom}x</div>
+                          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded">Focus: {preset.focus}%</div>
                         </div>
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline" className="flex-1 text-xs" onClick={() => testPreset(preset)}>
@@ -397,7 +396,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                 )}
               </div>
 
-              <div className="mt-6 pt-5 border-t border-input text-xs text-muted-foreground space-y-2">
+              <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-2">
                 <p className="font-medium">راهنما:</p>
                 <ul className="space-y-1">
                   <li>• برای هر جهت یک Preset تنظیم کنید</li>

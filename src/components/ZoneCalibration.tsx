@@ -265,13 +265,13 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const violationShapes = shapes.filter(s => s.layer === 'violation' && s.direction === selectedDirection);
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-background">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           <div className="space-y-6">
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">جهت</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">جهت</Label>
               <div className="grid grid-cols-2 gap-2">
                 {(['north', 'south', 'east', 'west'] as const).map((dir) => (
                   <Button
@@ -286,8 +286,8 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">مرحله</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">مرحله</Label>
               <Tabs value={calibrationStep} onValueChange={(v) => setCalibrationStep(v as CalibrationStep)}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="direction">منطقه اصلی</TabsTrigger>
@@ -297,7 +297,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
 
               {calibrationStep === 'violation' && (
                 <div className="mt-4 space-y-2">
-                  <Label className="text-xs">نوع تخلف</Label>
+                  <Label className="text-xs text-slate-700 dark:text-slate-300">نوع تخلف</Label>
                   {violationTypes.map((vType) => (
                     <Button
                       key={vType.id}
@@ -318,8 +318,8 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               )}
             </Card>
 
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">ابزار</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">ابزار</Label>
               <div className="space-y-2">
                 <Button
                   variant={activeTool === 'select' ? 'default' : 'outline'}
@@ -357,21 +357,21 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">نمایش</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">نمایش</Label>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs">منطقه اصلی</Label>
+                  <Label className="text-xs text-slate-700 dark:text-slate-300">منطقه اصلی</Label>
                   <Switch checked={showDirectionMasks} onCheckedChange={setShowDirectionMasks} />
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs">مناطق تخلف</Label>
+                  <Label className="text-xs text-slate-700 dark:text-slate-300">مناطق تخلف</Label>
                   <Switch checked={showViolationMasks} onCheckedChange={setShowViolationMasks} />
                 </div>
               </div>
 
               <div className="mt-4 pt-4 border-t">
-                <Label className="text-xs mb-2 block">بزرگنمایی {zoom.toFixed(1)}x</Label>
+                <Label className="text-xs mb-2 block text-slate-700 dark:text-slate-300">بزرگنمایی {zoom.toFixed(1)}x</Label>
                 <div className="flex items-center gap-2">
                   <Button size="icon" variant="outline" onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}>
                     <ZoomOut className="w-4 h-4" />
@@ -384,7 +384,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-5 border border-input shadow-sm">
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
               <div className="space-y-2">
                 <Button
                   variant="destructive"
@@ -407,52 +407,52 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               </div>
             </Card>
 
-            <Card className="p-5 border border-input shadow-sm">
-              <Label className="text-sm font-medium mb-3 block">منظقو ({directionShapes.length + violationShapes.length})</Label>
+            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <Label className="text-sm font-medium mb-3 block text-slate-700 dark:text-slate-300">مناطق ({directionShapes.length + violationShapes.length})</Label>
               <div className="space-y-2 text-xs">
                 {directionShapes.map(s => (
                   <div
                     key={s.id}
-                    className={`p-2 rounded cursor-pointer ${selectedShape === s.id ? 'bg-accent' : 'bg-muted/30'}`}
+                    className={`p-2 rounded cursor-pointer ${selectedShape === s.id ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-slate-100 dark:bg-slate-800/50'}`}
                     onClick={() => setSelectedShape(s.id)}
                   >
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded" style={{ backgroundColor: s.color }} />
-                      {s.name}
+                      <span className="text-slate-900 dark:text-slate-100">{s.name}</span>
                     </div>
                   </div>
                 ))}
                 {violationShapes.map(s => (
                   <div
                     key={s.id}
-                    className={`p-2 rounded cursor-pointer ${selectedShape === s.id ? 'bg-accent' : 'bg-muted/30'}`}
+                    className={`p-2 rounded cursor-pointer ${selectedShape === s.id ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-slate-100 dark:bg-slate-800/50'}`}
                     onClick={() => setSelectedShape(s.id)}
                   >
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded" style={{ backgroundColor: s.color }} />
-                      {s.name}
+                      <span className="text-slate-900 dark:text-slate-100">{s.name}</span>
                     </div>
                   </div>
                 ))}
                 {directionShapes.length + violationShapes.length === 0 && (
-                  <p className="text-center text-muted-foreground py-4">منطقه‌ای تعریف نشده</p>
+                  <p className="text-center text-slate-500 dark:text-slate-400 py-4">منطقه‌ای تعریف نشده</p>
                 )}
               </div>
             </Card>
           </div>
 
           <div className="lg:col-span-3">
-            <Card className="p-6 border border-input shadow-sm">
+            <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-semibold text-foreground">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   کالیبراسیون — جهت {selectedDirection === 'north' ? 'شمال' : selectedDirection === 'south' ? 'جنوب' : selectedDirection === 'east' ? 'شرق' : 'غرب'}
                 </h3>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs text-slate-700 dark:text-slate-300">
                   {activeTool === 'select' ? 'انتخاب' : activeTool === 'rectangle' ? 'مستطیل' : 'چندضلعی'}
                 </Badge>
               </div>
 
-              <div className="relative bg-muted rounded-xl overflow-hidden" style={{ height: '700px' }}>
+              <div className="relative bg-slate-900 rounded-xl overflow-hidden" style={{ height: '700px' }}>
                 <canvas
                   ref={canvasRef}
                   width={1200}
@@ -463,14 +463,14 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                 />
 
                 {isDrawing && activeTool === 'polygon' && (
-                  <div className="absolute top-4 left-4 bg-background px-4 py-2 rounded-lg shadow-lg text-sm">
+                  <div className="absolute top-4 left-4 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg shadow-lg text-sm text-slate-900 dark:text-slate-100">
                     {currentPoints.length} نقطه — برای اتمام دکمه بزنید
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 p-4 bg-accent/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                <p className="text-xs text-slate-700 dark:text-slate-300">
                   <strong>راهنما:</strong>{' '}
                   {activeTool === 'select' && 'روی منطقه کلیک کنید'}
                   {activeTool === 'rectangle' && 'دو نقطه برای مستطیل کلیک کنید'}
