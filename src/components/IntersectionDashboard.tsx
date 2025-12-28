@@ -10,16 +10,27 @@ import {
   AlertTriangle,
   Play,
   Pause,
-  Video,
-  Wifi,
-  Activity,
+  Plus,
   Eye,
   Download,
-  Plus
 } from 'lucide-react';
 import { Intersection } from '../types';
 import { mockViolations, mockCameras } from '../data/mockDatabase';
 import { toast } from 'sonner';
+
+// Chart.js & react-chartjs-2
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar, Pie } from 'react-chartjs-2';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 interface IntersectionDashboardProps {
   intersection: Intersection;
@@ -27,11 +38,10 @@ interface IntersectionDashboardProps {
 }
 
 export function IntersectionDashboard({ intersection, onChangeTab }: IntersectionDashboardProps) {
-  const [selectedDirection, setSelectedDirection] = useState<'north' | 'south' | 'east' | 'west'>('north');
   const [liveMonitoring, setLiveMonitoring] = useState(true);
   const [ptzTracking, setPtzTracking] = useState(true);
 
-  // ⚠️ mock violation types — جایگزین Redux (موقت)
+  // انواع تخلف — ثابت
   const violationTypes = [
     { id: '1', name: 'عبور از چراغ قرمز', color: '#ef4444' },
     { id: '2', name: 'تجاوز به خط عابر', color: '#f97316' },
@@ -40,11 +50,11 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     { id: '5', name: 'پارک ممنوع', color: '#10b981' },
   ];
 
+  // فیلتر تخلفات مربوط به این چهارراه
   const violations = mockViolations.filter(v => v.intersectionId === intersection.id);
-  const cameras = mockCameras[intersection.id] || [];
   const recentViolations = violations.slice(0, 12);
 
-  // آمار
+  // محاسبه آمار
   const stats = {
     total: violations.length,
     byStatus: {
@@ -58,7 +68,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     }, {} as Record<string, number>),
   };
 
-  // نظارت زنده — شبیه‌سازی هشدار
+  // شبیه‌سازی هشدار زنده
   useEffect(() => {
     if (!liveMonitoring) return;
 
@@ -71,6 +81,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     return () => clearInterval(interval);
   }, [liveMonitoring]);
 
+  // کمکی: نمایش وضعیت
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
@@ -98,13 +109,13 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
 
   const getViolationTypeLabel = (typeId: string) => {
     const type = violationTypes.find(v => v.id === typeId);
-    return type ? type.name : typeId;
+    return type ? type.name : 'ناشناخته';
   };
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900">
       <div className="max-w-[1800px] mx-auto px-6 py-8">
-        {/* هدر داشبورد */}
+        {/* هدر */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{intersection.name}</h2>
@@ -143,28 +154,18 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
             <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">کل تخلفات امروز</p>
             <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2">{stats.total}</p>
           </Card>
-
           <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
             <p className="text-xs text-green-700 dark:text-green-300 uppercase tracking-wider">تایید شده</p>
-            <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-2">
-              {stats.byStatus.verified}
-            </p>
+            <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-2">{stats.byStatus.verified}</p>
           </Card>
-
           <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
             <p className="text-xs text-amber-700 dark:text-amber-300 uppercase tracking-wider">در انتظار</p>
-            <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-2">
-              {stats.byStatus.pending}
-            </p>
+            <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-2">{stats.byStatus.pending}</p>
           </Card>
-
           <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
             <p className="text-xs text-red-700 dark:text-red-300 uppercase tracking-wider">رد شده</p>
-            <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-2">
-              {stats.byStatus.rejected}
-            </p>
+            <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-2">{stats.byStatus.rejected}</p>
           </Card>
-
           <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
             <p className="text-xs text-purple-700 dark:text-purple-300 uppercase tracking-wider">ردیابی PTZ</p>
             <p className="text-xl font-bold text-purple-900 dark:text-purple-100 mt-2">
@@ -174,14 +175,12 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ستون چپ: دوربین‌ها و آمار */}
+          {/* ستون چپ: نمودارها */}
           <div className="lg:col-span-2 space-y-6">
-         
-            {/* تخلفات به تفکیک نوع */}
             <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  تخلفات به تفکیک نوع
+                  تحلیل آماری تخلفات
                 </h3>
                 <Button
                   size="sm"
@@ -194,49 +193,118 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
                 </Button>
               </div>
 
-              <div className="space-y-4">
-                {violationTypes.length === 0 ? (
-                  <div className="text-center py-10">
-                    <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-slate-400 opacity-50" />
-                    <p className="text-slate-500 dark:text-slate-400 mb-4">
-                      هیچ نوع تخلفی تعریف نشده است
-                    </p>
-                    <Button
-                      size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => onChangeTab?.('violations')}
-                    >
-                      افزودن اولین تخلف
-                    </Button>
+              {violationTypes.length === 0 ? (
+                <div className="text-center py-10">
+                  <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-slate-400 opacity-50" />
+                  <p className="text-slate-500 dark:text-slate-400 mb-4">هیچ نوع تخلفی تعریف نشده است</p>
+                  <Button
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => onChangeTab?.('violations')}
+                  >
+                    افزودن اولین تخلف
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* نمودار میله‌ای */}
+                  <div className="flex flex-col h-[240px]">
+                    <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2 text-center">
+                      تعداد تخلفات
+                    </h4>
+                    <div className="flex-1">
+                      <Bar
+                        data={{
+                          labels: violationTypes.map(t => t.name),
+                          datasets: [
+                            {
+                              label: 'تعداد',
+                              data: violationTypes.map(t => stats.byType[t.id] || 0),
+                              backgroundColor: violationTypes.map(t => t.color),
+                              borderColor: violationTypes.map(t => t.color),
+                              borderWidth: 1,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                              backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                              titleColor: '#fff',
+                              bodyColor: '#f1f5f9',
+                              padding: 10,
+                            },
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: '#94a3b8', font: { size: 10 } },
+                              grid: { display: false },
+                            },
+                            y: {
+                              beginAtZero: true,
+                              ticks: { color: '#94a3b8' },
+                              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
                   </div>
-                ) : (
-                  violationTypes.map((type) => {
-                    const count = stats.byType[type.id] || 0;
-                    const percentage = stats.total > 0 ? (count / stats.total) * 100 : 0;
 
-                    return (
-                      <div key={type.id} className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: type.color }} />
-                            {type.name}
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-slate-100">{count}</span>
-                        </div>
-                        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                          <div
-                            className="h-full transition-all duration-700"
-                            style={{
-                              width: `${percentage}%`,
-                              backgroundColor: type.color,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+                  {/* نمودار دایره‌ای */}
+                  <div className="flex flex-col h-[240px]">
+                    <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2 text-center">
+                      درصد تخلفات
+                    </h4>
+                    <div className="flex-1">
+                      <Pie
+                        data={{
+                          labels: violationTypes.map(t => t.name),
+                          datasets: [
+                            {
+                              data: violationTypes.map(t => stats.byType[t.id] || 0),
+                              backgroundColor: violationTypes.map(t => t.color),
+                              borderWidth: 0,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              position: 'right' as const,
+                              labels: {
+                                color: '#f1f5f9',
+                                font: { size: 10 },
+                                padding: 8,
+                                usePointStyle: true,
+                              },
+                            },
+                            tooltip: {
+                              backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                              titleColor: '#fff',
+                              bodyColor: '#e2e8f0',
+                              padding: 10,
+                              callbacks: {
+                                label: (context) => {
+                                  const total = context.dataset.data.reduce((a, b) => a + (b as number), 0);
+                                  const value = context.raw as number;
+                                  const percent = total > 0 ? (value / total) * 100 : 0;
+                                  return `${context.label}: ${percent.toFixed(1)}% (${value})`;
+                                },
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </Card>
           </div>
 
