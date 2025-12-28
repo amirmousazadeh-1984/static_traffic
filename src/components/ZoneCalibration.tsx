@@ -314,7 +314,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
             {/* مرحله */}
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                مرحله
+                ترسیم مناطق کالیبراسیون
               </Label>
               <div className="flex gap-1">
                 <Button
@@ -323,7 +323,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                   className="text-[10px] h-7 flex-1 px-1"
                   onClick={() => setCalibrationStep('direction')}
                 >
-                  اصلی
+                  ترسیم ماسک اصلی
                 </Button>
                 <Button
                   variant={calibrationStep === 'violation' ? 'default' : 'outline'}
@@ -331,7 +331,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                   className="text-[10px] h-7 flex-1 px-1"
                   onClick={() => setCalibrationStep('violation')}
                 >
-                  تخلف
+                  ترسیم ماسک تخلفات
                 </Button>
               </div>
 
@@ -388,7 +388,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
           {/* ستون 2 (راست) — 25% */}
           <div className="space-y-3 overflow-y-auto pr-1">
             {/* نمایش/زوم */}
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+            {/* <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 نمایش
               </Label>
@@ -425,51 +425,14 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                   </div>
                 </div>
               </div>
-            </Card>
+            </Card> */}
 
-            {/* عملیات */}
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-              <div className="space-y-1.5">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="w-full text-[11px] h-8"
-                  disabled={!selectedShapeId}
-                  onClick={deleteSelectedShape}
-                >
-                  <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
-                </Button>
-                <Button
-                  size="sm"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
-                  onClick={() => {
-                    const masksToSave: Mask[] = shapes.map(shape => ({
-                      id: shape.id,
-                      name: shape.name,
-                      color: shape.color,
-                      type: shape.layer,
-                      area: {
-                        x: Math.min(shape.points[0].x, shape.points[1].x),
-                        y: Math.min(shape.points[0].y, shape.points[1].y),
-                        width: Math.abs(shape.points[1].x - shape.points[0].x),
-                        height: Math.abs(shape.points[1].y - shape.points[0].y),
-                      },
-                      direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
-                      ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
-                    }));
-                    mockMasks[intersection.id] = masksToSave;
-                    toast.success('ذخیره شد');
-                  }}
-                >
-                  <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
-                </Button>
-              </div>
-            </Card>
+        
 
             {/* لیست مناطق */}
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex-1 flex flex-col">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                مناطق ({directionShapes.length + violationShapes.length})
+                مناطق تعریف شده
               </Label>
               <div className="overflow-y-auto space-y-1 flex-1 text-[10px]">
                 {[...directionShapes, ...violationShapes].map(shape => (
@@ -494,6 +457,41 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                   </p>
                 )}
               </div>
+              <div className="flex gap-1.5 mt-2">
+  <Button
+    variant="destructive"
+    size="sm"
+    className="flex-1 text-[11px] h-8"
+    disabled={!selectedShapeId}
+    onClick={deleteSelectedShape}
+  >
+    <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
+  </Button>
+  <Button
+    size="sm"
+    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
+    onClick={() => {
+      const masksToSave: Mask[] = shapes.map(shape => ({
+        id: shape.id,
+        name: shape.name,
+        color: shape.color,
+        type: shape.layer,
+        area: {
+          x: Math.min(shape.points[0].x, shape.points[1].x),
+          y: Math.min(shape.points[0].y, shape.points[1].y),
+          width: Math.abs(shape.points[1].x - shape.points[0].x),
+          height: Math.abs(shape.points[1].y - shape.points[0].y),
+        },
+        direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
+        ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
+      }));
+      mockMasks[intersection.id] = masksToSave;
+      toast.success('ذخیره شد');
+    }}
+  >
+    <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
+  </Button>
+</div>
             </Card>
           </div>
         </div>
