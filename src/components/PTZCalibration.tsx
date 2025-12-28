@@ -119,75 +119,118 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                 )}
               </div>
 
-              <div
-                className="relative overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-900"
-                style={{ width: '100%', height: 520 }}
-              >
-                {intersection.imageUrl ? (
-                  <img
-                    src={intersection.imageUrl}
-                    alt="چهارراه"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-150"
-                    style={{
-                      transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-                      transformOrigin: 'center',
-                    }}
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-500 dark:text-slate-400">
-                    تصویری از چهارراه موجود نیست
-                  </div>
-                )}
-              </div>
+            <div
+  className="relative overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-900"
+  style={{ width: '100%', height: 520 }}
+>
+  {intersection.imageUrl ? (
+    <img
+      src={intersection.imageUrl}
+      alt="چهارراه"
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-150"
+      style={{
+        transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+        transformOrigin: 'center',
+      }}
+      draggable={false}
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center text-slate-500 dark:text-slate-400">
+      تصویری از چهارراه موجود نیست
+    </div>
+  )}
+
+  {/* آیکون‌های کنترل PTZ روی تصویر */}
+  <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+    {/* حرکت Pan/Tilt */}
+    <div className="grid grid-cols-3 gap-1 bg-black/30 backdrop-blur-sm p-1.5 rounded-lg">
+      <div />
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => moveView(0, -30)}
+      >
+        <ArrowUp className="w-3 h-3" />
+      </Button>
+      <div />
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => moveView(-30, 0)}
+      >
+        <ArrowLeft className="w-3 h-3" />
+      </Button>
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={resetView}
+      >
+        <Home className="w-3 h-3" />
+      </Button>
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => moveView(30, 0)}
+      >
+        <ArrowRightIcon className="w-3 h-3" />
+      </Button>
+      <div />
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => moveView(0, 30)}
+      >
+        <ArrowDown className="w-3 h-3" />
+      </Button>
+      <div />
+    </div>
+
+    {/* زوم */}
+    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm p-1.5 rounded-lg">
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => handleZoom('out')}
+      >
+        <ZoomOut className="w-3 h-3" />
+      </Button>
+      <Slider
+        value={[scale]}
+        onValueChange={([v]) => setScale(v)}
+        min={0.5}
+        max={3}
+        step={0.1}
+        className="w-16"
+      />
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+        onClick={() => handleZoom('in')}
+      >
+        <ZoomIn className="w-3 h-3" />
+      </Button>
+    </div>
+  </div>
+</div>
 
               <div className="mt-3 text-xs text-slate-600 dark:text-slate-400 flex gap-4">
-                <span>پان: {offset.x.toFixed(1)}</span>
-                <span>تیلت: {offset.y.toFixed(1)}</span>
-                <span>زوم: {scale.toFixed(1)}x</span>
+                <span>pan: {offset.x.toFixed(1)}</span>
+                <span>tilt: {offset.y.toFixed(1)}</span>
+                <span>zoom: {scale.toFixed(1)}x</span>
               </div>
             </Card>
           </div>
 
           {/* ستون 2: کنترل‌ها (30%) */}
           <div className="space-y-6">
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
-              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">حرکت</h3>
-              <div className="grid grid-cols-3 gap-2 w-full max-w-[180px] mx-auto">
-                <div />
-                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(0, -30)}>
-                  <ArrowUp className="w-5 h-5" />
-                </Button>
-                <div />
-                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(-30, 0)}>
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <Button size="icon" variant="outline" className="h-10 w-10" onClick={resetView}>
-                  <Home className="w-5 h-5" />
-                </Button>
-                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(30, 0)}>
-                  <ArrowRightIcon className="w-5 h-5" />
-                </Button>
-                <div />
-                <Button size="icon" variant="outline" className="h-10 w-10" onClick={() => moveView(0, 30)}>
-                  <ArrowDown className="w-5 h-5" />
-                </Button>
-                <div />
-              </div>
-            </Card>
 
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
-              <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">زوم</h3>
-              <div className="flex items-center gap-2">
-                <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => handleZoom('out')}>
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <Slider value={[scale]} onValueChange={([v]) => setScale(v)} min={0.5} max={3} step={0.1} className="flex-1" />
-                <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => handleZoom('in')}>
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-              </div>
-            </Card>
 
             <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-4">ذخیره Preset جدید</h3>
@@ -197,33 +240,16 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                   <Input
                     value={presetName}
                     onChange={(e) => setPresetName(e.target.value)}
-                    placeholder="مثلاً: دید جنوبی"
+                    placeholder="نام preset را وارد کنید..."
                     className="mt-1 text-sm"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400">پان</p>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{offset.x.toFixed(1)}</p>
-                  </div>
-                  <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400">تیلت</p>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{offset.y.toFixed(1)}</p>
-                  </div>
-                  <div className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded text-center">
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400">زوم</p>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{scale.toFixed(1)}x</p>
-                  </div>
-                </div>
+              
                 <Button className="w-full text-sm" onClick={savePreset}>
                   <Save className="w-4 h-4 ml-1" /> ذخیره Preset
                 </Button>
               </div>
             </Card>
-          </div>
-
-          {/* ستون 3: Presetها (20%) */}
-          <div>
             <Card className="p-4 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl h-full flex flex-col">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-3">
                 Preset‌ها ({presets.length})
@@ -254,9 +280,9 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                         </Button>
                       </div>
                       <div className="grid grid-cols-3 gap-1 mb-2">
-                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">پان: {preset.pan.toFixed(0)}</div>
-                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">تیلت: {preset.tilt.toFixed(0)}</div>
-                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">زوم: {preset.zoom.toFixed(1)}x</div>
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">pan: {preset.pan.toFixed(0)}</div>
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">tilt: {preset.tilt.toFixed(0)}</div>
+                        <div className="bg-white dark:bg-slate-800 px-1 py-0.5 rounded text-[9px] text-center">zoom: {preset.zoom.toFixed(1)}x</div>
                       </div>
                       <div className="flex gap-1">
                         <Button size="sm" variant="outline" className="flex-1 text-[9px] px-1.5 py-0.5 h-auto" onClick={() => testPreset(preset)}>
@@ -277,6 +303,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
               </div>
             </Card>
           </div>
+
         </div>
       </div>
     </div>
