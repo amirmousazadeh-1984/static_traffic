@@ -4,18 +4,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Switch } from './ui/switch';
-import { Slider } from './ui/slider';
 import { Label } from './ui/label';
-import { Intersection, PTZPreset, Mask } from '../types';
-import {
-  mockMasks,
-  mockCameras,
-  mockPTZPresets
-} from '../data/mockDatabase';
-import {
-  MousePointer2, Trash2, Save, ZoomIn, ZoomOut, AlertTriangle
-} from 'lucide-react';
+import { Intersection, Mask } from '../types';
+import { mockMasks, mockCameras, mockPTZPresets } from '../data/mockDatabase';
+import { MousePointer2, Trash2, Save, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -32,36 +24,28 @@ type View = {
   presetId?: string;
 };
 
-type CalibrationStep = 'direction' | 'violation';
+type ShapeType = 'rectangle' | 'polygon';
 
 interface Shape {
   id: string;
-  type: 'rectangle';
+  type: ShapeType;
   points: { x: number; y: number }[];
   color: string;
   name: string;
-  viewD: string;
+  viewId: string;
   layer: 'direction' | 'violation';
 }
 
 export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ptzPresetsFromRedux = useSelector((state: RootState) => 
-    state.ptzPresets[intersection.id] || []
-  );
+  const ptzPresetsFromRedux = useSelector((state: RootState) => state.ptzPresets[intersection.id] || []);
 
   const cameras = mockCameras[intersection.id] || [];
   const fixedDirections = Array.from(
-    new Set(
-      cameras
-        .filter(cam => cam.type === 'fixed' && cam.direction)
-        .map(cam => cam.direction!)
-    )
+    new Set(cameras.filter(cam => cam.type === 'fixed' && cam.direction).map(cam => cam.direction!))
   );
 
-  const ptzPresets = ptzPresetsFromRedux.length > 0
-    ? ptzPresetsFromRedux
-    : mockPTZPresets[intersection.id] || [];
+  const ptzPresets = ptzPresetsFromRedux.length > 0 ? ptzPresetsFromRedux : mockPTZPresets[intersection.id] || [];
 
   const availableViews: View[] = [
     ...fixedDirections.map(dir => ({
@@ -75,19 +59,18 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
       label: preset.name,
       type: 'ptz' as const,
       presetId: preset.id,
-    }))
+    })),
   ];
 
   const [selectedViewId, setSelectedViewId] = useState<string | null>(
     availableViews.length > 0 ? availableViews[0].id : null
   );
   const [calibrationStep, setCalibrationStep] = useState<'direction' | 'violation'>('direction');
-  const [activeTool, setActiveTool] = useState<'select' | 'rectangle'>('select');
+  const [activeTool, setActiveTool] = useState<'select' | 'rectangle' | 'polygon'>('select');
   const [shapes, setShapes] = useState<Shape[]>([]);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentStartPoint, setCurrentStartPoint] = useState<{ x: number; y: number } | null>(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom] = useState(1); // برای سادگی، زوم حذف شد
   const [showDirectionMasks, setShowDirectionMasks] = useState(true);
   const [showViolationMasks, setShowViolationMasks] = useState(true);
 
@@ -114,11 +97,13 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
       }
       return {
         id: mask.id,
-        type: 'rectangle',
-        points: [
-          { x: mask.area.x, y: mask.area.y },
-          { x: mask.area.x + mask.area.width, y: mask.area.y + mask.area.height },
-        ],
+        type: mask.points?.length > 2 ? 'polygon' : 'rectangle',
+        points: mask.points?.length > 2
+          ? mask.points
+          : [
+              { x: mask.area.x, y: mask.area.y },
+              { x: mask.area.x + mask.area.width, y: mask.area.y + mask.area.height },
+            ],
         color: mask.color,
         name: mask.name,
         viewId,
@@ -127,9 +112,26 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     }).filter(Boolean) as Shape[];
 
     setShapes(loadedShapes);
+    setSelectedShapeId(null);
   }, [intersection.id]);
 
-  // رسم کانواس
+  const getColor = () => {
+    if (calibrationStep === 'direction') return '#3b82f6';
+    const vt = violationTypes.find(v => v.id === selectedViolationType);
+    return vt?.color || '#ef4444';
+  };
+
+  const getName = () => {
+    if (calibrationStep === 'direction') {
+      return `منطقه اصلی (${availableViews.find(v => v.id === selectedViewId)?.label || '—'})`;
+    }
+    const vt = violationTypes.find(v => v.id === selectedViolationType);
+    return vt?.name || 'تخلف';
+  };
+
+  // ================================
+  // رسم روی کانوَس
+  // ================================
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -166,67 +168,200 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
       ctx.save();
       ctx.scale(zoom, zoom);
 
-      if (shape.points.length === 2) {
+      ctx.fillStyle = shape.color + '40';
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = shape.id === selectedShapeId ? 2 : 1;
+      ctx.setLineDash(shape.id === selectedShapeId ? [5, 3] : []);
+
+      if (shape.type === 'rectangle' && shape.points.length === 2) {
         const [p1, p2] = shape.points;
         const x = Math.min(p1.x, p2.x);
         const y = Math.min(p1.y, p2.y);
         const w = Math.abs(p2.x - p1.x);
         const h = Math.abs(p2.y - p1.y);
 
-        ctx.fillStyle = shape.color + '40';
         ctx.fillRect(x, y, w, h);
-
-        ctx.strokeStyle = shape.color;
-        ctx.lineWidth = shape.id === selectedShapeId ? 2.5 : 1.5;
-        ctx.setLineDash(shape.id === selectedShapeId ? [5, 3] : []);
         ctx.strokeRect(x, y, w, h);
-
         ctx.fillStyle = shape.color;
         ctx.font = '12px Vazirmatn, sans-serif';
         ctx.fillText(shape.name, x + 6, y + 14);
+      } else if (shape.type === 'polygon' && shape.points.length >= 3) {
+        ctx.beginPath();
+        ctx.moveTo(shape.points[0].x, shape.points[0].y);
+        for (let i = 1; i < shape.points.length; i++) {
+          ctx.lineTo(shape.points[i].x, shape.points[i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // نمایش handle‌ها در حالت انتخاب
+        if (shape.id === selectedShapeId) {
+          ctx.fillStyle = '#fff';
+          ctx.strokeStyle = shape.color;
+          shape.points.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+          });
+        }
+
+        // نام
+        const cx = shape.points.reduce((sum, p) => sum + p.x, 0) / shape.points.length;
+        const cy = shape.points.reduce((sum, p) => sum + p.y, 0) / shape.points.length;
+        ctx.fillStyle = shape.color;
+        ctx.font = '12px Vazirmatn, sans-serif';
+        ctx.fillText(shape.name, cx + 6, cy + 6);
       }
 
       ctx.restore();
     });
   }, [shapes, selectedShapeId, zoom, selectedViewId, showDirectionMasks, showViolationMasks]);
 
+  // ================================
+  // مدیریت کلیک روی کانوَس
+  // ================================
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (activeTool !== 'rectangle') return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    if (!isDrawing) {
-      setIsDrawing(true);
-      setCurrentStartPoint({ x, y });
-    } else {
-      const color = calibrationStep === 'direction'
-        ? '#3b82f6'
-        : violationTypes.find(v => v.id === selectedViolationType)?.color || '#ef4444';
+    if (activeTool === 'select') {
+      // انتخاب شکل
+      let clickedShapeId: string | null = null;
 
-      const name = calibrationStep === 'direction'
-        ? `منطقه اصلی (${availableViews.find(v => v.id === selectedViewId)?.label || '—'})`
-        : violationTypes.find(v => v.id === selectedViolationType)?.name || 'تخلف';
+      // بررسی معکوس (آخرین شکل بالاتر است)
+      for (let i = shapes.length - 1; i >= 0; i--) {
+        const shape = shapes[i];
+        if (shape.viewId !== selectedViewId) continue;
 
-      const newShape: Shape = {
-        id: `shape-${Date.now()}`,
-        type: 'rectangle',
-        points: [currentStartPoint!, { x, y }],
-        color,
-        name,
-        viewId: selectedViewId!,
-        layer: calibrationStep,
-      };
+        if (shape.type === 'rectangle' && shape.points.length === 2) {
+          const [p1, p2] = shape.points;
+          const left = Math.min(p1.x, p2.x);
+          const top = Math.min(p1.y, p2.y);
+          const right = Math.max(p1.x, p2.x);
+          const bottom = Math.max(p1.y, p2.y);
+          if (x >= left && x <= right && y >= top && y <= bottom) {
+            clickedShapeId = shape.id;
+            break;
+          }
+        } else if (shape.type === 'polygon') {
+          // الگوریتم نقطه در چندضلعی (ray casting)
+          const inside = isPointInPolygon({ x, y }, shape.points);
+          if (inside) {
+            clickedShapeId = shape.id;
+            break;
+          }
+        }
+      }
 
-      setShapes([...shapes, newShape]);
-      setIsDrawing(false);
-      setCurrentStartPoint(null);
-      toast.success('منطقه اضافه شد');
+      setSelectedShapeId(clickedShapeId);
+    } else if (activeTool === 'rectangle') {
+      if (!isDrawing) {
+        setIsDrawing(true);
+        const newRect: Shape = {
+          id: `rect-${Date.now()}`,
+          type: 'rectangle',
+          points: [{ x, y }, { x, y }],
+          color: getColor(),
+          name: getName(),
+          viewId: selectedViewId!,
+          layer: calibrationStep,
+        };
+        setShapes([...shapes, newRect]);
+        setSelectedShapeId(newRect.id);
+      } else {
+        const updated = shapes.map(s =>
+          s.id === selectedShapeId ? { ...s, points: [s.points[0], { x, y }] } : s
+        );
+        setShapes(updated);
+        setIsDrawing(false);
+        toast.success('مستطیل ایجاد شد');
+      }
+    } else if (activeTool === 'polygon') {
+      if (!selectedViewId) return;
+
+      if (!isDrawing) {
+        // شروع رسم چندضلعی جدید
+        const newPoly: Shape = {
+          id: `poly-${Date.now()}`,
+          type: 'polygon',
+          points: [{ x, y }],
+          color: getColor(),
+          name: getName(),
+          viewId: selectedViewId!,
+          layer: calibrationStep,
+        };
+        setShapes([...shapes, newPoly]);
+        setSelectedShapeId(newPoly.id);
+        setIsDrawing(true);
+      } else {
+        // افزودن نقطه جدید به چندضلعی انتخاب‌شده
+        const updated = shapes.map(s => {
+          if (s.id === selectedShapeId && s.type === 'polygon') {
+            return { ...s, points: [...s.points, { x, y }] };
+          }
+          return s;
+        });
+        setShapes(updated);
+      }
     }
   };
+
+  // تکمیل چندضلعی با کلیک راست یا دابل‌کلیک
+  const handleCanvasDoubleClick = () => {
+    if (activeTool === 'polygon' && isDrawing && selectedShapeId) {
+      const updated = shapes.map(s => {
+        if (s.id === selectedShapeId && s.type === 'polygon' && s.points.length >= 3) {
+          // حذف نقطه تکراری اگر نیاز باشد
+          return s;
+        } else if (s.id === selectedShapeId && s.points.length < 3) {
+          // حداقل ۳ نقطه لازم است
+          toast.error('حداقل ۳ نقطه برای چندضلعی لازم است');
+          return { ...s, points: [] };
+        }
+        return s;
+      }).filter(s => !(s.id === selectedShapeId && s.points.length < 3));
+
+      setShapes(updated);
+      setIsDrawing(false);
+      setSelectedShapeId(null);
+      toast.success('چندضلعی کامل شد');
+    }
+  };
+
+  // حرکت موس برای رسم مستطیل/چندضلعی به‌صورت زنده
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || !selectedShapeId || activeTool !== 'rectangle') return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const updated = shapes.map(s =>
+      s.id === selectedShapeId ? { ...s, points: [s.points[0], { x, y }] } : s
+    );
+    setShapes(updated);
+  };
+
+  // ================================
+  // توابع کمکی
+  // ================================
+  function isPointInPolygon(point: { x: number; y: number }, vs: { x: number; y: number }[]) {
+    let x = point.x, y = point.y;
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      let xi = vs[i].x, yi = vs[i].y;
+      let xj = vs[j].x, yj = vs[j].y;
+      let intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
 
   const deleteSelectedShape = () => {
     if (!selectedShapeId) return;
@@ -235,9 +370,50 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     toast.success('منطقه حذف شد');
   };
 
+  // ذخیره
+  const handleSave = () => {
+    const masksToSave: Mask[] = shapes.map(shape => {
+      if (shape.type === 'rectangle' && shape.points.length === 2) {
+        const [p1, p2] = shape.points;
+        return {
+          id: shape.id,
+          name: shape.name,
+          color: shape.color,
+          type: shape.layer,
+          area: {
+            x: Math.min(p1.x, p2.x),
+            y: Math.min(p1.y, p2.y),
+            width: Math.abs(p2.x - p1.x),
+            height: Math.abs(p2.y - p1.y),
+          },
+          points: undefined,
+          direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
+          ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
+        };
+      } else {
+        return {
+          id: shape.id,
+          name: shape.name,
+          color: shape.color,
+          type: shape.layer,
+          area: undefined,
+          points: shape.points,
+          direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
+          ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
+        };
+      }
+    });
+    mockMasks[intersection.id] = masksToSave;
+    toast.success('ذخیره شد');
+  };
+
   const currentView = availableViews.find(v => v.id === selectedViewId);
   const directionShapes = shapes.filter(s => s.viewId === selectedViewId && s.layer === 'direction');
   const violationShapes = shapes.filter(s => s.viewId === selectedViewId && s.layer === 'violation');
+
+  if (!selectedViewId) {
+    setActiveTool('select');
+  }
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
@@ -246,17 +422,40 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
           کالیبراسیون مناطق — {intersection.name}
         </h2>
 
-        {/* سه ستون: 50% | 25% | 25% */}
         <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4 h-[calc(100vh-200px)]">
-          {/* کانوس — 50% */}
+          {/* کانوَس */}
           <Card className="p-3 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
                 {currentView?.label || 'هیچ دیدی انتخاب نشده'}
               </h3>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5">
-                {activeTool === 'select' ? 'انتخاب' : 'مستطیل'}
-              </Badge>
+              {/* نوار ابزار */}
+              <div className="flex gap-1.5">
+                <Button
+                  variant={activeTool === 'select' ? 'default' : 'outline'}
+                  size="sm"
+                  className="text-[10px] h-6 px-2"
+                  onClick={() => setActiveTool('select')}
+                >
+                  <MousePointer2 className="w-3 h-3 mr-1" /> انتخاب
+                </Button>
+                <Button
+                  variant={activeTool === 'rectangle' ? 'default' : 'outline'}
+                  size="sm"
+                  className="text-[10px] h-6 px-2"
+                  onClick={() => setActiveTool('rectangle')}
+                >
+                  مستطیل
+                </Button>
+                <Button
+                  variant={activeTool === 'polygon' ? 'default' : 'outline'}
+                  size="sm"
+                  className="text-[10px] h-6 px-2"
+                  onClick={() => setActiveTool('polygon')}
+                >
+                  چندضلعی
+                </Button>
+              </div>
             </div>
 
             {selectedViewId ? (
@@ -266,6 +465,8 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                   width={1000}
                   height={600}
                   onClick={handleCanvasClick}
+                  onDoubleClick={handleCanvasDoubleClick}
+                  onMouseMove={handleCanvasMouseMove}
                   className="w-full h-full cursor-crosshair"
                 />
               </div>
@@ -274,13 +475,10 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                 <p className="text-slate-500 dark:text-slate-400 text-sm">ابتدا یک دید انتخاب کنید</p>
               </div>
             )}
-
-          
           </Card>
 
-          {/* ستون 1 (چپ) — 25% */}
+          {/* ستون چپ */}
           <div className="space-y-3 overflow-y-auto pr-1">
-            {/* انتخاب دید */}
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 جهات قابل کالیبراسیون
@@ -311,7 +509,6 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
               )}
             </Card>
 
-            {/* مرحله */}
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 ترسیم مناطق کالیبراسیون
@@ -358,89 +555,21 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                 </div>
               )}
             </Card>
-
-            {/* ابزارها */}
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                ابزار
-              </Label>
-              <div className="space-y-1.5">
-                <Button
-                  variant={activeTool === 'select' ? 'default' : 'outline'}
-                  size="sm"
-                  className="w-full text-[11px] justify-start h-8"
-                  onClick={() => setActiveTool('select')}
-                >
-                  <MousePointer2 className="w-3 h-3 ml-1 mr-1" /> انتخاب
-                </Button>
-                <Button
-                  variant={activeTool === 'rectangle' ? 'default' : 'outline'}
-                  size="sm"
-                  className="w-full text-[11px] justify-start h-8"
-                  onClick={() => setActiveTool('rectangle')}
-                >
-                  مستطیل
-                </Button>
-              </div>
-            </Card>
           </div>
 
-          {/* ستون 2 (راست) — 25% */}
+          {/* ستون راست */}
           <div className="space-y-3 overflow-y-auto pr-1">
-            {/* نمایش/زوم */}
-            {/* <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                نمایش
-              </Label>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">منطقه اصلی</Label>
-                  <Switch
-                    checked={showDirectionMasks}
-                    onCheckedChange={setShowDirectionMasks}
-                    className="data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">مناطق تخلف</Label>
-                  <Switch
-                    checked={showViolationMasks}
-                    onCheckedChange={setShowViolationMasks}
-                    className="data-[state=checked]:bg-red-600"
-                  />
-                </div>
-
-                <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">
-                    زوم: {zoom.toFixed(1)}x
-                  </Label>
-                  <div className="flex items-center gap-1">
-                    <Button size="icon" variant="outline" className="h-6 w-6 p-0" onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}>
-                      <ZoomOut className="w-3 h-3" />
-                    </Button>
-                    <Slider value={[zoom]} onValueChange={([v]) => setZoom(v)} min={0.5} max={2} step={0.1} className="flex-1" />
-                    <Button size="icon" variant="outline" className="h-6 w-6 p-0" onClick={() => setZoom(Math.min(2, zoom + 0.1))}>
-                      <ZoomIn className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card> */}
-
-        
-
-            {/* لیست مناطق */}
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex-1 flex flex-col">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                مناطق تعریف شده
+                مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
               </Label>
               <div className="overflow-y-auto space-y-1 flex-1 text-[10px]">
                 {[...directionShapes, ...violationShapes].map(shape => (
                   <div
                     key={shape.id}
                     className={`p-1.5 rounded cursor-pointer ${
-                      selectedShapeId === shape.id 
-                        ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700' 
+                      selectedShapeId === shape.id
+                        ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700'
                         : 'bg-slate-100 dark:bg-slate-700'
                     }`}
                     onClick={() => setSelectedShapeId(shape.id)}
@@ -448,6 +577,7 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                     <div className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
                       <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
+                    
                     </div>
                   </div>
                 ))}
@@ -458,40 +588,23 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
                 )}
               </div>
               <div className="flex gap-1.5 mt-2">
-  <Button
-    variant="destructive"
-    size="sm"
-    className="flex-1 text-[11px] h-8"
-    disabled={!selectedShapeId}
-    onClick={deleteSelectedShape}
-  >
-    <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
-  </Button>
-  <Button
-    size="sm"
-    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
-    onClick={() => {
-      const masksToSave: Mask[] = shapes.map(shape => ({
-        id: shape.id,
-        name: shape.name,
-        color: shape.color,
-        type: shape.layer,
-        area: {
-          x: Math.min(shape.points[0].x, shape.points[1].x),
-          y: Math.min(shape.points[0].y, shape.points[1].y),
-          width: Math.abs(shape.points[1].x - shape.points[0].x),
-          height: Math.abs(shape.points[1].y - shape.points[0].y),
-        },
-        direction: availableViews.find(v => v.id === shape.viewId && v.type === 'fixed')?.direction,
-        ptzPresetId: availableViews.find(v => v.id === shape.viewId && v.type === 'ptz')?.presetId,
-      }));
-      mockMasks[intersection.id] = masksToSave;
-      toast.success('ذخیره شد');
-    }}
-  >
-    <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
-  </Button>
-</div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="flex-1 text-[11px] h-8"
+                  disabled={!selectedShapeId}
+                  onClick={deleteSelectedShape}
+                >
+                  <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
+                  onClick={handleSave}
+                >
+                  <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
+                </Button>
+              </div>
             </Card>
           </div>
         </div>
