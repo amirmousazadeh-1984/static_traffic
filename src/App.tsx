@@ -59,7 +59,7 @@ function App() {
     },
     {
       id: 'dashboard',
-      label: 'مشخصات دوربین‌ها',
+      label: 'داشبورد تخلفات چهارراهها',
       icon: <Monitor className="w-4 h-4" />,
       disabled: !isIntersectionSelected,
     },
