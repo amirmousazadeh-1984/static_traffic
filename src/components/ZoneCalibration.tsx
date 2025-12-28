@@ -478,115 +478,153 @@ return (
             </div>
           )}
         </Card>
+{/* ستون دوم: دو بخش با ارتفاع برابر */}
+<div className="flex flex-col gap-4 h-full">
+  {/* بخش اول: جهات و presetها */}
+  <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+    <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+      جهات دوربین‌های ثابت
+    </Label>
+    {fixedDirections.length > 0 ? (
+      <div className="space-y-1.5 mb-3 overflow-y-auto flex-1">
+        {fixedDirections.map(dir => {
+          const label = dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب';
+          const isSelected = selectedViewId === dir;
+          return (
+            <Button
+              key={dir}
+              variant="outline"
+              size="sm"
+              className={`text-[11px] justify-start h-8 px-2 w-full text-left ${
+                isSelected
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+              }`}
+              onClick={() => setSelectedViewId(dir)}
+            >
+              {label}
+            </Button>
+          );
+        })}
+      </div>
+    ) : (
+      <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">دوربین ثابتی تعریف نشده</p>
+    )}
 
-        {/* ستون دوم: دو بخش با ارتفاع برابر (هر کدام 50% از 80vh = 40vh) */}
-        <div className="flex flex-col gap-4 h-full">
-          {/* بخش اول: جهات و presetها */}
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
-            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-              جهات دوربین‌های ثابت
-            </Label>
-            {fixedDirections.length > 0 ? (
-              <div className="space-y-1.5 mb-3 overflow-y-auto flex-1">
-                {fixedDirections.map(dir => {
-                  const label = dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب';
-                  return (
-                    <Button
-                      key={dir}
-                      variant={selectedViewId === dir ? 'default' : 'outline'}
-                      size="sm"
-                      className="text-[11px] justify-start h-8 px-2 w-full"
-                      onClick={() => setSelectedViewId(dir)}
-                    >
-                      {label}
-                    </Button>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">دوربین ثابتی تعریف نشده</p>
-            )}
+    <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+      preset های دوربین های چرخان
+    </Label>
+    {ptzPresets.length > 0 ? (
+      <div className="space-y-1.5 overflow-y-auto flex-1">
+        {ptzPresets.map(preset => {
+          const isSelected = selectedViewId === preset.id;
+          return (
+            <Button
+              key={preset.id}
+              variant="outline"
+              size="sm"
+              className={`text-[11px] justify-start h-8 px-2 w-full text-left flex items-center ${
+                isSelected
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+              }`}
+              onClick={() => setSelectedViewId(preset.id)}
+            >
+              {preset.name}
+              <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
+                PTZ
+              </Badge>
+            </Button>
+          );
+        })}
+      </div>
+    ) : (
+      <p className="text-[10px] text-slate-500 dark:text-slate-400">preset تعریف نشده است</p>
+    )}
+  </Card>
 
-            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-              preset های دوربین های چرخان
-            </Label>
-            {ptzPresets.length > 0 ? (
-              <div className="space-y-1.5 overflow-y-auto flex-1">
-                {ptzPresets.map(preset => (
-                  <Button
-                    key={preset.id}
-                    variant={selectedViewId === preset.id ? 'default' : 'outline'}
-                    size="sm"
-                    className="text-[11px] justify-start h-8 px-2 w-full"
-                    onClick={() => setSelectedViewId(preset.id)}
-                  >
-                    {preset.name}
-                    <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
-                      PTZ
-                    </Badge>
-                  </Button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">preset تعریف نشده است</p>
-            )}
-          </Card>
+  {/* بخش دوم: ترسیم مناطق */}
+  <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+    <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+      ترسیم مناطق کالیبراسیون
+    </Label>
+    <div className="flex gap-1 mb-2">
+      <Button
+        variant="outline"
+        size="sm"
+        className={`text-[10px] h-7 flex-1 px-1 ${
+          calibrationStep === 'direction'
+            ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+        }`}
+        onClick={() => setCalibrationStep('direction')}
+      >
+        ترسیم ماسک اصلی
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className={`text-[10px] h-7 flex-1 px-1 ${
+          calibrationStep === 'violation'
+            ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+        }`}
+        onClick={() => setCalibrationStep('violation')}
+      >
+        ترسیم ماسک تخلفات
+      </Button>
+    </div>
 
-          {/* بخش دوم: ترسیم مناطق */}
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
-            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-              ترسیم مناطق کالیبراسیون
-            </Label>
-            <div className="flex gap-1 mb-2">
-              <Button
-                variant={calibrationStep === 'direction' ? 'default' : 'outline'}
-                size="sm"
-                className="text-[10px] h-7 flex-1 px-1"
-                onClick={() => setCalibrationStep('direction')}
-              >
-                ترسیم ماسک اصلی
-              </Button>
-              <Button
-                variant={calibrationStep === 'violation' ? 'default' : 'outline'}
-                size="sm"
-                className="text-[10px] h-7 flex-1 px-1"
-                onClick={() => setCalibrationStep('violation')}
-              >
-                ترسیم ماسک تخلفات
-              </Button>
-            </div>
-
-            {calibrationStep === 'violation' && (
-              <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
-                <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">نوع تخلف</Label>
-                {violationTypes.map(vType => (
-                  <Button
-                    key={vType.id}
-                    variant={selectedViolationType === vType.id ? 'default' : 'outline'}
-                    size="sm"
-                    className="w-full justify-start text-[10px] h-7 px-1.5"
-                    style={{
-                      backgroundColor: selectedViolationType === vType.id ? vType.color + '15' : undefined,
-                      borderColor: vType.color,
-                      color: selectedViolationType === vType.id ? vType.color : undefined,
-                    }}
-                    onClick={() => setSelectedViolationType(vType.id)}
-                  >
-                    <div className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: vType.color }} />
-                    {vType.name}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </Card>
-        </div>
+    {calibrationStep === 'violation' && (
+      <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
+        <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">نوع تخلف</Label>
+        {violationTypes.map(vType => {
+          const isSelected = selectedViolationType === vType.id;
+          return (
+            <Button
+              key={vType.id}
+              variant="outline"
+              size="sm"
+              className={`w-full justify-start text-[10px] h-7 px-1.5 flex items-center ${
+                isSelected
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+              }`}
+              onClick={() => setSelectedViolationType(vType.id)}
+            >
+              <div
+                className="w-2 h-2 rounded-full mr-2"
+                style={{ backgroundColor: vType.color }}
+              />
+              {vType.name}
+            </Button>
+          );
+        })}
+      </div>
+    )}
+  </Card>
+</div>
 
         {/* ستون سوم: لیست مناطق (25%) */}
         <Card className="flex flex-col border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
-          <div className="p-3">
+          <div className="p-3 flex justify-between align-center">
             <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
               مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
             </Label>
+             {/* نمایش دکمه‌ها فقط وقتی حداقل یک منطقه وجود دارد */}
+          {directionShapes.length + violationShapes.length > 0 && (
+            <div >
+            
+              <Button
+                size="sm"
+                                variant="ghost"
+                                className="text-green-600 hover:bg-red-100 dark:hover:bg-green-900/20 h-5 w-5 "
+                                             onClick={handleSave}
+              >
+                <Save className="w-3 h-3 ml-1 " /> 
+              </Button>
+            </div>
+          )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-1 text-[10px]">
@@ -604,7 +642,17 @@ return (
                   <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
                   <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
                 </div>
+                  <Button
+                variant="destructive"
+                size="sm"
+                className="flex-1 text-[11px] h-8"
+                disabled={!selectedShapeId}
+                onClick={deleteSelectedShape}
+              >
+                <Trash2 className="w-3 h-3 ml-1 mr-1" /> 
+              </Button>
               </div>
+              
             ))}
             {directionShapes.length + violationShapes.length === 0 && (
               <p className="text-center text-slate-500 dark:text-slate-400 py-2">
@@ -613,27 +661,7 @@ return (
             )}
           </div>
 
-          {/* نمایش دکمه‌ها فقط وقتی حداقل یک منطقه وجود دارد */}
-          {directionShapes.length + violationShapes.length > 0 && (
-            <div className="p-3 border-t border-slate-200 dark:border-slate-700 flex gap-1.5">
-              <Button
-                variant="destructive"
-                size="sm"
-                className="flex-1 text-[11px] h-8"
-                disabled={!selectedShapeId}
-                onClick={deleteSelectedShape}
-              >
-                <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
-              </Button>
-              <Button
-                size="sm"
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
-                onClick={handleSave}
-              >
-                <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
-              </Button>
-            </div>
-          )}
+         
         </Card>
       </div>
     </div>
