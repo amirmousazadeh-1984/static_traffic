@@ -417,220 +417,224 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   }
 }, [selectedViewId]);
 
-  return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
-      <div className="max-w-[1800px] mx-auto">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          کالیبراسیون مناطق — {intersection.name}
-        </h2>
+return (
+  <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="max-w-[1800px] mx-auto">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        کالیبراسیون مناطق — {intersection.name}
+      </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4 h-[calc(100vh-200px)]">
-          {/* کانوَس */}
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                {currentView?.label || 'هیچ دیدی انتخاب نشده'}
-              </h3>
-              {/* نوار ابزار */}
-              <div className="flex gap-1.5">
-                <Button
-                  variant={activeTool === 'select' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-[10px] h-6 px-2"
-                  onClick={() => setActiveTool('select')}
-                >
-                  <MousePointer2 className="w-3 h-3 mr-1" /> انتخاب
-                </Button>
-                <Button
-                  variant={activeTool === 'rectangle' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-[10px] h-6 px-2"
-                  onClick={() => setActiveTool('rectangle')}
-                >
-                  مستطیل
-                </Button>
-                <Button
-                  variant={activeTool === 'polygon' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-[10px] h-6 px-2"
-                  onClick={() => setActiveTool('polygon')}
-                >
-                  چندضلعی
-                </Button>
-              </div>
+      {/* Container با ارتفاع 80vh و عرض ستون‌های 50% / 25% / 25% */}
+      <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4" style={{ height: '80vh' }}>
+        {/* ستون اول: کانواس (50%) */}
+        <Card className="flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between p-3">
+            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              {currentView?.label || 'هیچ دیدی انتخاب نشده'}
+            </h3>
+            <div className="flex gap-1.5">
+              <Button
+                variant={activeTool === 'select' ? 'default' : 'outline'}
+                size="sm"
+                className="text-[10px] h-6 px-2"
+                onClick={() => setActiveTool('select')}
+              >
+                <MousePointer2 className="w-3 h-3 mr-1" /> انتخاب
+              </Button>
+              <Button
+                variant={activeTool === 'rectangle' ? 'default' : 'outline'}
+                size="sm"
+                className="text-[10px] h-6 px-2"
+                onClick={() => setActiveTool('rectangle')}
+              >
+                مستطیل
+              </Button>
+              <Button
+                variant={activeTool === 'polygon' ? 'default' : 'outline'}
+                size="sm"
+                className="text-[10px] h-6 px-2"
+                onClick={() => setActiveTool('polygon')}
+              >
+                چندضلعی
+              </Button>
             </div>
+          </div>
 
-            {selectedViewId ? (
-              <div className="relative bg-slate-900 rounded flex-1 overflow-hidden">
-                <canvas
-                  ref={canvasRef}
-                  width={1000}
-                  height={600}
-                  onClick={handleCanvasClick}
-                  onDoubleClick={handleCanvasDoubleClick}
-                  onMouseMove={handleCanvasMouseMove}
-                  className="w-full h-full cursor-crosshair"
-                />
+          {selectedViewId ? (
+            <div className="relative bg-slate-900 flex-1 overflow-hidden">
+              <canvas
+                ref={canvasRef}
+                width={1000}
+                height={600}
+                onClick={handleCanvasClick}
+                onDoubleClick={handleCanvasDoubleClick}
+                onMouseMove={handleCanvasMouseMove}
+                className="w-full h-full cursor-crosshair"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center flex-1 bg-slate-100 dark:bg-slate-800 rounded border border-dashed border-slate-300 dark:border-slate-600">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">ابتدا یک دید انتخاب کنید</p>
+            </div>
+          )}
+        </Card>
+
+        {/* ستون دوم: انتخاب جهت + تنظیمات ترسیم (25%) */}
+        <div className="flex flex-col gap-4">
+          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+              جهات دوربین‌های ثابت
+            </Label>
+            {fixedDirections.length > 0 ? (
+              <div className="space-y-1.5 mb-3 overflow-y-auto flex-1">
+                {fixedDirections.map(dir => {
+                  const label = dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب';
+                  return (
+                    <Button
+                      key={dir}
+                      variant={selectedViewId === dir ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-[11px] justify-start h-8 px-2 w-full"
+                      onClick={() => setSelectedViewId(dir)}
+                    >
+                      {label}
+                    </Button>
+                  );
+                })}
               </div>
             ) : (
-              <div className="flex items-center justify-center flex-1 bg-slate-100 dark:bg-slate-800 rounded border border-dashed border-slate-300 dark:border-slate-600">
-                <p className="text-slate-500 dark:text-slate-400 text-sm">ابتدا یک دید انتخاب کنید</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">دوربین ثابتی تعریف نشده</p>
+            )}
+
+            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+              preset های دوربین های چرخان
+            </Label>
+            {ptzPresets.length > 0 ? (
+              <div className="space-y-1.5 overflow-y-auto flex-1">
+                {ptzPresets.map(preset => (
+                  <Button
+                    key={preset.id}
+                    variant={selectedViewId === preset.id ? 'default' : 'outline'}
+                    size="sm"
+                    className="text-[11px] justify-start h-8 px-2 w-full"
+                    onClick={() => setSelectedViewId(preset.id)}
+                  >
+                    {preset.name}
+                    <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
+                      PTZ
+                    </Badge>
+                  </Button>
+                ))}
               </div>
+            ) : (
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">preset تعریف نشده است</p>
             )}
           </Card>
 
-          {/* ستون چپ */}
-          <div className="space-y-3 overflow-y-auto pr-1">
-       <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-  <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-    جهات دوربین‌های ثابت
-  </Label>
-  {fixedDirections.length > 0 ? (
-    <div className="space-y-1.5 mb-3 ">
-      {fixedDirections.map(dir => {
-        const label = dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب';
-        return (
-          <Button
-            key={dir}
-            variant={selectedViewId === dir ? 'default' : 'outline'}
-            size="sm"
-            className="text-[11px] justify-start h-8 px-2"
-            onClick={() => setSelectedViewId(dir)}
-          >
-            {label}
-          </Button>
-        );
-      })}
-    </div>
-  ) : (
-    <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">دوربین ثابتی تعریف نشده</p>
-  )}
+          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+              ترسیم مناطق کالیبراسیون
+            </Label>
+            <div className="flex gap-1 mb-2">
+              <Button
+                variant={calibrationStep === 'direction' ? 'default' : 'outline'}
+                size="sm"
+                className="text-[10px] h-7 flex-1 px-1"
+                onClick={() => setCalibrationStep('direction')}
+              >
+                ترسیم ماسک اصلی
+              </Button>
+              <Button
+                variant={calibrationStep === 'violation' ? 'default' : 'outline'}
+                size="sm"
+                className="text-[10px] h-7 flex-1 px-1"
+                onClick={() => setCalibrationStep('violation')}
+              >
+                ترسیم ماسک تخلفات
+              </Button>
+            </div>
 
-  <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-  preset های دوربین های چرخان
-  </Label>
-  {ptzPresets.length > 0 ? (
-    <div className="space-y-1.5">
-      {ptzPresets.map(preset => (
-        <Button
-          key={preset.id}
-          variant={selectedViewId === preset.id ? 'default' : 'outline'}
-          size="sm"
-          className="text-[11px] justify-start h-8 px-2"
-          onClick={() => setSelectedViewId(preset.id)}
-        >
-          {preset.name}
-          <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
-            PTZ
-          </Badge>
-        </Button>
-      ))}
-    </div>
-  ) : (
-    <p className="text-[10px] text-slate-500 dark:text-slate-400">preset تعریف نشده است</p>
-  )}
-</Card>
-
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                ترسیم مناطق کالیبراسیون
-              </Label>
-              <div className="flex gap-1">
-                <Button
-                  variant={calibrationStep === 'direction' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-[10px] h-7 flex-1 px-1"
-                  onClick={() => setCalibrationStep('direction')}
-                >
-                  ترسیم ماسک اصلی
-                </Button>
-                <Button
-                  variant={calibrationStep === 'violation' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-[10px] h-7 flex-1 px-1"
-                  onClick={() => setCalibrationStep('violation')}
-                >
-                  ترسیم ماسک تخلفات
-                </Button>
-              </div>
-
-              {calibrationStep === 'violation' && (
-                <div className="mt-2 space-y-1">
-                  <Label className="text-[10px] text-slate-700 dark:text-slate-300">نوع تخلف</Label>
-                  {violationTypes.map(vType => (
-                    <Button
-                      key={vType.id}
-                      variant={selectedViolationType === vType.id ? 'default' : 'outline'}
-                      size="sm"
-                      className="w-full justify-start text-[10px] h-7 px-1.5"
-                      style={{
-                        backgroundColor: selectedViolationType === vType.id ? vType.color + '15' : undefined,
-                        borderColor: vType.color,
-                        color: selectedViolationType === vType.id ? vType.color : undefined,
-                      }}
-                      onClick={() => setSelectedViolationType(vType.id)}
-                    >
-                      <div className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: vType.color }} />
-                      {vType.name}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </Card>
-          </div>
-
-          {/* ستون راست */}
-          <div className="space-y-3 overflow-y-auto pr-1">
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex-1 flex flex-col">
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
-              </Label>
-              <div className="overflow-y-auto space-y-1 flex-1 text-[10px]">
-                {[...directionShapes, ...violationShapes].map(shape => (
-                  <div
-                    key={shape.id}
-                    className={`p-1.5 rounded cursor-pointer ${
-                      selectedShapeId === shape.id
-                        ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700'
-                        : 'bg-slate-100 dark:bg-slate-700'
-                    }`}
-                    onClick={() => setSelectedShapeId(shape.id)}
+            {calibrationStep === 'violation' && (
+              <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
+                <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">نوع تخلف</Label>
+                {violationTypes.map(vType => (
+                  <Button
+                    key={vType.id}
+                    variant={selectedViolationType === vType.id ? 'default' : 'outline'}
+                    size="sm"
+                    className="w-full justify-start text-[10px] h-7 px-1.5"
+                    style={{
+                      backgroundColor: selectedViolationType === vType.id ? vType.color + '15' : undefined,
+                      borderColor: vType.color,
+                      color: selectedViolationType === vType.id ? vType.color : undefined,
+                    }}
+                    onClick={() => setSelectedViolationType(vType.id)}
                   >
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
-                      <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
-                    
-                    </div>
-                  </div>
+                    <div className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: vType.color }} />
+                    {vType.name}
+                  </Button>
                 ))}
-                {directionShapes.length + violationShapes.length === 0 && (
-                  <p className="text-center text-slate-500 dark:text-slate-400 py-2">
-                    منطقه‌ای تعریف نشده
-                  </p>
-                )}
               </div>
-              <div className="flex gap-1.5 mt-2">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="flex-1 text-[11px] h-8"
-                  disabled={!selectedShapeId}
-                  onClick={deleteSelectedShape}
-                >
-                  <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
-                </Button>
-                <Button
-                  size="sm"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
-                  onClick={handleSave}
-                >
-                  <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
-                </Button>
-              </div>
-            </Card>
-          </div>
+            )}
+          </Card>
         </div>
+
+        {/* ستون سوم: لیست مناطق (25%) */}
+        <Card className="flex flex-col border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+          <div className="p-3">
+            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+              مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
+            </Label>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-1 text-[10px]">
+            {[...directionShapes, ...violationShapes].map(shape => (
+              <div
+                key={shape.id}
+                className={`p-1.5 rounded cursor-pointer ${
+                  selectedShapeId === shape.id
+                    ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700'
+                    : 'bg-slate-100 dark:bg-slate-700'
+                }`}
+                onClick={() => setSelectedShapeId(shape.id)}
+              >
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
+                  <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
+                </div>
+              </div>
+            ))}
+            {directionShapes.length + violationShapes.length === 0 && (
+              <p className="text-center text-slate-500 dark:text-slate-400 py-2">
+                منطقه‌ای تعریف نشده
+              </p>
+            )}
+          </div>
+
+          {/* نمایش دکمه‌ها فقط وقتی حداقل یک منطقه وجود دارد */}
+          {directionShapes.length + violationShapes.length > 0 && (
+            <div className="p-3 border-t border-slate-200 dark:border-slate-700 flex gap-1.5">
+              <Button
+                variant="destructive"
+                size="sm"
+                className="flex-1 text-[11px] h-8"
+                disabled={!selectedShapeId}
+                onClick={deleteSelectedShape}
+              >
+                <Trash2 className="w-3 h-3 ml-1 mr-1" /> حذف
+              </Button>
+              <Button
+                size="sm"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] h-8"
+                onClick={handleSave}
+              >
+                <Save className="w-3 h-3 ml-1 mr-1" /> ذخیره
+              </Button>
+            </div>
+          )}
+        </Card>
       </div>
     </div>
-  );
+  </div>
+);
 }
