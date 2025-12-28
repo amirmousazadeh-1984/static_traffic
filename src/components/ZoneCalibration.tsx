@@ -73,7 +73,9 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const [zoom] = useState(1); // برای سادگی، زوم حذف شد
   const [showDirectionMasks, setShowDirectionMasks] = useState(true);
   const [showViolationMasks, setShowViolationMasks] = useState(true);
-
+const [editingShapeId, setEditingShapeId] = useState<string | null>(null);
+  const [editedName, setEditedName] = useState('');
+  
   const [violationTypes] = useState([
     { id: 'red-light', name: 'عبور از چراغ قرمز', color: '#ef4444' },
     { id: 'crosswalk', name: 'تجاوز به خط عابر', color: '#f97316' },
@@ -82,7 +84,24 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
     { id: 'illegal-parking', name: 'پارک ممنوع', color: '#10b981' },
   ]);
   const [selectedViolationType, setSelectedViolationType] = useState(violationTypes[0].id);
+const startEditing = (shapeId: string, currentName: string) => {
+  setEditingShapeId(shapeId);
+  setEditedName(currentName);
+};
 
+const cancelEditing = () => {
+  setEditingShapeId(null);
+  setEditedName('');
+};
+
+const saveEditedName = () => {
+  if (!editingShapeId) return;
+  setShapes(shapes.map(s => 
+    s.id === editingShapeId ? { ...s, name: editedName } : s
+  ));
+  setEditingShapeId(null);
+  toast.success('نام منطقه به‌روزرسانی شد');
+};
   // بارگذاری ماسک‌ها
   useEffect(() => {
     const existingMasks = mockMasks[intersection.id] || [];
@@ -605,64 +624,119 @@ return (
   </Card>
 </div>
 
-        {/* ستون سوم: لیست مناطق (25%) */}
-        <Card className="flex flex-col border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
-          <div className="p-3 flex justify-between align-center">
-            <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-              مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
-            </Label>
-             {/* نمایش دکمه‌ها فقط وقتی حداقل یک منطقه وجود دارد */}
-          {directionShapes.length + violationShapes.length > 0 && (
-            <div >
-            
+      {/* ستون سوم: لیست مناطق (25%) */}
+<Card className="flex flex-col border border-slate-200 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+  <div className="p-3 flex justify-between items-center">
+    <Label className="text-xs font-medium text-slate-900 dark:text-slate-100">
+      مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
+    </Label>
+    {directionShapes.length + violationShapes.length > 0 && (
+      <Button
+        size="sm"
+        variant="ghost"
+        className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0"
+        onClick={handleSave}
+      >
+        <Save className="w-3 h-3" />
+      </Button>
+    )}
+  </div>
+
+  <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-2 text-[11px]">
+    {[...directionShapes, ...violationShapes].map(shape => (
+      <div
+        key={shape.id}
+        className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${
+          selectedShapeId === shape.id
+            ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700'
+            : 'bg-slate-100 dark:bg-slate-700'
+        }`}
+        onClick={() => {
+          if (!editingShapeId) {
+            setSelectedShapeId(shape.id);
+          }
+        }}
+      >
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-2 h-2 rounded flex-shrink-0" style={{ backgroundColor: shape.color }} />
+          {editingShapeId === shape.id ? (
+            <input
+              type="text"
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              autoFocus
+              className="flex-1 bg-transparent border-b border-blue-400 outline-none text-slate-900 dark:text-slate-100 text-[11px] py-0.5"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <span className="text-slate-900 dark:text-slate-100 truncate">{shape.name}</span>
+          )}
+        </div>
+
+        <div className="flex gap-1 mr-1 flex-shrink-0">
+          {editingShapeId === shape.id ? (
+            <>
               <Button
                 size="sm"
-                                variant="ghost"
-                                className="text-green-600 hover:bg-red-100 dark:hover:bg-green-900/20 h-5 w-5 "
-                                             onClick={handleSave}
+                variant="ghost"
+                className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  saveEditedName();
+                }}
               >
-                <Save className="w-3 h-3 ml-1 " /> 
+                <Save className="w-3 h-3" />
               </Button>
-            </div>
-          )}
-          </div>
-
-          <div className="flex-1  overflow-y-auto p-3 pt-0 space-y-2 text-[11px] ">
-            {[...directionShapes, ...violationShapes].map(shape => (
-              <div
-                key={shape.id}
-                className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${
-                  selectedShapeId === shape.id
-                    ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700'
-                    : 'bg-slate-100 dark:bg-slate-700'
-                }`}                              
-
-                onClick={() => setSelectedShapeId(shape.id)}
-              >
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded" style={{ backgroundColor: shape.color }} />
-                  <span className="text-slate-900 dark:text-slate-100">{shape.name}</span>
-                </div>
-                  <Button
-                variant="destructive"
+              <Button
                 size="sm"
-                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5  "
-                disabled={!selectedShapeId}
-                onClick={deleteSelectedShape}
+                variant="ghost"
+                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  cancelEditing();
+                }}
               >
-                <Trash2 className="w-3 h-3 ml-1 mr-1" /> 
+                ✕
               </Button>
-              </div>
-              
-            ))}
-            {directionShapes.length + violationShapes.length === 0 && (
-              <p className="text-center text-slate-500 dark:text-slate-400 py-2">
-منطقه ای برای این Preset  تعریف نشده است              </p>
-            )}
-          </div>
+            </>
+          ) : (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEditing(shape.id, shape.name);
+                }}
+              >
+                ✎
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedShapeId(shape.id);
+                  deleteSelectedShape();
+                }}
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    ))}
 
-         
-        </Card>
+    {directionShapes.length + violationShapes.length === 0 && (
+      <p className="text-center text-slate-500 dark:text-slate-400 py-2">
+        منطقه‌ای برای این Preset تعریف نشده است
+      </p>
+    )}
+  </div>
+</Card>
       </div>
     </div>
   </div>
