@@ -625,7 +625,7 @@ return (
 </div>
 
       {/* ستون سوم: لیست مناطق (25%) */}
-<Card className="flex flex-col border border-slate-200 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+<Card className="flex flex-col border border-slate-700 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
   <div className="p-3 flex justify-between items-center">
     <Label className="text-xs font-medium text-slate-900 dark:text-slate-100">
       مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
