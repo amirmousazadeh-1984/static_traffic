@@ -627,15 +627,16 @@ return (
           )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-1 text-[10px]">
+          <div className="flex-1  overflow-y-auto p-3 pt-0 space-y-2 text-[11px] ">
             {[...directionShapes, ...violationShapes].map(shape => (
               <div
                 key={shape.id}
-                className={`p-1.5 rounded cursor-pointer ${
+                className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${
                   selectedShapeId === shape.id
-                    ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700'
+                    ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700'
                     : 'bg-slate-100 dark:bg-slate-700'
-                }`}
+                }`}                              
+
                 onClick={() => setSelectedShapeId(shape.id)}
               >
                 <div className="flex items-center gap-1.5">
@@ -645,7 +646,7 @@ return (
                   <Button
                 variant="destructive"
                 size="sm"
-                className="flex-1 text-[11px] h-8"
+                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5  "
                 disabled={!selectedShapeId}
                 onClick={deleteSelectedShape}
               >
@@ -656,8 +657,7 @@ return (
             ))}
             {directionShapes.length + violationShapes.length === 0 && (
               <p className="text-center text-slate-500 dark:text-slate-400 py-2">
-                منطقه‌ای تعریف نشده
-              </p>
+منطقه ای برای این Preset  تعریف نشده است              </p>
             )}
           </div>
 
