@@ -441,13 +441,18 @@ const saveEditedName = () => {
   return (
 
   <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
-    <div className="max-w-[1800px] mx-auto">
+      <div className="max-w-[1800px] mx-auto">
+        
+        <div className="mb-4">
       <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
         کالیبراسیون مناطق — {intersection.name}
-      </h2>
-
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+           کالیبره کردن جهات و preset ها و ترسیم ماسک های اصلی و ماسک های تخلفات برای هر جهت
+          </p>
+</div>
       {/* Container اصلی با ارتفاع 80vh و عرض ستون‌های 50% / 25% / 25% */}
-      <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4" style={{ height: '80vh' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-[50%_24%_24%] gap-4" style={{ height: '80vh' }}>
         {/* ستون اول: کانواس (50%) */}
         <Card className="flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
           <div className="flex items-center justify-between p-3">

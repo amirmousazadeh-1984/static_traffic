@@ -130,10 +130,11 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
-      <div className="mx-auto">
+ <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+      <div className="max-w-[1800px] mx-auto">
+        
         <div className="mb-4">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+         <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             کالیبراسیون PTZ — {intersection.name}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
@@ -142,7 +143,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
         </div>
 
         <div
-          className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6"
+          className="grid grid-cols-1 lg:grid-cols-[70%_28%] gap-6"
           style={{ height: '80vh' }}
         >
           {/* ستون 1: تصویر */}
