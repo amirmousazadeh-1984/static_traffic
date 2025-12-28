@@ -424,7 +424,7 @@ return (
         کالیبراسیون مناطق — {intersection.name}
       </h2>
 
-      {/* Container با ارتفاع 80vh و عرض ستون‌های 50% / 25% / 25% */}
+      {/* Container اصلی با ارتفاع 80vh و عرض ستون‌های 50% / 25% / 25% */}
       <div className="grid grid-cols-1 lg:grid-cols-[50%_25%_25%] gap-4" style={{ height: '80vh' }}>
         {/* ستون اول: کانواس (50%) */}
         <Card className="flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
@@ -479,9 +479,10 @@ return (
           )}
         </Card>
 
-        {/* ستون دوم: انتخاب جهت + تنظیمات ترسیم (25%) */}
-        <div className="flex flex-col gap-4">
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+        {/* ستون دوم: دو بخش با ارتفاع برابر (هر کدام 50% از 80vh = 40vh) */}
+        <div className="flex flex-col gap-4 h-full">
+          {/* بخش اول: جهات و presetها */}
+          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
             <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
               جهات دوربین‌های ثابت
             </Label>
@@ -531,7 +532,8 @@ return (
             )}
           </Card>
 
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden flex flex-col">
+          {/* بخش دوم: ترسیم مناطق */}
+          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
             <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
               ترسیم مناطق کالیبراسیون
             </Label>
