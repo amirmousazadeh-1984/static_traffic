@@ -411,9 +411,11 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const directionShapes = shapes.filter(s => s.viewId === selectedViewId && s.layer === 'direction');
   const violationShapes = shapes.filter(s => s.viewId === selectedViewId && s.layer === 'violation');
 
+ useEffect(() => {
   if (!selectedViewId) {
     setActiveTool('select');
   }
+}, [selectedViewId]);
 
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
@@ -479,35 +481,55 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
 
           {/* ستون چپ */}
           <div className="space-y-3 overflow-y-auto pr-1">
-            <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                جهات قابل کالیبراسیون
-              </Label>
-              {availableViews.length > 0 ? (
-                <div className="space-y-1.5">
-                  {availableViews.map(view => (
-                    <Button
-                      key={view.id}
-                      variant={selectedViewId === view.id ? 'default' : 'outline'}
-                      size="sm"
-                      className="text-[11px] justify-start h-8 px-2"
-                      onClick={() => setSelectedViewId(view.id)}
-                    >
-                      {view.label}
-                      {view.type === 'ptz' && (
-                        <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
-                          PTZ
-                        </Badge>
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" /> هیچ دیدی موجود نیست
-                </p>
-              )}
-            </Card>
+       <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+  <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+    جهات دوربین‌های ثابت
+  </Label>
+  {fixedDirections.length > 0 ? (
+    <div className="space-y-1.5 mb-3 ">
+      {fixedDirections.map(dir => {
+        const label = dir === 'north' ? 'شمال' : dir === 'south' ? 'جنوب' : dir === 'east' ? 'شرق' : 'غرب';
+        return (
+          <Button
+            key={dir}
+            variant={selectedViewId === dir ? 'default' : 'outline'}
+            size="sm"
+            className="text-[11px] justify-start h-8 px-2"
+            onClick={() => setSelectedViewId(dir)}
+          >
+            {label}
+          </Button>
+        );
+      })}
+    </div>
+  ) : (
+    <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">دوربین ثابتی تعریف نشده</p>
+  )}
+
+  <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+  preset های دوربین های چرخان
+  </Label>
+  {ptzPresets.length > 0 ? (
+    <div className="space-y-1.5">
+      {ptzPresets.map(preset => (
+        <Button
+          key={preset.id}
+          variant={selectedViewId === preset.id ? 'default' : 'outline'}
+          size="sm"
+          className="text-[11px] justify-start h-8 px-2"
+          onClick={() => setSelectedViewId(preset.id)}
+        >
+          {preset.name}
+          <Badge className="mr-1 text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 px-1.5 py-0">
+            PTZ
+          </Badge>
+        </Button>
+      ))}
+    </div>
+  ) : (
+    <p className="text-[10px] text-slate-500 dark:text-slate-400">preset تعریف نشده است</p>
+  )}
+</Card>
 
             <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
