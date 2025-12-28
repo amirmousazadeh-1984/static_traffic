@@ -11,6 +11,7 @@ import { MousePointer2, Trash2, Save, AlertTriangle, Edit3 } from 'lucide-react'
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
+import { SubPresetCalibration } from './SubPresetCalibration';
 
 interface ZoneCalibrationProps {
   intersection: Intersection;
@@ -75,7 +76,8 @@ export function ZoneCalibration({ intersection }: ZoneCalibrationProps) {
   const [showViolationMasks, setShowViolationMasks] = useState(true);
 const [editingShapeId, setEditingShapeId] = useState<string | null>(null);
   const [editedName, setEditedName] = useState('');
-  
+  const [showSubPresetModal, setShowSubPresetModal] = useState<{ maskId: string; maskName: string } | null>(null);
+
   const [violationTypes] = useState([
     { id: 'red-light', name: 'عبور از چراغ قرمز', color: '#ef4444' },
     { id: 'crosswalk', name: 'تجاوز به خط عابر', color: '#f97316' },
@@ -436,7 +438,8 @@ const saveEditedName = () => {
   }
 }, [selectedViewId]);
 
-return (
+  return (
+
   <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
     <div className="max-w-[1800px] mx-auto">
       <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
@@ -701,7 +704,20 @@ return (
               </Button>
             </>
           ) : (
-            <>
+              <>
+                {shape.layer === 'violation' && editingShapeId !== shape.id && (
+  <Button
+    size="sm"
+    variant="outline"
+    className="text-[10px] h-5 px-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+    onClick={(e) => {
+      e.stopPropagation();
+      setShowSubPresetModal({ maskId: shape.id, maskName: shape.name });
+    }}
+  >
+    Sub-preset
+  </Button>
+)}
               <Button
                 size="sm"
                 variant="ghost"
@@ -730,7 +746,14 @@ return (
         </div>
       </div>
     ))}
-
+{showSubPresetModal && selectedViewId && (
+  <SubPresetCalibration
+    intersection={intersection}
+    maskId={showSubPresetModal.maskId}
+    maskName={showSubPresetModal.maskName}
+    onClose={() => setShowSubPresetModal(null)}
+  />
+)}
     {directionShapes.length + violationShapes.length === 0 && (
       <p className="text-center text-slate-500 dark:text-slate-400 py-2">
         منطقه‌ای برای این Preset تعریف نشده است
@@ -741,5 +764,12 @@ return (
       </div>
     </div>
   </div>
-);
+  
+
+  );
+  
+  
+  
+  
+
 }
