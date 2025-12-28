@@ -40,7 +40,7 @@ export function SubPresetCalibration({
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
   const [editingPresetId, setEditingPresetId] = useState<string | null>(null);
 
-  // ❗️ توجه: این فقط برای دیباگ mock است — حذف شود در نهایت
+  // ❗️ فقط برای دیباگ mock — در نسخه نهایی حذف شود
   useEffect(() => {
     (window as any).mockSubPresets = {
       ...(window as any).mockSubPresets,
@@ -90,7 +90,7 @@ export function SubPresetCalibration({
       zoom: scale,
       focus: 100,
       maskId,
-      presetId: '', // می‌توانید این را بعداً از preset اصلی بگیرید
+      presetId: '',
     };
 
     dispatch(
@@ -161,44 +161,44 @@ export function SubPresetCalibration({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 sm:p-6">
       <div
-        className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-[80vw] h-[80vh] flex flex-col"
         dir="rtl"
       >
         {/* هدر */}
-        <div className="p-4 bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600 flex items-center justify-between">
+        <div className="px-5 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              تعریف Sub-preset برای منطقه: {maskName}
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              تعریف Sub-preset برای منطقه: <span className="text-blue-600 dark:text-blue-400">{maskName}</span>
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               {intersection.name} — تنظیم دید دوربین چرخان برای عکس‌برداری از این منطقه تخلف
             </p>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+          <Button variant="ghost" size="icon" onClick={onClose} className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+            <X className="w-5 h-5" />
           </Button>
         </div>
 
         {/* بدنه اصلی */}
-        <div className="flex-1 overflow-auto p-4" style={{ height: 'calc(90vh - 100px)' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6 h-full">
+        <div className="flex-1 overflow-hidden p-4 sm:p-5">
+          <div className="grid grid-cols-1 lg:grid-cols-[65%_34%] gap-5 h-full">
             {/* نمای دوربین */}
-            <div className="flex">
-              <Card className="w-full border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col">
-                <div className="p-4 pb-2 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    نمای دوربین چرخان (برای منطقه تخلف)
+            <div className="flex flex-col">
+              <Card className="w-full h-full flex flex-col border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl">
+                <div className="px-4 pt-3 pb-2 flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    نمای دوربین چرخان
                   </h3>
                   {isTesting && (
-                    <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">
+                    <span className="text-[10px] bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-0.5 rounded-full font-medium">
                       تست فعال
                     </span>
                   )}
                 </div>
 
-                <div className="relative flex-1 overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-900 mx-4 mb-3">
+                <div className="relative flex-1 overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-900 mx-3 mb-3">
                   {intersection.imageUrl ? (
                     <img
                       src={intersection.imageUrl}
@@ -217,61 +217,61 @@ export function SubPresetCalibration({
                   )}
 
                   <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-                    <div className="grid grid-cols-3 gap-1 bg-black/30 backdrop-blur-sm p-1.5 rounded-lg">
+                    <div className="grid grid-cols-3 gap-1 bg-black/40 backdrop-blur-sm p-1 rounded-md">
                       <div />
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => moveView(0, -30)}
                       >
-                        <ArrowUp className="w-3 h-3" />
+                        <ArrowUp className="w-2.5 h-2.5" />
                       </Button>
                       <div />
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => moveView(-30, 0)}
                       >
-                        <ArrowLeft className="w-3 h-3" />
+                        <ArrowLeft className="w-2.5 h-2.5" />
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={resetView}
                       >
-                        <Home className="w-3 h-3" />
+                        <Home className="w-2.5 h-2.5" />
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => moveView(30, 0)}
                       >
-                        <ArrowRightIcon className="w-3 h-3" />
+                        <ArrowRightIcon className="w-2.5 h-2.5" />
                       </Button>
                       <div />
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => moveView(0, 30)}
                       >
-                        <ArrowDown className="w-3 h-3" />
+                        <ArrowDown className="w-2.5 h-2.5" />
                       </Button>
                       <div />
                     </div>
 
-                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm p-1.5 rounded-lg">
+                    <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm p-1 rounded-md">
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => handleZoom('out')}
                       >
-                        <ZoomOut className="w-3 h-3" />
+                        <ZoomOut className="w-2.5 h-2.5" />
                       </Button>
                       <Slider
                         value={[scale]}
@@ -279,21 +279,21 @@ export function SubPresetCalibration({
                         min={0.5}
                         max={3}
                         step={0.1}
-                        className="w-16"
+                        className="w-14"
                       />
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6 p-0 bg-white/20 hover:bg-white/30 text-white"
+                        className="h-5 w-5 p-0 bg-white/20 hover:bg-white/30 text-white"
                         onClick={() => handleZoom('in')}
                       >
-                        <ZoomIn className="w-3 h-3" />
+                        <ZoomIn className="w-2.5 h-2.5" />
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                <div className="px-4 pb-3 text-xs text-slate-600 dark:text-slate-400 flex gap-4">
+                <div className="px-4 pb-3 text-[11px] text-slate-600 dark:text-slate-400 flex gap-3">
                   <span>pan: {offset.x.toFixed(1)}</span>
                   <span>tilt: {offset.y.toFixed(1)}</span>
                   <span>zoom: {scale.toFixed(1)}x</span>
@@ -302,10 +302,10 @@ export function SubPresetCalibration({
             </div>
 
             {/* لیست و فرم */}
-            <div className="flex flex-col gap-6 h-full">
-              <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl shrink-0">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-base font-medium text-slate-900 dark:text-slate-100">
+            <div className="flex flex-col gap-5 h-full">
+              <Card className="p-4 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl shrink-0">
+                <div className="flex justify-between items-start mb-2.5">
+                  <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
                     {editingPresetId ? 'ویرایش Sub-preset' : 'ایجاد Sub-preset جدید'}
                   </h3>
                   {editingPresetId ? (
@@ -314,17 +314,17 @@ export function SubPresetCalibration({
                         onClick={() => savePreset(true)}
                         size="icon"
                         variant="ghost"
-                        className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
+                        className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
                       >
-                        <Save className="w-3 h-3" />
+                        <Save className="w-2.5 h-2.5" />
                       </Button>
                       <Button
                         onClick={cancelEdit}
                         size="icon"
                         variant="ghost"
-                        className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
+                        className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-2.5 h-2.5" />
                       </Button>
                     </div>
                   ) : (
@@ -332,36 +332,34 @@ export function SubPresetCalibration({
                       onClick={() => savePreset(false)}
                       size="icon"
                       variant="ghost"
-                      className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
+                      className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
                     >
-                      <Save className="w-3 h-3" />
+                      <Save className="w-2.5 h-2.5" />
                     </Button>
                   )}
                 </div>
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-xs text-slate-700 dark:text-slate-300">
-                      نام Sub-preset *
-                    </Label>
-                    <Input
-                      value={presetName}
-                      onChange={(e) => setPresetName(e.target.value)}
-                      placeholder="نام sub-preset را وارد کنید..."
-                      className="mt-1 text-sm bg-slate-50 dark:bg-slate-700"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label className="text-[11px] text-slate-700 dark:text-slate-300">
+                    نام Sub-preset *
+                  </Label>
+                  <Input
+                    value={presetName}
+                    onChange={(e) => setPresetName(e.target.value)}
+                    placeholder="نام sub-preset را وارد کنید..."
+                    className="text-sm bg-slate-50 dark:bg-slate-700"
+                  />
                 </div>
               </Card>
 
               {/* لیست sub-presets */}
-              <Card className="flex-1 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
-                <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-2">
+              <Card className="flex-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col p-3">
+                <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">
                   Sub-preset‌ها ({subPresets.length})
                 </h3>
 
-                <div className="overflow-y-auto pr-1 space-y-2 text-xs flex-1 min-h-0">
+                <div className="overflow-y-auto space-y-2 text-[11px] flex-1">
                   {subPresets.length === 0 ? (
-                    <div className="flex items-center justify-center h-full text-slate-500 dark:text-slate-400 text-center px-2 py-4">
+                    <div className="flex items-center justify-center h-full text-slate-500 dark:text-slate-400 text-center px-2 py-3">
                       <p>هیچ sub-presetی تعریف نشده است</p>
                     </div>
                   ) : (
@@ -369,13 +367,13 @@ export function SubPresetCalibration({
                       <div
                         key={preset.id}
                         onClick={() => selectPreset(preset)}
-                        className={`p-3.5 rounded-lg border cursor-pointer transition-colors ${
+                        className={`p-2.5 rounded-md border cursor-pointer transition-colors ${
                           selectedPresetId === preset.id
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                             : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-700/50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-start justify-between mb-1.5">
                           <p className="font-medium text-[11px] text-slate-900 dark:text-slate-200 line-clamp-1">
                             {preset.name}
                           </p>
@@ -385,24 +383,24 @@ export function SubPresetCalibration({
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
+                                  className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-4 w-4 p-0.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     savePreset(true);
                                   }}
                                 >
-                                  <Save className="w-3 h-3" />
+                                  <Save className="w-2.5 h-2.5" />
                                 </Button>
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
+                                  className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-4 w-4 p-0.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     cancelEdit();
                                   }}
                                 >
-                                  <X className="w-3 h-3" />
+                                  <X className="w-2.5 h-2.5" />
                                 </Button>
                               </>
                             ) : (
@@ -410,35 +408,35 @@ export function SubPresetCalibration({
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0.5"
+                                  className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-4 w-4 p-0.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     startEditPreset(preset);
                                   }}
                                 >
-                                  <Edit3 className="w-3 h-3" />
+                                  <Edit3 className="w-2.5 h-2.5" />
                                 </Button>
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
+                                  className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-4 w-4 p-0.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     testPreset(preset);
                                   }}
                                 >
-                                  <Play className="w-3 h-3" />
+                                  <Play className="w-2.5 h-2.5" />
                                 </Button>
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
+                                  className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-4 w-4 p-0.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     deletePreset(preset.id);
                                   }}
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  <Trash2 className="w-2.5 h-2.5" />
                                 </Button>
                               </>
                             )}
