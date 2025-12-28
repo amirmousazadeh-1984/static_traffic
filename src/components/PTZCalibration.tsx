@@ -233,25 +233,25 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
         <div className="flex flex-col gap-6">
           <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl">
              <div className='flex justify-between'>
-                 <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-3">ذخیره Preset جدید</h3>
+                 <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-3">ایجاد Preset جدید</h3>
            
                <Button onClick={savePreset}
-               
+               className="text-green-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
                
                         size="icon"
                         variant="ghost">
-                <Save                                                                         className="text-green-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
+                <Save className="w-3 h-3"                                                                         
  /> 
               </Button>
           </div>
-             <div className="space-y-3">
+             <div className=" space-y-6 ">
               <div>
                 <Label className="text-xs text-slate-700 dark:text-slate-300">نام Preset *</Label>
                 <Input
                   value={presetName}
                   onChange={(e) => setPresetName(e.target.value)}
                   placeholder="نام preset را وارد کنید..."
-                  className="mt-1 text-sm"
+                  className="mt-1 text-sm bg-slate-50 dark:bg-slate-700"
                 />
               </div>
              
