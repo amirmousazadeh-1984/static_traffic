@@ -77,14 +77,19 @@ export function ViolationTypesManager() {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">مدیریت انواع تخلفات</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+<div className="max-w-[1800px] mx-auto">
+      <div className="mb-4">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">مدیریت انواع تخلفات</h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           انواع تخلفات قابل شناسایی در سیستم را اینجا تعریف و مدیریت کنید
         </p>
       </div>
 
+      <div
+          className="grid grid-cols-1 lg:grid-cols-[50%_48%] gap-6"
+          style={{ height: '80vh' }}
+        >
       {/* فرم افزودن */}
       <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
@@ -183,7 +188,9 @@ export function ViolationTypesManager() {
             <p>هنوز هیچ تخلفی تعریف نشده است</p>
           </div>
         )}
-      </Card>
+        </Card>
+        </div>
+        </div>
     </div>
   );
 }
