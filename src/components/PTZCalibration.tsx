@@ -8,7 +8,7 @@ import { Label } from './ui/label';
 import { Slider } from './ui/slider';
 import { 
   ArrowUp, ArrowDown, ArrowLeft, ArrowRight as ArrowRightIcon,
-  ZoomIn, ZoomOut, Save, Home, Play, Eye, Trash2, Edit3
+  ZoomIn, ZoomOut, Save, Home, Play, Eye, Trash2, Edit3, X
 } from 'lucide-react';
 import { PTZPreset, Intersection } from '../types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +29,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
   const [presetName, setPresetName] = useState('');
   const [isTesting, setIsTesting] = useState(false);
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
+  const [editingPresetId, setEditingPresetId] = useState<string | null>(null);
 
   useEffect(() => {
     (window as any).mockPTZPresets = { ...(window as any).mockPTZPresets, [intersection.id]: presets };
@@ -52,16 +53,18 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
     setScale(1);
     setPresetName('');
     setSelectedPresetId(null);
+    setEditingPresetId(null);
   };
 
-  const savePreset = () => {
+  const savePreset = (inPlace = false) => {
     if (!presetName.trim()) {
       toast.error('لطفاً نام Preset را وارد کنید');
       return;
     }
 
+    const targetId = inPlace && editingPresetId ? editingPresetId : (selectedPresetId || `preset-${Date.now()}`);
     const newPreset: PTZPreset = {
-      id: selectedPresetId || `preset-${Date.now()}`,
+      id: targetId,
       name: presetName.trim(),
       pan: offset.x,
       tilt: offset.y,
@@ -72,7 +75,8 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
     dispatch(addOrUpdatePreset({ intersectionId: intersection.id, preset: newPreset }));
     setPresetName('');
     setSelectedPresetId(null);
-    toast.success(selectedPresetId ? 'Preset به‌روزرسانی شد' : 'Preset جدید ذخیره شد');
+    setEditingPresetId(null);
+    toast.success(inPlace ? 'تغییرات ذخیره شد' : (selectedPresetId ? 'Preset به‌روزرسانی شد' : 'Preset جدید ذخیره شد'));
   };
 
   const testPreset = (preset: PTZPreset) => {
@@ -88,24 +92,41 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
 
   const deletePreset = (id: string) => {
     dispatch(removePreset({ intersectionId: intersection.id, presetId: id }));
-    if (selectedPresetId === id) {
+    if (selectedPresetId === id || editingPresetId === id) {
       setSelectedPresetId(null);
+      setEditingPresetId(null);
       setPresetName('');
+      resetView();
     }
     toast.success('Preset حذف شد');
   };
 
-  const loadPreset = (preset: PTZPreset) => {
+  const selectPreset = (preset: PTZPreset) => {
+    setSelectedPresetId(preset.id);
     setOffset({ x: preset.pan, y: preset.tilt });
     setScale(preset.zoom);
-    // نام را نمی‌نویسیم تا کاربر بتواند آزادانه ادیت کند
+    // فقط برای نمایش — نام را در فرم نمی‌نویسیم مگر در حالت ادیت
   };
 
-  const editPreset = (preset: PTZPreset) => {
+  const startEditPreset = (preset: PTZPreset) => {
     setOffset({ x: preset.pan, y: preset.tilt });
     setScale(preset.zoom);
     setPresetName(preset.name);
     setSelectedPresetId(preset.id);
+    setEditingPresetId(preset.id);
+  };
+
+  const cancelEdit = () => {
+    if (selectedPresetId) {
+      const preset = presets.find(p => p.id === selectedPresetId);
+      if (preset) {
+        setOffset({ x: preset.pan, y: preset.tilt });
+        setScale(preset.zoom);
+        setPresetName('');
+      }
+    }
+    setEditingPresetId(null);
+    setPresetName('');
   };
 
   return (
@@ -244,16 +265,37 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
             <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl shrink-0">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-base font-medium text-slate-900 dark:text-slate-100">
-                  {selectedPresetId ? 'ویرایش Preset' : 'ایجاد Preset جدید'}
+                  {editingPresetId ? 'ویرایش Preset' : 'ایجاد Preset جدید'}
                 </h3>
-                <Button
-                  onClick={savePreset}
-                  size="icon"
-                  variant="ghost"
-                  className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
-                >
-                  <Save className="w-3 h-3" />
-                </Button>
+                {editingPresetId ? (
+                  <div className="flex gap-1">
+                    <Button
+                      onClick={() => savePreset(true)}
+                      size="icon"
+                      variant="ghost"
+                      className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
+                    >
+                      <Save className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      onClick={cancelEdit}
+                      size="icon"
+                      variant="ghost"
+                      className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => savePreset(false)}
+                    size="icon"
+                    variant="ghost"
+                    className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
+                  >
+                    <Save className="w-3 h-3" />
+                  </Button>
+                )}
               </div>
               <div className="space-y-3">
                 <div>
@@ -269,7 +311,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
             </Card>
 
             {/* لیست presetها با اسکرول */}
-            <Card className="flex-1 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
+            <Card className="flex-1 border  border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-2">
                 Preset‌ها ({presets.length})
               </h3>
@@ -283,7 +325,8 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                   presets.map((preset) => (
                     <div
                       key={preset.id}
-                      className={`p-2.5 rounded border transition-colors ${
+                      onClick={() => selectPreset(preset)}
+                      className={`p-3.5 rounded-lg border cursor-pointer transition-colors ${
                         selectedPresetId === preset.id
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-700/50'
@@ -294,30 +337,68 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
                           {preset.name}
                         </p>
                         <div className="flex gap-1">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0.5"
-                            onClick={() => editPreset(preset)}
-                          >
-                            <Edit3 className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
-                            onClick={() => testPreset(preset)}
-                          >
-                            <Play className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
-                            onClick={() => deletePreset(preset.id)}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
+                          {editingPresetId === preset.id ? (
+                            <>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  savePreset(true);
+                                }}
+                              >
+                                <Save className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  cancelEdit();
+                                }}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  startEditPreset(preset);
+                                }}
+                              >
+                                <Edit3 className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-5 w-5 p-0.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  testPreset(preset);
+                                }}
+                              >
+                                <Play className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deletePreset(preset.id);
+                                }}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-1">
