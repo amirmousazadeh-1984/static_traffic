@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Label } from './ui/label';
 import { Intersection, Mask } from '../types';
 import { mockMasks, mockCameras, mockPTZPresets } from '../data/mockDatabase';
-import { MousePointer2, Trash2, Save, AlertTriangle } from 'lucide-react';
+import { MousePointer2, Trash2, Save, AlertTriangle, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -710,7 +710,7 @@ return (
                   startEditing(shape.id, shape.name);
                 }}
               >
-                ✎
+                 <Edit3 className="w-3 h-3" />
               </Button>
               <Button
                 size="sm"
