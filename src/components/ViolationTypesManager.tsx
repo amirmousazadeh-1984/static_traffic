@@ -87,7 +87,7 @@ export function ViolationTypesManager() {
       </div>
 
       <div
-          className="grid grid-cols-1 lg:grid-cols-[50%_48%] gap-6"
+          className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-6"
           style={{ height: '80vh' }}
         >
       {/* فرم افزودن */}
@@ -95,47 +95,47 @@ export function ViolationTypesManager() {
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label className="text-slate-700 dark:text-slate-300">کد تخلف</Label>
+            <Label className=" mb-3 text-slate-700 dark:text-slate-300">کد تخلف</Label>
             <Input
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
               placeholder="مثال: 101"
-              className="mt-1"
+              className="mt-1 bg-slate-50 dark:bg-slate-700"
             />
           </div>
           <div>
-            <Label className="text-slate-700 dark:text-slate-300">نام تخلف</Label>
+            <Label className="mb-3 text-slate-700 dark:text-slate-300">نام تخلف</Label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="مثال: توقف دوبل"
-              className="mt-1"
+              className="mt-1 bg-slate-50 dark:bg-slate-700"
             />
           </div>
           <div>
-            <Label className="text-slate-700 dark:text-slate-300">مدت زمان توقف جریمه (ثانیه)</Label>
+            <Label className="mb-3 text-slate-700 dark:text-slate-300">مدت زمان توقف جریمه (ثانیه)</Label>
             <Input
               type="number"
               value={formData.validDuration}
               onChange={(e) => setFormData({ ...formData, validDuration: Number(e.target.value) })}
               min={1}
-              className="mt-1"
+              className="mt-1 bg-slate-50 dark:bg-slate-700"
             />
           </div>
           <div className="md:col-span-2">
-            <Label className="text-slate-700 dark:text-slate-300">توضیحات</Label>
+            <Label className=" mb-3 text-slate-700 dark:text-slate-300">توضیحات</Label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="توضیح مختصر درباره این تخلف..."
               rows={3}
-              className="mt-1"
+              className="mt-1 bg-slate-50 dark:bg-slate-700 "
             />
           </div>
           <div className="md:col-span-2">
             <Button
               onClick={handleAdd}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white "
             >
               <Plus className="w-4 h-4" />
               افزودن تخلف جدید
