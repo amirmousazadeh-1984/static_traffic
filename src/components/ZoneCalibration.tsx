@@ -676,6 +676,7 @@ return (
         <div className="flex gap-1 mr-1 flex-shrink-0">
           {editingShapeId === shape.id ? (
             <>
+              
               <Button
                 size="sm"
                 variant="ghost"

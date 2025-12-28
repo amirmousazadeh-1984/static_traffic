@@ -1,13 +1,14 @@
 // src/store/store.ts
-
 import { configureStore } from '@reduxjs/toolkit';
 import violationReducer from './violationSlice';
-import ptzPresetReducer from './ptzPresetSlice'; // ✅ اضافه شد
+import ptzPresetReducer from './ptzPresetSlice';
+import subPresetReducer from './subPresetSlice'; // ✅ جدید
 
 export const store = configureStore({
   reducer: {
     violations: violationReducer,
-    ptzPresets: ptzPresetReducer, // ✅ اضافه شد
+    ptzPresets: ptzPresetReducer,
+    subPresets: subPresetReducer, // ✅
   },
 });
 
