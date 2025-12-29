@@ -133,7 +133,7 @@ export function ViolationTypesManager() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-6" style={{ height: '80vh' }}>
           {/* فرم افزودن */}
-          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-lg bg-white dark:bg-slate-800">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
               {editingId ? 'ویرایش تخلف' : 'افزودن تخلف جدید'}
             </h3>
@@ -214,7 +214,7 @@ export function ViolationTypesManager() {
           </Card>
 
           {/* لیست تخلفات */}
-          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-lg bg-white dark:bg-slate-800">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
               تخلفات تعریف شده در سیستم
             </h3>
