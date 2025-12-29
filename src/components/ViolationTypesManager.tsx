@@ -251,7 +251,8 @@ export function ViolationTypesManager() {
             {/* ذخیره */}
             <Button
               size="icon"
-              className="bg-green-600 hover:bg-green-700 text-white"
+                      variant="ghost"
+                      className="text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20 h-6 w-6 p-0.5"
               onClick={handleSaveEdit}
             >
               <Save className="w-4 h-4" />
@@ -259,8 +260,8 @@ export function ViolationTypesManager() {
             {/* لغو */}
             <Button
               size="icon"
-              variant="outline"
-              className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                      variant="ghost"
+                      className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-6 w-6 p-0.5"
               onClick={handleCancelEdit}
             >
               <X className="w-4 h-4" />
@@ -272,16 +273,16 @@ export function ViolationTypesManager() {
             <Button
               variant="ghost"
               size="icon"
-              className="text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                                className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0.5"
               onClick={() => handleEditClick(v)}
             >
-              <Pencil className="w-4 h-4" />
+              <Edit3 className="w-4 h-4" />
             </Button>
             {/* حذف */}
             <Button
               variant="ghost"
               size="icon"
-              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                                className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 h-5 w-5 p-0.5"
               onClick={() => handleDelete(v.id)}
             >
               <Trash2 className="w-4 h-4" />
