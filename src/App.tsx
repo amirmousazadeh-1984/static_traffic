@@ -90,7 +90,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background dark:bg-slate-900 transition-colors duration-300 flex" dir="rtl">
       {/* ========== منوی عمودی (سمت راست) ========== */}
-      <div className="w-full shadow-lg max-w-[280px] flex-shrink-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
+      <div className="w-full shadow-lgg max-w-[280px] flex-shrink-0 bg-slate-100 dark:bg-slate-800  dark:border-slate-700 flex flex-col">
         {/* هدر منو */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
