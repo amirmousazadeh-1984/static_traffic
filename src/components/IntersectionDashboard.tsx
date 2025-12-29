@@ -168,7 +168,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
 
         {/* کارت‌های آمار */}
 <div className="grid grid-cols-2 md:grid-cols-5 gap-5 mb-8">
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -180,7 +180,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     </div>
   </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">
@@ -194,7 +194,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     </div>
   </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
@@ -208,7 +208,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     </div>
   </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-xs text-red-600 dark:text-red-400 uppercase tracking-wider">
@@ -222,7 +222,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
     </div>
   </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">

@@ -226,7 +226,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
 
         {/* --- کارت‌های آمار --- */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">تعداد چهارراه‌ها</p>
@@ -236,7 +236,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             </div>
           </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">چهارراه‌های فعال</p>
@@ -246,7 +246,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             </div>
           </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">تخلفات ثبت‌شده امروز</p>
@@ -256,7 +256,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             </div>
           </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">تعداد کل دوربین‌ها</p>
@@ -425,7 +425,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           {filteredIntersections.map((intersection) => (
             <Card
               key={intersection.id}
-              className=" shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transform hover:-translate-y-2"
+              className=" shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transform hover:-translate-y-2"
               onClick={() => onSelectIntersection(intersection)}
             >
               <div className="p-5  ">
