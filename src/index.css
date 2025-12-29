@@ -1744,6 +1744,30 @@
               var(--tw-shadow);
 }
 
+.shadow-lg {
+  --tw-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2),
+               0 20px 40px -15px rgba(0, 0, 0, 0.15);
+  --tw-shadow-colored: 0 10px 30px -10px var(--tw-shadow-color),
+                       0 20px 40px -15px var(--tw-shadow-color);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000),
+              var(--tw-inset-ring-shadow, 0 0 #0000),
+              var(--tw-ring-offset-shadow, 0 0 #0000),
+              var(--tw-ring-shadow, 0 0 #0000),
+              var(--tw-shadow);
+}
+
+.shadow-xl {
+  --tw-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.22),
+               0 24px 50px -12px rgba(0, 0, 0, 0.18);
+  --tw-shadow-colored: 0 12px 40px -8px var(--tw-shadow-color),
+                       0 24px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000),
+              var(--tw-inset-ring-shadow, 0 0 #0000),
+              var(--tw-ring-offset-shadow, 0 0 #0000),
+              var(--tw-ring-shadow, 0 0 #0000),
+              var(--tw-shadow);
+}
+
 .shadow-lgg {
   --tw-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.52),
                0 8px 16px -6px rgba(0, 0, 0, 0.158);
