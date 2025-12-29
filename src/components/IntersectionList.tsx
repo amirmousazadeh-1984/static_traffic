@@ -588,7 +588,8 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                   onChange={(e) => setCameraDirection(e.target.value as any)}
                   className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
                 >
-                  <option value="north">شمال</option>
+                  <option value="north"                   className="bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
+>شمال</option>
                   <option value="south">جنوب</option>
                   <option value="east">شرق</option>
                   <option value="west">غرب</option>
