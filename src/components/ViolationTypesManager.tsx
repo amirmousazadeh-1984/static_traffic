@@ -79,7 +79,7 @@ export function ViolationTypesManager() {
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
 <div className="max-w-[1800px] mx-auto">
-      <div className="mb-4">
+      <div className="mb-8">
         <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">مدیریت انواع تخلفات</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           انواع تخلفات قابل شناسایی در سیستم را اینجا تعریف و مدیریت کنید

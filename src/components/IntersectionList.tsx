@@ -223,14 +223,14 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   return (
    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
-         <div className="mb-4">
+         <div className="mb-8">
          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
 کنترل ترافیک در تقاطع های شهری          </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
 برنامه جامع ثبت تخلفات چهارراه ها بر اساس تخلفات توسط دوربین های جرخان (PTZ)     </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
           <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
