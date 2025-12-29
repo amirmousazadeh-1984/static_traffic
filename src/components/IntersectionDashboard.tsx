@@ -12,6 +12,11 @@ import {
   Plus,
   Eye,
   Download,
+  FileText,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Video,
 } from 'lucide-react';
 import { Intersection } from '../types';
 import { mockViolations, mockCameras } from '../data/mockDatabase';
@@ -162,47 +167,75 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
         </div>
 
         {/* کارت‌های آمار */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md">
-            <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-              کل تخلفات امروز
-            </p>
-            <p className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">{stats.total}</p>
-          </Card>
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md">
-            <p className="text-[10px] text-green-700 dark:text-green-300 uppercase tracking-wider">
-              تخلفات تایید شده
-            </p>
-            <p className="text-lg font-bold text-green-900 dark:text-green-100 mt-1">
-              {stats.byStatus.verified}
-            </p>
-          </Card>
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md">
-            <p className="text-[10px] text-amber-700 dark:text-amber-300 uppercase tracking-wider">
-              تخلفات در حال انتظار
-            </p>
-            <p className="text-lg font-bold text-amber-900 dark:text-amber-100 mt-1">
-              {stats.byStatus.pending}
-            </p>
-          </Card>
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md">
-            <p className="text-[10px] text-red-700 dark:text-red-300 uppercase tracking-wider">
-              تخلفات رد شده
-            </p>
-            <p className="text-lg font-bold text-red-900 dark:text-red-100 mt-1">
-              {stats.byStatus.rejected}
-            </p>
-          </Card>
-          <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md">
-            <p className="text-[10px] text-purple-700 dark:text-purple-300 uppercase tracking-wider">
-              وضعیت دوربین چرخان (PTZ)
-            </p>
-            <p className="text-base font-bold text-purple-900 dark:text-purple-100 mt-1">
-              {ptzTracking ? 'فعال' : 'غیرفعال'}
-            </p>
-          </Card>
-        </div>
+<div className="grid grid-cols-2 md:grid-cols-5 gap-5 mb-8">
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+          کل تخلفات امروز
+        </p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{stats.total}</p>
+      </div>
+      <FileText className="w-9 h-9 text-slate-600 dark:text-slate-400" />
+    </div>
+  </Card>
 
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">
+          تخلفات تایید شده
+        </p>
+        <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">
+          {stats.byStatus.verified}
+        </p>
+      </div>
+      <CheckCircle className="w-9 h-9 text-green-600 dark:text-green-400" />
+    </div>
+  </Card>
+
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+          تخلفات در حال انتظار
+        </p>
+        <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-1">
+          {stats.byStatus.pending}
+        </p>
+      </div>
+      <Clock className="w-9 h-9 text-amber-600 dark:text-amber-400" />
+    </div>
+  </Card>
+
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-red-600 dark:text-red-400 uppercase tracking-wider">
+          تخلفات رد شده
+        </p>
+        <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-1">
+          {stats.byStatus.rejected}
+        </p>
+      </div>
+      <XCircle className="w-9 h-9 text-red-600 dark:text-red-400" />
+    </div>
+  </Card>
+
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+          وضعیت دوربین چرخان (PTZ)
+        </p>
+        <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">
+          {ptzTracking ? 'فعال' : 'غیرفعال'}
+        </p>
+      </div>
+      <Video className="w-9 h-9 text-purple-600 dark:text-purple-400" />
+    </div>
+  </Card>
+</div>
         {/* نمودارها — در کنار هم */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* نمودار ستونی */}

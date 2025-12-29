@@ -223,7 +223,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   return (
    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
-         <div className="mb-8">
+         <div className="mb-10">
          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
 کنترل ترافیک در تقاطع های شهری          </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
@@ -231,46 +231,62 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">تعداد چهارراه ها</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{mockIntersections.length}</p>
-              </div>
-              <MapPin className="w-9 h-9 text-blue-600 dark:text-blue-400" />
-            </div>
-          </Card>
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+          تعداد چهارراه‌ها
+        </p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+          {mockIntersections.length}
+        </p>
+      </div>
+      <MapPin className="w-9 h-9 text-slate-600 dark:text-slate-400" />
+    </div>
+  </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">چهارراههای فعال</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{activeIntersections}</p>
-              </div>
-              <Activity className="w-9 h-9 text-green-600 dark:text-green-400" />
-            </div>
-          </Card>
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">
+          چهارراه‌های فعال
+        </p>
+        <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">
+          {activeIntersections}
+        </p>
+      </div>
+      <Activity className="w-9 h-9 text-green-600 dark:text-green-400" />
+    </div>
+  </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">تخلفات ثبت شده امروز</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{totalViolations}</p>
-              </div>
-              <AlertTriangle className="w-9 h-9 text-amber-600 dark:text-amber-400" />
-            </div>
-          </Card>
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+          تخلفات ثبت‌شده امروز
+        </p>
+        <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-1">
+          {totalViolations}
+        </p>
+      </div>
+      <AlertTriangle className="w-9 h-9 text-amber-600 dark:text-amber-400" />
+    </div>
+  </Card>
 
-          <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">تعداد کل دوربین ها</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{totalCameras}</p>
-              </div>
-              <CameraIcon className="w-9 h-9 text-purple-600 dark:text-purple-400" />
-            </div>
-          </Card>
-        </div>
+  <Card className="p-5 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+          تعداد کل دوربین‌ها
+        </p>
+        <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">
+          {totalCameras}
+        </p>
+      </div>
+      <CameraIcon className="w-9 h-9 text-purple-600 dark:text-purple-400" />
+    </div>
+  </Card>
+</div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
