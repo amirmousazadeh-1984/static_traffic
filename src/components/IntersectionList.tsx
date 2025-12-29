@@ -45,6 +45,18 @@ import {
   TrafficCone,
   Waypoints,
 } from 'lucide-react';
+// کامپوننت Select با modal غیرفعال شده (برای استفاده داخل مدال)
+import * as SelectPrimitive from '@radix-ui/react-select';
+
+const SelectNoModal = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>
+>(({ children, ...props }, ref) => (
+  <SelectPrimitive.Root modal={false} {...props} ref={ref}>
+    {children}
+  </SelectPrimitive.Root>
+));
+
 
 interface IntersectionListProps {
   onSelectIntersection: (intersection: Intersection) => void;
@@ -351,8 +363,8 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           id="int-name"
           value={newIntName}
           onChange={(e) => setNewIntName(e.target.value)}
-          className="col-span-3 text-right"
-          placeholder="مثلاً: چهارراه ولیعصر"
+          className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
+          placeholder="نام چهارراه "
         />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
@@ -363,7 +375,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           id="int-location"
           value={newIntLocation}
           onChange={(e) => setNewIntLocation(e.target.value)}
-          className="col-span-3 text-right"
+          className="col-span-3 text-right  bg-slate-50 dark:bg-slate-700/50"
           placeholder="آدرس کامل محل تقاطع"
         />
       </div>
@@ -377,8 +389,9 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           step="any"
           value={newIntLat}
           onChange={(e) => setNewIntLat(e.target.value)}
-          className="col-span-3 text-right"
-          placeholder="مثلاً: 35.6892"
+          className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
+                    placeholder="عرض جغرافیایی محل تقاطع"
+                 
         />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
@@ -391,23 +404,25 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           step="any"
           value={newIntLng}
           onChange={(e) => setNewIntLng(e.target.value)}
-          className="col-span-3 text-right"
-          placeholder="مثلاً: 51.3890"
+          className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
+          placeholder="طول جغرافیایی محل تقاطع"
         />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className="text-right text-sm text-slate-700 dark:text-slate-300">وضعیت</Label>
         <Select value={newIntStatus} onValueChange={(v) => setNewIntStatus(v as any)}>
-          <SelectTrigger className="col-span-3 text-right">
+          <SelectTrigger className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50">
             <SelectValue placeholder="وضعیت را انتخاب کنید" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="active">فعال</SelectItem>
-            <SelectItem value="inactive">غیرفعال</SelectItem>
-            <SelectItem value="maintenance">در حال تعمیر</SelectItem>
+          <SelectContent className="border-slate-200 dark:border-slate-800  z-[1550]">
+            <SelectItem value="active" className="bg-slate-50 dark:bg-slate-700/50 cursor-pointer">فعال</SelectItem>
+            <SelectItem value="inactive" className="bg-slate-50 dark:bg-slate-700/50 cursor-pointer">غیرفعال</SelectItem>
+            <SelectItem value="maintenance" className="bg-slate-50 dark:bg-slate-700/50 cursor-pointer">در حال تعمیر</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+                </div>
+                
+                
     </div>
 
     <DialogFooter className="gap-2 pt-2">
@@ -579,7 +594,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
         <Select value={cameraType} onValueChange={(v) => setCameraType(v as 'fixed' | 'ptz')}>
-          <SelectTrigger className="col-span-3 text-right">
+          <SelectTrigger className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50">
             <SelectValue placeholder="نوع دوربین را انتخاب کنید" />
           </SelectTrigger>
           <SelectContent>
@@ -594,13 +609,13 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           id="cam-name"
           value={cameraName}
           onChange={(e) => setCameraName(e.target.value)}
-          className="col-span-3 text-right"
+          className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
         />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
         <Select value={cameraDirection} onValueChange={(v) => setCameraDirection(v as any)}>
-          <SelectTrigger className="col-span-3 text-right">
+          <SelectTrigger className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50">
             <SelectValue placeholder="جهت نصب را انتخاب کنید" />
           </SelectTrigger>
           <SelectContent>
@@ -617,7 +632,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           id="cam-ip"
           value={cameraIP}
           onChange={(e) => setCameraIP(e.target.value)}
-          className="col-span-3 text-right"
+          className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
         />
       </div>
     </div>
