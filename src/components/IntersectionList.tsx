@@ -288,39 +288,53 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
   </Card>
 </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
-          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between align-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 flex-1 ">
             <div className="relative ">
-              <Search className="absolute right-3 top-1/3 -translate-y-1/3 w-5 h-5 text-slate-400" />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/3 w-5 h-5 text-slate-400 " />
               <Input
                 placeholder="جستجو..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 w-full sm:w-80"
+                className="pr-10 w-full sm:w-80 bg-slate-50 dark:bg-slate-700/50"
               />
             </div>
 
-            <div className="flex gap-2 flex-wrap">
-              {(['all', 'active', 'inactive', 'maintenance'] as const).map((filter) => (
-                <Button
-                  key={filter}
-                  variant={statusFilter === filter ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter(filter)}
-                >
-                  {filter === 'all' ? 'همه' : filter === 'active' ? 'فعال' : filter === 'inactive' ? 'غیرفعال' : 'در حال تعمیر'}
-                </Button>
-              ))}
-            </div>
+           <div className="flex gap-2 flex-wrap">
+  {(['all', 'active', 'inactive', 'maintenance'] as const).map((filter) => (
+    <Button
+      key={filter}
+      variant={statusFilter === filter ? 'default' : 'outline'}
+      size="sm"
+      onClick={() => setStatusFilter(filter)}
+      // استایل سفارشی فقط برای حالت‌های مختلف
+      className={
+        statusFilter === filter
+          ? 'bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 shadow-sm'
+          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-800'
+      }
+    >
+      {filter === 'all'
+        ? 'همه'
+        : filter === 'active'
+        ? 'فعال'
+        : filter === 'inactive'
+        ? 'غیرفعال'
+        : 'در حال تعمیر'}
+    </Button>
+  ))}
+</div>
           </div>
 
           <Dialog open={openAddIntersection} onOpenChange={setOpenAddIntersection}>
             <DialogTrigger asChild>
-              <Button className="shadow-md hover:shadow-lg transition-shadow">
-                <Plus className="w-4 h-4 ml-2" />
-                چهارراه جدید
-              </Button>
-            </DialogTrigger>
+    <Button
+      className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+    >
+      <Plus className="w-4 h-4 ml-2" />
+      چهارراه جدید
+    </Button>
+  </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
               <DialogHeader>
                 <DialogTitle className="text-lg text-slate-900 dark:text-slate-100">چهارراه جدید</DialogTitle>
@@ -413,7 +427,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                     showCamerasModal(intersection);
                   }}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between ">
                     <span className="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                       <CameraIcon className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                       <span className="text-xs text-slate-500 dark:text-slate-400">تعداد دوربین های موجود:</span>
