@@ -327,7 +327,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           </div>
 
           <Dialog open={openAddIntersection} onOpenChange={setOpenAddIntersection}>
-            <DialogTrigger asChild>
+  <DialogTrigger asChild>
     <Button
       className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
     >
@@ -335,44 +335,98 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
       چهارراه جدید
     </Button>
   </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-              <DialogHeader>
-                <DialogTitle className="text-lg text-slate-900 dark:text-slate-100">چهارراه جدید</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
-                  <Input id="int-name" value={newIntName} onChange={(e) => setNewIntName(e.target.value)} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-location" className="text-right text-sm text-slate-700 dark:text-slate-300">آدرس</Label>
-                  <Input id="int-location" value={newIntLocation} onChange={(e) => setNewIntLocation(e.target.value)} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-lat" className="text-right text-sm text-slate-700 dark:text-slate-300">عرض</Label>
-                  <Input id="int-lat" type="number" step="any" value={newIntLat} onChange={(e) => setNewIntLat(e.target.value)} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-lng" className="text-right text-sm text-slate-700 dark:text-slate-300">طول</Label>
-                  <Input id="int-lng" type="number" step="any" value={newIntLng} onChange={(e) => setNewIntLng(e.target.value)} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-sm text-slate-700 dark:text-slate-300">وضعیت</Label>
-                  <Select value={newIntStatus} onValueChange={(v: any) => setNewIntStatus(v)}>
-                    <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">فعال</SelectItem>
-                      <SelectItem value="inactive">غیرفعال</SelectItem>
-                      <SelectItem value="maintenance">در حال تعمیر</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button onClick={handleAddIntersection}>اضافه کردن</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+  <DialogContent className="sm:max-w-md p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
+    <DialogHeader>
+      <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        چهارراه جدید
+      </DialogTitle>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="int-name" className="text-right text-sm text-slate-700 dark:text-slate-300">
+          نام
+        </Label>
+        <Input
+          id="int-name"
+          value={newIntName}
+          onChange={(e) => setNewIntName(e.target.value)}
+          className="col-span-3 text-right"
+          placeholder="مثلاً: چهارراه ولیعصر"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="int-location" className="text-right text-sm text-slate-700 dark:text-slate-300">
+          آدرس
+        </Label>
+        <Input
+          id="int-location"
+          value={newIntLocation}
+          onChange={(e) => setNewIntLocation(e.target.value)}
+          className="col-span-3 text-right"
+          placeholder="آدرس کامل محل تقاطع"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="int-lat" className="text-right text-sm text-slate-700 dark:text-slate-300">
+          عرض جغرافیایی
+        </Label>
+        <Input
+          id="int-lat"
+          type="number"
+          step="any"
+          value={newIntLat}
+          onChange={(e) => setNewIntLat(e.target.value)}
+          className="col-span-3 text-right"
+          placeholder="مثلاً: 35.6892"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="int-lng" className="text-right text-sm text-slate-700 dark:text-slate-300">
+          طول جغرافیایی
+        </Label>
+        <Input
+          id="int-lng"
+          type="number"
+          step="any"
+          value={newIntLng}
+          onChange={(e) => setNewIntLng(e.target.value)}
+          className="col-span-3 text-right"
+          placeholder="مثلاً: 51.3890"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right text-sm text-slate-700 dark:text-slate-300">وضعیت</Label>
+        <Select value={newIntStatus} onValueChange={(v) => setNewIntStatus(v as any)}>
+          <SelectTrigger className="col-span-3 text-right">
+            <SelectValue placeholder="وضعیت را انتخاب کنید" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">فعال</SelectItem>
+            <SelectItem value="inactive">غیرفعال</SelectItem>
+            <SelectItem value="maintenance">در حال تعمیر</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setOpenAddIntersection(false)}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        انصراف
+      </Button>
+      <Button
+        onClick={handleAddIntersection}
+        className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+      >
+        اضافه کردن
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -450,139 +504,215 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">جستجو یا فیلتر را تغییر دهید</p>
           </div>
         )}
+{/* --- مدال لیست دوربین‌ها --- */}
+<Dialog open={openCamerasModal} onOpenChange={setOpenCamerasModal}>
+  <DialogContent className="sm:max-w-lg p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
+    <DialogHeader>
+      <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        دوربین‌های {currentIntersection?.name}
+      </DialogTitle>
+    </DialogHeader>
 
-        <Dialog open={openCamerasModal} onOpenChange={setOpenCamerasModal}>
-          <DialogContent className="sm:max-w-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-lg text-slate-900 dark:text-slate-100">
-                دوربین‌های {currentIntersection?.name}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="mt-5">
-              <Button
-                className="w-full mb-5"
-                size="sm"
-                onClick={() => setOpenAddCamera(true)}
+    <div className="mt-5">
+      <Button
+        className="w-full mb-5 shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm py-1.5"
+        size="sm"
+        onClick={() => setOpenAddCamera(true)}
+      >
+        <Plus className="w-4 h-4 ml-2" />
+        دوربین جدید
+      </Button>
+
+      {currentIntersection && (mockCameras[currentIntersection.id]?.length || 0) === 0 ? (
+        <div className="py-8 text-center">
+          <CameraIcon className="w-10 h-10 mx-auto mb-3 text-slate-400 dark:text-slate-500" />
+          <p className="text-slate-500 dark:text-slate-400 text-sm">دوربینی برای این چهارراه تعریف نشده است</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {currentIntersection &&
+            mockCameras[currentIntersection.id]?.map((cam) => (
+              <div
+                key={cam.id}
+                className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Plus className="w-4 h-4 ml-2" />
-                دوربین جدید
-              </Button>
-              {currentIntersection && (mockCameras[currentIntersection.id]?.length || 0) === 0 ? (
-                <p className="text-center text-slate-500 dark:text-slate-400 py-8 text-sm">دوربینی موجود نیست</p>
-              ) : (
-                <div className="space-y-3">
-                  {currentIntersection && mockCameras[currentIntersection.id]?.map((cam) => (
-                    <div
-                      key={cam.id}
-                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-                    >
-                      <div>
-                        <div className="font-medium text-slate-900 dark:text-slate-100 text-base">{cam.name}</div>
-                        <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                          {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان' : 'ثابت'} • {getDirectionLabel(cam.direction)}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="icon" variant="ghost" onClick={() => openEditCameraModal(cam)}>
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost" className="text-red-600" onClick={() => handleDeleteCamera(cam.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex-1">
+                  <div className="font-medium text-slate-900 dark:text-slate-100 text-base">{cam.name}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان' : 'ثابت'} • {getDirectionLabel(cam.direction)}
+                  </div>
                 </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+                <div className="flex gap-2 mr-1">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    onClick={() => openEditCameraModal(cam)}
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    onClick={() => handleDeleteCamera(cam.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  </DialogContent>
+</Dialog>
 
-        <Dialog open={openAddCamera} onOpenChange={setOpenAddCamera}>
-          <DialogContent className="sm:max-w-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-base text-slate-900 dark:text-slate-100">دوربین جدید</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
-                <Select value={cameraType} onValueChange={(v: 'fixed' | 'ptz') => setCameraType(v)}>
-                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fixed">ثابت</SelectItem>
-                    <SelectItem value="ptz">چرخان</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="cam-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
-                <Input id="cam-name" value={cameraName} onChange={(e) => setCameraName(e.target.value)} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
-                <Select value={cameraDirection} onValueChange={(v: any) => setCameraDirection(v)}>
-                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="north">شمال</SelectItem>
-                    <SelectItem value="south">جنوب</SelectItem>
-                    <SelectItem value="east">شرق</SelectItem>
-                    <SelectItem value="west">غرب</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="cam-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">IP</Label>
-                <Input id="cam-ip" value={cameraIP} onChange={(e) => setCameraIP(e.target.value)} className="col-span-3" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleAddCamera}>اضافه کردن</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+{/* --- مدال افزودن دوربین --- */}
+<Dialog open={openAddCamera} onOpenChange={setOpenAddCamera}>
+  <DialogContent className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">دوربین جدید</DialogTitle>
+    </DialogHeader>
 
-        <Dialog open={openEditCamera} onOpenChange={setOpenEditCamera}>
-          <DialogContent className="sm:max-w-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-base text-slate-900 dark:text-slate-100">ویرایش {editingCamera?.name}</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
-                <Select value={cameraType} onValueChange={(v: 'fixed' | 'ptz') => setCameraType(v)}>
-                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fixed">ثابت</SelectItem>
-                    <SelectItem value="ptz">چرخان</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
-                <Input id="edit-name" value={cameraName} onChange={(e) => setCameraName(e.target.value)} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
-                <Select value={cameraDirection} onValueChange={(v: any) => setCameraDirection(v)}>
-                  <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="north">شمال</SelectItem>
-                    <SelectItem value="south">جنوب</SelectItem>
-                    <SelectItem value="east">شرق</SelectItem>
-                    <SelectItem value="west">غرب</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">IP</Label>
-                <Input id="edit-ip" value={cameraIP} onChange={(e) => setCameraIP(e.target.value)} className="col-span-3" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleUpdateCamera}>ذخیره</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
+        <Select value={cameraType} onValueChange={(v) => setCameraType(v as 'fixed' | 'ptz')}>
+          <SelectTrigger className="col-span-3 text-right">
+            <SelectValue placeholder="نوع دوربین را انتخاب کنید" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="fixed">ثابت</SelectItem>
+            <SelectItem value="ptz">چرخان</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="cam-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
+        <Input
+          id="cam-name"
+          value={cameraName}
+          onChange={(e) => setCameraName(e.target.value)}
+          className="col-span-3 text-right"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
+        <Select value={cameraDirection} onValueChange={(v) => setCameraDirection(v as any)}>
+          <SelectTrigger className="col-span-3 text-right">
+            <SelectValue placeholder="جهت نصب را انتخاب کنید" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="north">شمال</SelectItem>
+            <SelectItem value="south">جنوب</SelectItem>
+            <SelectItem value="east">شرق</SelectItem>
+            <SelectItem value="west">غرب</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="cam-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">آدرس IP</Label>
+        <Input
+          id="cam-ip"
+          value={cameraIP}
+          onChange={(e) => setCameraIP(e.target.value)}
+          className="col-span-3 text-right"
+        />
+      </div>
+    </div>
+
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setOpenAddCamera(false)}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        انصراف
+      </Button>
+      <Button
+        onClick={handleAddCamera}
+        className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+      >
+        اضافه کردن
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+{/* --- مدال ویرایش دوربین --- */}
+<Dialog open={openEditCamera} onOpenChange={setOpenEditCamera}>
+  <DialogContent className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
+        ویرایش دوربین
+      </DialogTitle>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
+        <Select value={cameraType} onValueChange={(v) => setCameraType(v as 'fixed' | 'ptz')}>
+          <SelectTrigger className="col-span-3 text-right">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="fixed">ثابت</SelectItem>
+            <SelectItem value="ptz">چرخان</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="edit-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
+        <Input
+          id="edit-name"
+          value={cameraName}
+          onChange={(e) => setCameraName(e.target.value)}
+          className="col-span-3 text-right"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
+        <Select value={cameraDirection} onValueChange={(v) => setCameraDirection(v as any)}>
+          <SelectTrigger className="col-span-3 text-right">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="north">شمال</SelectItem>
+            <SelectItem value="south">جنوب</SelectItem>
+            <SelectItem value="east">شرق</SelectItem>
+            <SelectItem value="west">غرب</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="edit-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">آدرس IP</Label>
+        <Input
+          id="edit-ip"
+          value={cameraIP}
+          onChange={(e) => setCameraIP(e.target.value)}
+          className="col-span-3 text-right"
+        />
+      </div>
+    </div>
+
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setOpenEditCamera(false)}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        انصراف
+      </Button>
+      <Button
+        onClick={handleUpdateCamera}
+        className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+      >
+        ذخیره
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
       </div>
     </div>
   );
