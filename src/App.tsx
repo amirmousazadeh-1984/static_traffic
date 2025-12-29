@@ -175,7 +175,7 @@ function App() {
           )}
 
           {activeTab === 'violations' && (
-            <div className="max-w-[1200px] mx-auto">
+            <div >
               <ViolationTypesManager />
             </div>
           )}

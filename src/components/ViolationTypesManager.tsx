@@ -135,8 +135,10 @@ export function ViolationTypesManager() {
           <div className="md:col-span-2">
             <Button
               onClick={handleAdd}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white "
-            >
+                               className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600">
+                  
+                  
+          
               <Plus className="w-4 h-4" />
               افزودن تخلف جدید
             </Button>
@@ -147,7 +149,7 @@ export function ViolationTypesManager() {
       {/* لیست تخلفات */}
       <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
-          تخلفات تعریف شده ({violationTypes.length})
+          تخلفات تعریف شده در سیستم
         </h3>
         <div className="space-y-3">
           {violationTypes.map((v) => (
