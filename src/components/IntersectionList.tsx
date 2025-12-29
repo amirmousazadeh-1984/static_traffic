@@ -33,7 +33,7 @@ import {
   Activity,
   Plus,
   Trash2,
-  Edit2,
+  Edit3,
   ChevronDown,
 } from 'lucide-react';
 
@@ -533,11 +533,12 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+                            className="h-8 w-8 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20"
                             onClick={() => openEditCameraModal(cam)}
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <Edit3 className="w-4 h-4" />
                           </Button>
+
                           <Button
                             size="icon"
                             variant="ghost"
