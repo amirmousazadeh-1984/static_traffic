@@ -440,7 +440,7 @@ const saveEditedName = () => {
 
   return (
 
-  <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+  <div className="min-h-[calc(100vh-140px)]  dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
         
         <div className="mb-8">

@@ -2471,44 +2471,63 @@
 }
 
 :root {
+  /* فونت و شعاع */
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: #111827; /* Airbnb: متن تیره و خوانا */
-  --card: #ffffff;
-  --card-foreground: #111827;
+  --radius: 0.75rem;
+
+  /* پس‌زمینه‌ها: کمی تیره‌تر از نسخه قبل، ولی همچنان گرم */
+  --background: #ffffff; /* ماسه‌ای با عمق بیشتر (به جای #faf9f7) */
+  --card: #ffffff; /* کارت‌ها همچنان سفید برای کنتراست، یا #fefefe برای هماهنگی */
   --popover: #ffffff;
-  --popover-foreground: #111827;
-  --primary: #007A87; /* Airbnb Primary Blue */
+  --sidebar: #f5f3f0;
+
+  /* متن اصلی: تیره‌تر و با کنتراست بالاتر، ولی گرم */
+  --foreground: #24201d; /* خاکستری-قهوه‌ای تیره (به جای #2a2624) */
+  --card-foreground: #24201d;
+  --popover-foreground: #24201d;
+  --sidebar-foreground: #24201d;
+
+  /* رنگ اصلی (آبی Airbnb) — بدون تغییر، همچنان عالی */
+  --primary: #007a87;
   --primary-foreground: #ffffff;
-  --secondary: #f9fafb;
-  --secondary-foreground: #374151;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
-  --accent-foreground: #1f2937;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #e5e7eb; /* Airbnb-like subtle border */
-  --input: #d1d5db;
-  --input-background: #ffffff;
-  --switch-background: #d1d5db;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --ring: #007A87;
-  --chart-1: oklch(.623 .214 259.815); /* آبی */
-  --chart-2: oklch(.627 .194 149.214); /* سبز */
-  --chart-3: oklch(.398 .07 227.392);
-  --chart-4: oklch(.828 .189 84.429);
-  --chart-5: oklch(.769 .188 70.08);
-  --radius: 0.75rem; /* Airbnb گردتر است */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #111827;
-  --sidebar-primary: #007A87;
+  --ring: #007a87;
+  --sidebar-primary: #007a87;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3f4f6;
-  --sidebar-accent-foreground: #1f2937;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #007A87;
+  --sidebar-ring: #007a87;
+
+  /* رنگ‌های ثانویه و muted: کمی تیره‌تر و غنی‌تر */
+  --secondary: #ede9e4; /* به جای #f4f2f0 */
+  --secondary-foreground: #45403b;
+  --muted: #e9e5e0; /* به جای #f0eeec */
+  --muted-foreground: #756f69; /* کمی تیره‌تر از قبل */
+  --accent: #e9e5e0;
+  --accent-foreground: #35312d;
+
+  /* رنگ‌های هشدار/حذف */
+  --destructive: #e53e3e;
+  --destructive-foreground: #ffffff;
+
+  /* Border و Input: کمی تیره‌تر برای وضوح بیشتر */
+  --border: #d8d3ce; /* به جای #e0dcd8 */
+  --input: #c2bdb7; /* کمی تیره‌تر */
+  --input-background: #ffffff;
+  --switch-background: #c2bdb7;
+
+  /* Sidebar */
+  --sidebar-accent: #e9e5e0;
+  --sidebar-accent-foreground: #35312d;
+  --sidebar-border: #d8d3ce;
+
+  /* وزن فونت */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+
+  /* نمودارها — کمی اشباع‌تر و تیره‌تر برای دیده‌شدن بهتر */
+  --chart-1: oklch(0.55 0.2 250);   /* آبی عمیق‌تر */
+  --chart-2: oklch(0.6 0.18 140);   /* سبز زمینی تیره‌تر */
+  --chart-3: oklch(0.45 0.12 30);   /* قهوه‌ای خاکی غنی */
+  --chart-4: oklch(0.7 0.17 80);    /* زرد ماسه‌ای با عمق */
+  --chart-5: oklch(0.65 0.14 60);   /* بژ طبیعی ولی متمایز */
 }
 
 .dark {

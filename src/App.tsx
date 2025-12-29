@@ -88,7 +88,7 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex" dir="rtl">
+    <div className="min-h-screen bg-background dark:bg-slate-900 transition-colors duration-300 flex" dir="rtl">
       {/* ========== منوی عمودی (سمت راست) ========== */}
       <div className="w-full shadow-lg max-w-[280px] flex-shrink-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
         {/* هدر منو */}
