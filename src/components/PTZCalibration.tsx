@@ -148,7 +148,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
         >
           {/* ستون 1: تصویر */}
           <div className="flex">
-            <Card className="w-full border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col">
+            <Card className="shadow-lg w-full border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl flex flex-col">
               <div className="p-4 pb-2 flex items-center justify-between">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">نمای دوربین</h3>
                 {isTesting && (
@@ -263,7 +263,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
 
           {/* ستون 2: presetها و فرم */}
           <div className="flex flex-col gap-6 h-full">
-            <Card className="p-5 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl shrink-0">
+            <Card className="shadow-lg p-5 border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl shrink-0">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-base font-medium text-slate-900 dark:text-slate-100">
                   {editingPresetId ? 'ویرایش Preset' : 'ایجاد Preset جدید'}
@@ -312,7 +312,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
             </Card>
 
             {/* لیست presetها با اسکرول */}
-            <Card className="flex-1 border  border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
+            <Card className=" shadow-lg flex-1 border  border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-2">
                 Preset‌ها ({presets.length})
               </h3>

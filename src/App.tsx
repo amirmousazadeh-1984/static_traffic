@@ -90,15 +90,15 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex" dir="rtl">
       {/* ========== منوی عمودی (سمت راست) ========== */}
-      <div className="w-full max-w-[280px] flex-shrink-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col shadow-xl">
+      <div className="w-full max-w-[280px] flex-shrink-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
         {/* هدر منو */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#007A87] dark:bg-blue-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center shadow-sm">
                 <Camera className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
                 نظارت ترافیکی
               </h1>
             </div>
@@ -106,19 +106,19 @@ function App() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
               aria-label="تغییر تم"
             >
-              <Sun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-slate-700" />
-              <Moon className="absolute w-5 h-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-slate-400" />
+              <Sun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute w-5 h-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
           </div>
 
           {/* چهارراه انتخاب‌شده */}
           {selectedIntersection && (
-            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2.5 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
-              <MapPin className="w-4 h-4 text-[#007A87] dark:text-blue-400 flex-shrink-0" />
-              <span className="text-sm font-medium text-[#005f69] dark:text-blue-300 truncate">
+            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg border border-blue-200 dark:border-blue-800">
+              <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+              <span className="text-sm font-medium text-blue-900 dark:text-blue-300 truncate">
                 {selectedIntersection.name}
               </span>
             </div>
@@ -127,24 +127,22 @@ function App() {
 
         {/* آیتم‌های منو */}
         <nav className="flex-1 overflow-y-auto py-3">
-          <div className="space-y-1.5 px-3">
+          <div className="space-y-1 px-3">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => !item.disabled && setActiveTab(item.id)}
                 disabled={item.disabled}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-right rounded-lg transition-all duration-200 shadow-sm hover:shadow-md ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 text-right rounded-lg transition-colors ${
                   activeTab === item.id
-                    ? 'bg-[#007A87]/10 dark:bg-blue-900/40 text-[#007A87] dark:text-blue-300 font-medium border border-[#007A87]/20 dark:border-blue-700'
+                    ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-medium'
                     : item.disabled
-                    ? 'text-slate-400 dark:text-slate-600 cursor-not-allowed bg-slate-50/50 dark:bg-slate-800/30'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 border border-transparent hover:border-slate-200 dark:hover:border-slate-600'
+                    ? 'text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}
               >
-                <span className={activeTab === item.id ? 'text-[#007A87] dark:text-blue-300' : 'text-slate-600 dark:text-slate-400'}>
-                  {item.icon}
-                </span>
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-slate-600 dark:text-slate-400">{item.icon}</span>
+                <span className="text-sm">{item.label}</span>
               </button>
             ))}
           </div>
@@ -177,7 +175,7 @@ function App() {
           )}
 
           {activeTab === 'violations' && (
-            <div className="min-h-[calc(100vh-140px)]">
+            <div >
               <ViolationTypesManager />
             </div>
           )}

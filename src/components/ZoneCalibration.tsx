@@ -508,7 +508,7 @@ const saveEditedName = () => {
 {/* ستون دوم: دو بخش با ارتفاع برابر */}
 <div className="flex flex-col gap-4 h-full">
   {/* بخش اول: جهات و presetها */}
-  <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+  <Card className="shadow-lg p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
     <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
       جهات دوربین‌های ثابت
     </Label>
@@ -571,7 +571,7 @@ const saveEditedName = () => {
   </Card>
 
   {/* بخش دوم: ترسیم مناطق */}
-  <Card className="p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+  <Card className="shadow-lg p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
     <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
       ترسیم مناطق کالیبراسیون
     </Label>
@@ -633,7 +633,7 @@ const saveEditedName = () => {
 </div>
 
       {/* ستون سوم: لیست مناطق (25%) */}
-<Card className="flex flex-col border border-slate-200 dark:border-slate-700 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+<Card className="shadow-lg flex flex-col border border-slate-200 dark:border-slate-700 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
   <div className="p-3 flex justify-between items-center">
     <Label className="text-xs font-medium text-slate-900 dark:text-slate-100">
       مناطق تعریف شده ({shapes.filter(s => s.viewId === selectedViewId).length})
