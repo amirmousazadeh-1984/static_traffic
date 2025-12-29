@@ -32,7 +32,7 @@ export function ViolationTypesManager() {
     code: '',
     name: '',
     description: '',
-    validDuration: 30,
+    validDuration: '',
   });
 
   const handleAdd = () => {
@@ -94,21 +94,22 @@ export function ViolationTypesManager() {
       <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label className=" mb-3 text-slate-700 dark:text-slate-300">کد تخلف</Label>
-            <Input
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              placeholder="مثال: 101"
-              className="mt-1 bg-slate-50 dark:bg-slate-700"
-            />
-          </div>
+         
           <div>
             <Label className="mb-3 text-slate-700 dark:text-slate-300">نام تخلف</Label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="مثال: توقف دوبل"
+              placeholder="نام تخلف را وارد کنید"
+              className="mt-1 bg-slate-50 dark:bg-slate-700"
+            />
+              </div>
+               <div>
+            <Label className=" mb-3 text-slate-700 dark:text-slate-300">کد تخلف</Label>
+            <Input
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              placeholder="کد تخلف را وارد کنید"
               className="mt-1 bg-slate-50 dark:bg-slate-700"
             />
           </div>
@@ -118,21 +119,22 @@ export function ViolationTypesManager() {
               type="number"
               value={formData.validDuration}
               onChange={(e) => setFormData({ ...formData, validDuration: Number(e.target.value) })}
-              min={1}
+                  min={1}
+                  placeholder="مدت زمان توقف جریمه را وارد کنید"
               className="mt-1 bg-slate-50 dark:bg-slate-700"
             />
           </div>
-          <div className="md:col-span-2">
+          <div className="mb-6 md:col-span-2">
             <Label className=" mb-3 text-slate-700 dark:text-slate-300">توضیحات</Label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="توضیح مختصر درباره این تخلف..."
-              rows={3}
+              placeholder="توضیح درباره این تخلف..."
+              rows={8}
               className="mt-1 bg-slate-50 dark:bg-slate-700 "
             />
           </div>
-          <div className="md:col-span-2">
+          <div className="flex items-center justify-end md:col-span-2">
             <Button
               onClick={handleAdd}
                                className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600">
