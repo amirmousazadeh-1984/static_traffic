@@ -425,10 +425,10 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           {filteredIntersections.map((intersection) => (
             <Card
               key={intersection.id}
-              className="shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transform hover:-translate-y-2"
+              className=" shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transform hover:-translate-y-2"
               onClick={() => onSelectIntersection(intersection)}
             >
-              <div className="p-6">
+              <div className="p-5  ">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-2">{intersection.name}</h3>
                   <div className="flex items-center gap-2">
@@ -463,13 +463,13 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                 )}
 
                 <div
-                  className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl -mx-6 px-6 py-3 transition-all duration-200"
+                  className="mt-5 pt-1 border-t border-slate-200 dark:border-slate-700 cursor-pointer transition-all duration-200"
                   onClick={(e) => {
                     e.stopPropagation();
                     showCamerasModal(intersection);
                   }}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between">
                     <span className="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                       <CameraIcon className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                       <span className="text-xs text-slate-500 dark:text-slate-400">تعداد دوربین‌ها:</span>
