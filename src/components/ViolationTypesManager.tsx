@@ -157,7 +157,7 @@ export function ViolationTypesManager() {
           {violationTypes.map((v) => (
             <div
               key={v.id}
-              className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
+              className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
             >
               <div className="flex items-center gap-4">
                 <div
