@@ -239,7 +239,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
         {/* نمودارها — در کنار هم */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* نمودار ستونی */}
-          <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+          <Card className="p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
   <h3 className=" text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
     تعداد تخلفات بر اساس نوع
   </h3>
@@ -321,7 +321,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
 </Card>
 
           {/* نمودار دونات */}
-          <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+          <Card className="p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
               درصد تخلفات بر اساس نوع            </h3>
            <div className="flex-1 w-full flex items-center justify-center">
