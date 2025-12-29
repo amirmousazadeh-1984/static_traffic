@@ -39,6 +39,7 @@ import {
 
 // --- Radix UI Imports برای Select سفارشی ---
 import * as SelectPrimitive from '@radix-ui/react-select';
+import { translations, type Language } from '../locales';
 
 // --- SelectNoModal: برای استفاده داخل مدال بدون محدودیت z-index ---
 const SelectNoModal = forwardRef<
@@ -49,13 +50,16 @@ const SelectNoModal = forwardRef<
 });
 SelectNoModal.displayName = 'SelectNoModal';
 
-// --- کامپوننت اصلی ---
 interface IntersectionListProps {
   onSelectIntersection: (intersection: Intersection) => void;
+  language: Language;
 }
-
-export function IntersectionList({ onSelectIntersection }: IntersectionListProps) {
+export function IntersectionList({ onSelectIntersection, language }: IntersectionListProps) {
+  const t = translations[language];
+  
   const [searchQuery, setSearchQuery] = useState('');
+
+
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'maintenance'>('all');
   const [, setUpdateTrigger] = useState({});
 
@@ -217,11 +221,10 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
       <div className="max-w-[1800px] mx-auto">
         <div className="mb-10">
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            کنترل ترافیک در تقاطع های شهری
+          {t.trafficControlTitle}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            برنامه جامع ثبت تخلفات چهارراه ها بر اساس تخلفات توسط دوربین های جرخان (PTZ)
-          </p>
+{t.trafficControlDesc}          </p>
         </div>
 
         {/* --- کارت‌های آمار --- */}
@@ -229,7 +232,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">تعداد چهارراه‌ها</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">{t.intersectionsCount}</p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{mockIntersections.length}</p>
               </div>
               <MapPin className="w-9 h-9 text-slate-600 dark:text-slate-400" />
@@ -239,7 +242,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">چهارراه‌های فعال</p>
+                <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">{t.activeIntersections}</p>
                 <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">{activeIntersections}</p>
               </div>
               <Activity className="w-9 h-9 text-green-600 dark:text-green-400" />
@@ -249,7 +252,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">تخلفات ثبت‌شده امروز</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">{t.todayViolations}</p>
                 <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-1">{totalViolations}</p>
               </div>
               <AlertTriangle className="w-9 h-9 text-amber-600 dark:text-amber-400" />
@@ -259,7 +262,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
           <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">تعداد کل دوربین‌ها</p>
+                <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t.totalCameras}  </p>
                 <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">{totalCameras}</p>
               </div>
               <CameraIcon className="w-9 h-9 text-purple-600 dark:text-purple-400" />
@@ -273,7 +276,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             <div className="relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/3 w-5 h-5 text-slate-400" />
               <Input
-                placeholder="جستجو..."
+                placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pr-10 w-full sm:w-80 bg-slate-50 dark:bg-slate-700/50"
@@ -293,13 +296,7 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-800'
                   }
                 >
-                  {filter === 'all'
-                    ? 'همه'
-                    : filter === 'active'
-                    ? 'فعال'
-                    : filter === 'inactive'
-                    ? 'غیرفعال'
-                    : 'در حال تعمیر'}
+                 {filter === 'all' ? t.filterAll : filter === 'active' ? (language === 'fa' ? 'فعال' : 'Active') : filter === 'inactive' ? (language === 'fa' ? 'غیرفعال' : 'Inactive') : t.filterMaintenance}
                 </Button>
               ))}
             </div>
@@ -309,12 +306,12 @@ export function IntersectionList({ onSelectIntersection }: IntersectionListProps
             <DialogTrigger asChild>
               <Button className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600">
                 <Plus className="w-4 h-4 ml-2" />
-                چهارراه جدید
+             {t.addNewIntersection}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
               <DialogHeader>
-                <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">چهارراه جدید</DialogTitle>
+                <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.newIntersectionTitle}</DialogTitle>
               </DialogHeader>
 
               <div className="grid gap-4 py-4">
