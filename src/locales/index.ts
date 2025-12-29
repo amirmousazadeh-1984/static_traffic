@@ -26,6 +26,8 @@ export const translations = {
     latitude: "عرض جغرافیایی",
     longitude: "طول جغرافیایی",
     status: "وضعیت",
+    enterlangitude: "طول جغرافیایی را وارد کنید ",
+    enterlatitude: "عرض جغرافیایی را وارد کنید ",
     cameraType: "نوع دوربین",
     fixed: "ثابت",
     ptz: "چرخان",
@@ -55,6 +57,7 @@ export const translations = {
   activeIntersections: "چهارراه‌های فعال",
   todayViolations: "تخلفات ثبت‌شده امروز",
   totalCameras: "تعداد کل دوربین‌ها",
+  totalCamera: "تعداد  دوربین‌ها",
   searchPlaceholder: "جستجو...",
   filterAll: "همه",
   filterActive: "فعال",
@@ -90,7 +93,8 @@ export const translations = {
   cameraEdited: "دوربین ویرایش شد",
   cameraDeleted: "دوربین حذف شد",
   confirmDeleteIntersection: "حذف چهارراه و دوربین‌های آن؟",
-  confirmDeleteCamera: "حذف این دوربین؟",
+    confirmDeleteCamera: "حذف این دوربین؟",
+  enterAddress: "آدرس را وارد کنید",
 
   },
   en: {
@@ -141,6 +145,9 @@ export const translations = {
     validDuration: "Violation Hold Duration (seconds)",
     description: "Description",
     addViolationType: "Add New Violation Type",
+
+    enterlangitude: "Enter longitude",
+    enterlatitude: "Enter latitude",
     
   trafficControlTitle: "Urban Intersection Traffic Control",
   trafficControlDesc: "Comprehensive violation registration system for intersections using PTZ cameras",
@@ -184,6 +191,8 @@ export const translations = {
   cameraDeleted: "Camera deleted",
   confirmDeleteIntersection: "Delete intersection and its cameras?",
   confirmDeleteCamera: "Delete this camera?",
+  enterAddress: "enter inter address",
+  totalCamera: "Total Cameras",
 
   },
 };

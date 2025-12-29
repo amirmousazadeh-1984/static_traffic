@@ -332,11 +332,11 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                     value={newIntLocation}
                     onChange={(e) => setNewIntLocation(e.target.value)}
                     className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                    placeholder="آدرس کامل محل تقاطع"
+                    placeholder={t.enterAddress}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-lat" className="text-right text-sm text-slate-700 dark:text-slate-300">عرض جغرافیایی</Label>
+                  <Label htmlFor="int-lat" className="text-right text-sm text-slate-700 dark:text-slate-300">{t.latitude} </Label>
                   <Input
                     id="int-lat"
                     type="number"
@@ -344,11 +344,11 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                     value={newIntLat}
                     onChange={(e) => setNewIntLat(e.target.value)}
                     className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                    placeholder="مثلاً: 35.6892"
+                    placeholder={t.enterlatitude}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="int-lng" className="text-right text-sm text-slate-700 dark:text-slate-300">طول جغرافیایی</Label>
+                  <Label htmlFor="int-lng" className="text-right text-sm text-slate-700 dark:text-slate-300">{t.longitude} </Label>
                   <Input
                     id="int-lng"
                     type="number"
@@ -356,7 +356,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                     value={newIntLng}
                     onChange={(e) => setNewIntLng(e.target.value)}
                     className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                    placeholder="مثلاً: 51.3890"
+                    placeholder={t.enterlangitude}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -378,19 +378,19 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                           value="active"
                           className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
                         >
-                          <SelectPrimitive.ItemText>فعال</SelectPrimitive.ItemText>
+                          <SelectPrimitive.ItemText>{t.active}</SelectPrimitive.ItemText>
                         </SelectPrimitive.Item>
                         <SelectPrimitive.Item
                           value="inactive"
                           className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
                         >
-                          <SelectPrimitive.ItemText>غیرفعال</SelectPrimitive.ItemText>
+                          <SelectPrimitive.ItemText>{t.inactive}</SelectPrimitive.ItemText>
                         </SelectPrimitive.Item>
                         <SelectPrimitive.Item
                           value="maintenance"
                           className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
                         >
-                          <SelectPrimitive.ItemText>در حال تعمیر</SelectPrimitive.ItemText>
+                          <SelectPrimitive.ItemText>{t.maintenance}</SelectPrimitive.ItemText>
                         </SelectPrimitive.Item>
                       </SelectPrimitive.Viewport>
                     </SelectPrimitive.Content>
@@ -404,14 +404,13 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                   onClick={() => setOpenAddIntersection(false)}
                   className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
-                  انصراف
+                  {t.cancel}
                 </Button>
                 <Button
                   onClick={handleAddIntersection}
                   className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
                 >
-                  اضافه کردن
-                </Button>
+                  {t.add}                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -452,7 +451,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                 {intersection.todayViolations > 0 ? (
                   <div className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-2 mb-4">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>تعداد تخلف ثبت شده</span>
+                    <span>{t.todayViolations}</span>
                     {intersection.todayViolations}
                   </div>
                 ) : (
@@ -469,10 +468,10 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                       <CameraIcon className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                      <span className="text-xs text-slate-500 dark:text-slate-400">تعداد دوربین‌ها:</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{t.totalCamera}</span>
                       <span className="text-xs text-slate-900 dark:text-slate-100">{intersection.camerasCount}</span>
                     </span>
-                    <span className="text-xs text-blue-600 dark:text-blue-400">مدیریت دوربین‌ها →</span>
+                    <span className="text-xs text-blue-600 dark:text-blue-400">{t.manageCameras}</span>
                   </div>
                 </div>
               </div>
