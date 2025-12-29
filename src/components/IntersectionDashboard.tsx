@@ -207,87 +207,95 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* نمودار ستونی */}
           <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-              تعداد تخلفات بر اساس نوع
-            </h3>
-            <div className="flex-1 w-full">
-              {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
-                <Bar
-                  data={{
-                    labels: validTypeIds.map(id => violationTypeMap[id].name),
-                    datasets: [
-                      {
-                        label: 'تعداد تخلفات',
+  <h3 className=" text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+    تعداد تخلفات بر اساس نوع
+  </h3>
+            {/* 👇 این دیو 20% کوتاه‌تر از ارتفاع کارت است */}
+            <div className="flex-1 w-full flex items-center justify-center">
+
+
+            
+   <div className="w-[90%] h-[80%]">
+    {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
+      <Bar
+        data={{
+          labels: validTypeIds.map(id => violationTypeMap[id].name),
+          datasets: [
+            {
+              label: 'تعداد تخلفات',
  data: validTypeIds.map(id => stats.byType[id] || 0),
-                        backgroundColor: validTypeIds.map(id => violationTypeMap[id].color + '80'),
-                        borderColor: validTypeIds.map(id => violationTypeMap[id].color),
-                        borderWidth: 1.5,
-                        borderRadius: 4,
-                        borderSkipped: false,
-                      },
-                    ],
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    barThickness: 24,
-                    categoryPercentage: 0.7,
-                    barPercentage: 0.85,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                        titleColor: '#fff',
-                        bodyColor: '#e2e8f0',
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 12,
-                        cornerRadius: 8,
-                      },
-                    },
-                    scales: {
-                      x: {
-                        ticks: {
-                          color: '#94a3b8',
-                          font: { size: 11 },
-                          maxRotation: 0,
-                          autoSkip: true,
-                        },
-                        grid: { display: false },
-                      },
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          color: '#94a3b8',
-                          font: { size: 11 },
-                          stepSize: 1,
-                        },
-                        grid: {
-                          color: 'rgba(148, 163, 184, 0.1)',
-                        },
-                      },
-                    },
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <AlertTriangle className="w-10 h-10 mx-auto mb-2 text-slate-400" />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">
-                      هیچ تخلفی برای نمایش وجود ندارد
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
+              backgroundColor: validTypeIds.map(id => violationTypeMap[id].color + '80'),
+              borderColor: validTypeIds.map(id => violationTypeMap[id].color),
+              borderWidth: 0.5,
+              borderRadius: 5,
+              borderSkipped: false,
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          barThickness: 35,
+          categoryPercentage: 0.7,
+          barPercentage: 0.85,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e2e8f0',
+              titleFont: { size: 13, weight: 'bold' },
+              bodyFont: { size: 12 },
+              padding: 12,
+              cornerRadius: 8,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 },
+                maxRotation: 0,
+                autoSkip: true,
+              },
+              grid: { display: false },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 },
+                stepSize: 1,
+              },
+              grid: {
+                color: 'rgba(148, 163, 184, 0.1)',
+              },
+            },
+          },
+        }}
+      />
+    ) : (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <AlertTriangle className="w-10 h-10 mx-auto mb-2 text-slate-400" />
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            هیچ تخلفی برای نمایش وجود ندارد
+          </p>
+        </div>
+      </div>
+    )}
+  </div></div>
+</Card>
 
           {/* نمودار دونات */}
           <Card className="p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-              سهم هر نوع تخلف از کل
-            </h3>
-            <div className="flex-1 w-full">
+              درصد تخلفات بر اساس نوع            </h3>
+           <div className="flex-1 w-full flex items-center justify-center">
+
+
+            
+   <div className="w-[90%] h-[80%]">
               {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
                 <Pie
                   data={{
@@ -298,7 +306,9 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
  data: validTypeIds.map(id => stats.byType[id] || 0),
                         backgroundColor: validTypeIds.map(id => violationTypeMap[id].color + 'B0'),
                         borderWidth: 0,
+                        borderColor: 'transparent',
                         cutout: '50%',
+                        borderRadius: 5,
                       },
                     ],
                   }}
@@ -360,7 +370,8 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+              </div>
           </Card>
         </div>
       </div>
