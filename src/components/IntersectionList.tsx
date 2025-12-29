@@ -93,11 +93,11 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
   const getStatusBadge = (status: Intersection['status']) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs">فعال</Badge>;
+        return <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs">{t.active}</Badge>;
       case 'inactive':
-        return <Badge className="bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300 text-xs">غیرفعال</Badge>;
+        return <Badge className="bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300 text-xs">{t.inactive}</Badge>;
       case 'maintenance':
-        return <Badge className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs">در حال تعمیر</Badge>;
+        return <Badge className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs">{t.maintenance}</Badge>;
     }
   };
 
@@ -360,7 +360,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-sm text-slate-700 dark:text-slate-300">وضعیت</Label>
+                  <Label className="text-right text-sm text-slate-700 dark:text-slate-300">{t.status}</Label>
                   <SelectNoModal value={newIntStatus} onValueChange={(v) => setNewIntStatus(v as any)}>
                     <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
                       <SelectPrimitive.Value placeholder="وضعیت را انتخاب کنید" />
@@ -455,7 +455,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                     {intersection.todayViolations}
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mb-4">امکان ثبت تخلف وجود ندارد</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-4">{t.noViolationPossible}</div>
                 )}
 
                 <div
@@ -484,8 +484,8 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
             <div className="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-10 h-10 text-slate-400" />
             </div>
-            <p className="text-slate-600 dark:text-slate-400 text-base">چهارراهی یافت نشد</p>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">جستجو یا فیلتر را تغییر دهید</p>
+            <p className="text-slate-600 dark:text-slate-400 text-base">{t.noIntersectionFound}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">   {t.changeSearchOrFilter}  </p>
           </div>
         )}
 
