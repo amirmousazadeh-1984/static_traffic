@@ -248,7 +248,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
 
 
             
-   <div className="w-[90%] h-[80%]">
+   <div className="w-[85%] h-[75%]">
     {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
       <Bar
         data={{
@@ -328,7 +328,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
 
 
             
-   <div className="w-[90%] h-[80%]">
+      <div className="w-[85%] h-[75%]">
               {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
                 <Pie
                   data={{
