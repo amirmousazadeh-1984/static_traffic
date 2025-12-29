@@ -6,12 +6,12 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { AlertCircle, Plus, Trash2 } from 'lucide-react';
+import { AlertCircle, Plus, Trash2, Pencil, X, Save, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ViolationType {
   id: string;
-  code: string; // ✅ فیلد جدید: کد تخلف
+  code: string;
   name: string;
   description: string;
   validDuration: number;
@@ -32,8 +32,10 @@ export function ViolationTypesManager() {
     code: '',
     name: '',
     description: '',
-    validDuration: '',
+    validDuration: 30, // ✅ initialize as number
   });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<ViolationType | null>(null);
 
   const handleAdd = () => {
     const { code, name } = formData;
@@ -48,7 +50,6 @@ export function ViolationTypesManager() {
       return;
     }
 
-    // بررسی منحصربه‌فرد بودن کد
     if (violationTypes.some(v => v.code === code)) {
       toast.error('کد تخلف تکراری است. لطفاً کد دیگری وارد کنید.');
       return;
@@ -62,7 +63,7 @@ export function ViolationTypesManager() {
       code: code.trim(),
       name: name.trim(),
       description: formData.description.trim(),
-      validDuration: formData.validDuration,
+      validDuration: Number(formData.validDuration),
       color: newColor,
     };
 
@@ -76,125 +77,231 @@ export function ViolationTypesManager() {
     toast.success('تخلف حذف شد');
   };
 
+  const handleEditClick = (violation: ViolationType) => {
+    setEditingId(violation.id);
+    setEditForm({ ...violation });
+  };
+
+  const handleEditChange = (field: keyof ViolationType, value: string | number) => {
+    if (editForm) {
+      setEditForm({ ...editForm, [field]: value });
+    }
+  };
+
+  const handleSaveEdit = () => {
+    if (!editForm) return;
+
+    const { id, code, name } = editForm;
+
+    if (!code.trim()) {
+      toast.error('کد تخلف الزامی است');
+      return;
+    }
+
+    if (!name.trim()) {
+      toast.error('نام تخلف الزامی است');
+      return;
+    }
+
+    // بررسی تکراری بودن کد (به جز خود تخلف در حال ویرایش)
+    const isDuplicate = violationTypes.some(v => v.code === code && v.id !== id);
+    if (isDuplicate) {
+      toast.error('کد تخلف تکراری است.');
+      return;
+    }
+
+    setViolationTypes(violationTypes.map(v => (v.id === id ? { ...editForm, code: code.trim(), name: name.trim(), description: editForm.description.trim() } : v)));
+    setEditingId(null);
+    setEditForm(null);
+    toast.success('تغییرات با موفقیت ذخیره شد');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm(null);
+  };
+
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
-<div className="max-w-[1800px] mx-auto">
-      <div className="mb-8">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">مدیریت انواع تخلفات</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-          انواع تخلفات قابل شناسایی در سیستم را اینجا تعریف و مدیریت کنید
-        </p>
-      </div>
+      <div className="max-w-[1800px] mx-auto">
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">مدیریت انواع تخلفات</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            انواع تخلفات قابل شناسایی در سیستم را اینجا تعریف و مدیریت کنید
+          </p>
+        </div>
 
-      <div
-          className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-6"
-          style={{ height: '80vh' }}
-        >
-      {/* فرم افزودن */}
-      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">افزودن تخلف جدید</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-         
-          <div>
-            <Label className="mb-3 text-slate-700 dark:text-slate-300">نام تخلف</Label>
-            <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="نام تخلف را وارد کنید"
-              className="mt-1 bg-slate-50 dark:bg-slate-700"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-6" style={{ height: '80vh' }}>
+          {/* فرم افزودن */}
+          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              {editingId ? 'ویرایش تخلف' : 'افزودن تخلف جدید'}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="mb-3 text-slate-700 dark:text-slate-300">نام تخلف</Label>
+                <Input
+                  value={editingId ? editForm?.name || '' : formData.name}
+                  onChange={(e) =>
+                    editingId
+                      ? handleEditChange('name', e.target.value)
+                      : setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="نام تخلف را وارد کنید"
+                  className="mt-1 bg-slate-50 dark:bg-slate-700"
+                />
               </div>
-               <div>
-            <Label className=" mb-3 text-slate-700 dark:text-slate-300">کد تخلف</Label>
-            <Input
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              placeholder="کد تخلف را وارد کنید"
-              className="mt-1 bg-slate-50 dark:bg-slate-700"
-            />
-          </div>
-          <div>
-            <Label className="mb-3 text-slate-700 dark:text-slate-300">مدت زمان توقف جریمه (ثانیه)</Label>
-            <Input
-              type="number"
-              value={formData.validDuration}
-              onChange={(e) => setFormData({ ...formData, validDuration: Number(e.target.value) })}
+              <div>
+                <Label className="mb-3 text-slate-700 dark:text-slate-300">کد تخلف</Label>
+                <Input
+                  value={editingId ? editForm?.code || '' : formData.code}
+                  onChange={(e) =>
+                    editingId
+                      ? handleEditChange('code', e.target.value)
+                      : setFormData({ ...formData, code: e.target.value })
+                  }
+                  placeholder="کد تخلف را وارد کنید"
+                  className="mt-1 bg-slate-50 dark:bg-slate-700"
+                />
+              </div>
+              <div>
+                <Label className="mb-3 text-slate-700 dark:text-slate-300">مدت زمان توقف جریمه (ثانیه)</Label>
+                <Input
+                  type="number"
+                  value={editingId ? editForm?.validDuration || 30 : formData.validDuration}
+                  onChange={(e) =>
+                    editingId
+                      ? handleEditChange('validDuration', Number(e.target.value))
+                      : setFormData({ ...formData, validDuration: Number(e.target.value) })
+                  }
                   min={1}
                   placeholder="مدت زمان توقف جریمه را وارد کنید"
-              className="mt-1 bg-slate-50 dark:bg-slate-700"
-            />
-          </div>
-          <div className="mb-6 md:col-span-2">
-            <Label className=" mb-3 text-slate-700 dark:text-slate-300">توضیحات</Label>
-            <Textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="توضیح درباره این تخلف..."
-              rows={8}
-              className="mt-1 bg-slate-50 dark:bg-slate-700 "
-            />
-          </div>
-          <div className="flex items-center justify-end md:col-span-2">
-            <Button
-              onClick={handleAdd}
-                               className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600">
-                  
-                  
-          
-              <Plus className="w-4 h-4" />
-              افزودن تخلف جدید
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* لیست تخلفات */}
-      <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
-          تخلفات تعریف شده در سیستم
-        </h3>
-        <div className="space-y-3">
-          {violationTypes.map((v) => (
-            <div
-              key={v.id}
-              className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
-                  style={{ backgroundColor: v.color }}
-                >
-                  {v.code}
-                </div>
-                <div>
-                  <p className="font-medium text-slate-900 dark:text-slate-100">{v.name}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{v.description}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                    کد تخلف: {v.code} | مدت زمان توقف جریمه: {v.validDuration} ثانیه
-                  </p>
-                </div>
+                  className="mt-1 bg-slate-50 dark:bg-slate-700"
+                />
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
-                onClick={() => handleDelete(v.id)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              <div className="md:col-span-2">
+                <Label className="mb-3 text-slate-700 dark:text-slate-300">توضیحات</Label>
+                <Textarea
+                  value={editingId ? editForm?.description || '' : formData.description}
+                  onChange={(e) =>
+                    editingId
+                      ? handleEditChange('description', e.target.value)
+                      : setFormData({ ...formData, description: e.target.value })
+                  }
+                  placeholder="توضیح درباره این تخلف..."
+                  rows={8}
+                  className="mt-1 bg-slate-50 dark:bg-slate-700"
+                />
+              </div>
+              <div className="flex items-center justify-end md:col-span-2 gap-2">
+                {editingId ? (
+                  <>
+                   
+                    <span></span>
+                    </>
+                  
+                ) : (
+                  <Button
+                    onClick={handleAdd}
+                    className="shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+                  >
+                    <Plus className="w-4 h-4 ml-1" />
+                    افزودن تخلف جدید
+                  </Button>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
+          </Card>
 
-        {violationTypes.length === 0 && (
-          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-            <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>هنوز هیچ تخلفی تعریف نشده است</p>
-          </div>
+          {/* لیست تخلفات */}
+          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              تخلفات تعریف شده در سیستم
+            </h3>
+           <div className="space-y-3">
+  {violationTypes.map((v) => (
+    <div
+      key={v.id}
+      className={`flex items-center justify-between p-3 rounded-lg border ${
+        editingId === v.id
+          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-inner'
+          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <div
+          className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
+          style={{ backgroundColor: v.color }}
+        >
+          {v.code}
+        </div>
+        <div>
+          <p className="font-medium text-slate-900 dark:text-slate-100">{v.name}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{v.description}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+            کد تخلف: {v.code} | مدت زمان توقف جریمه: {v.validDuration} ثانیه
+          </p>
+        </div>
+      </div>
+
+      {/* دکمه‌ها */}
+      <div className="flex gap-1">
+        {editingId === v.id ? (
+          <>
+            {/* ذخیره */}
+            <Button
+              size="icon"
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={handleSaveEdit}
+            >
+              <Save className="w-4 h-4" />
+            </Button>
+            {/* لغو */}
+            <Button
+              size="icon"
+              variant="outline"
+              className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+              onClick={handleCancelEdit}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </>
+        ) : (
+          <>
+            {/* ویرایش */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+              onClick={() => handleEditClick(v)}
+            >
+              <Pencil className="w-4 h-4" />
+            </Button>
+            {/* حذف */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+              onClick={() => handleDelete(v.id)}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </>
         )}
-        </Card>
+      </div>
+    </div>
+  ))}
+</div>
+
+            {violationTypes.length === 0 && (
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+                <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>هنوز هیچ تخلفی تعریف نشده است</p>
+              </div>
+            )}
+          </Card>
         </div>
-        </div>
+      </div>
     </div>
   );
 }
