@@ -178,24 +178,31 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                   </Label>
                 
                 </div>
-                <Select value={selectedCameraId || ''} onValueChange={setSelectedCameraId}>
-  <SelectTrigger className="w-full">
+      <Select  onValueChange={setSelectedCameraId} 
+    align={isRTL ? 'end' : 'start'}  
+    dir={isRTL ? 'rtl' : 'ltr'} >
+  <SelectTrigger className="w-full" >
     <SelectValue placeholder="دوربینی انتخاب کنید" />
   </SelectTrigger>
   <SelectContent 
-    className="z-50 min-w-[240px] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
-    sideOffset={5}
+    className="z-50 min-w-[260px] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
+    sideOffset={8}
+    align={isRTL ? 'end' : 'start'}  
+    dir={isRTL ? 'rtl' : 'ltr'}       
   >
     {cameras.length > 0 ? (
       cameras.map(cam => (
         <SelectItem 
           key={cam.id} 
           value={cam.id}
-          className="text-sm py-2 px-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700"
+          className="text-sm py-3 px-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
         >
-          <div className="flex items-center justify-between">
-            <span className="font-medium">{cam.name}</span>
-            <Badge variant="outline" className="text-[10px] ml-2">
+          <div className={`flex items-center ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'} gap-3`}>
+            <span className="font-medium truncate">{cam.name}</span>
+            <Badge 
+              variant="outline" 
+              className={`text-[10px] ${isRTL ? 'mr-auto' : 'ml-auto'} px-2 py-0.5`}
+            >
               {cam.type === 'ptz' ? 'PTZ' : 'ثابت'}
               {cam.direction ? ` — ${cam.direction}` : ''}
             </Badge>
@@ -203,7 +210,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
         </SelectItem>
       ))
     ) : (
-      <div className="py-6 text-center text-sm text-slate-500">
+      <div className="py-8 text-center text-sm text-slate-500">
         دوربینی تعریف نشده
       </div>
     )}
