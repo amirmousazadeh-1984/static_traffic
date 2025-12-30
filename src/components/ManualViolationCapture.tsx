@@ -95,7 +95,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
 
   const takeCroppedSnapshot = useCallback(() => {
     if (!completedCrop || !canvasRef.current || !imgRef.current) {
-      toast.error('لطفاً یک منطقه روی تصویر انتخاب کنید');
+      toast.error(t.selectAreaError || 'لطفاً یک منطقه روی تصویر انتخاب کنید');
       return;
     }
 
@@ -123,12 +123,12 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
     );
 
     setSnapshotTaken(true);
-    toast.success('عکس از منطقه انتخاب‌شده گرفته شد', { duration: 4000 });
-  }, [completedCrop]);
+    toast.success(t.snapshotTaken || 'عکس از منطقه انتخاب‌شده گرفته شد', { duration: 4000 });
+  }, [completedCrop, t]);
 
   const saveViolation = () => {
     if (!snapshotTaken) {
-      toast.error('ابتدا عکس بگیرید');
+      toast.error(t.takeSnapshotFirst || 'ابتدا عکس بگیرید');
       return;
     }
 
@@ -144,7 +144,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
       cropArea: completedCrop,
     });
 
-    toast.success('تخلف با موفقیت ثبت شد', { duration: 5000 });
+    toast.success(t.violationSaved || 'تخلف با موفقیت ثبت شد', { duration: 5000 });
     setSnapshotTaken(false);
     setPlateNumber('');
     setCrop({ unit: '%', width: 30, height: 30, x: 35, y: 35 });
@@ -158,10 +158,10 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
         {/* هدر */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            ثبت دستی تخلف — {intersection.name}
+            {t.manualViolationTitle} — {intersection.name}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            با زوم، جابجایی و انتخاب منطقه دقیق، از خودرو متخلف عکس بگیرید.
+            {t.manualViolationDesc}
           </p>
         </div>
 
@@ -174,52 +174,48 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
               <div className="p-6 pb-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
                   <Label className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                    انتخاب دوربین
+                    {t.selectCameraLabel}
                   </Label>
-                
                 </div>
-      <Select  onValueChange={setSelectedCameraId} 
-    align={isRTL ? 'end' : 'start'}  
-    dir={isRTL ? 'rtl' : 'ltr'} >
-  <SelectTrigger className="w-full" >
-    <SelectValue placeholder="دوربینی انتخاب کنید" />
-  </SelectTrigger>
-  <SelectContent 
-    className="z-50 min-w-[260px] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
-    sideOffset={8}
-    align={isRTL ? 'end' : 'start'}  
-    dir={isRTL ? 'rtl' : 'ltr'}       
-  >
-    {cameras.length > 0 ? (
-      cameras.map(cam => (
-        <SelectItem 
-          key={cam.id} 
-          value={cam.id}
-          className="text-sm py-3 px-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
-        >
-          <div className={`flex items-center ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'} gap-3`}>
-            <span className="font-medium truncate">{cam.name}</span>
-            <Badge 
-              variant="outline" 
-              className={`text-[10px] ${isRTL ? 'mr-auto' : 'ml-auto'} px-2 py-0.5`}
-            >
-              {cam.type === 'ptz' ? 'PTZ' : 'ثابت'}
-              {cam.direction ? ` — ${cam.direction}` : ''}
-            </Badge>
-          </div>
-        </SelectItem>
-      ))
-    ) : (
-      <div className="py-8 text-center text-sm text-slate-500">
-        دوربینی تعریف نشده
-      </div>
-    )}
-  </SelectContent>
-</Select>
+                <Select value={selectedCameraId || ''} onValueChange={setSelectedCameraId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t.selectCameraPlaceholder || 'دوربینی انتخاب کنید'} />
+                  </SelectTrigger>
+                  <SelectContent 
+                    className="z-50 min-w-[260px] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
+                    sideOffset={8}
+                    align={isRTL ? 'end' : 'start'}  
+                    dir={isRTL ? 'rtl' : 'ltr'}       
+                  >
+                    {cameras.length > 0 ? (
+                      cameras.map(cam => (
+                        <SelectItem 
+                          key={cam.id} 
+                          value={cam.id}
+                          className="text-sm py-3 px-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
+                        >
+                          <div className={`flex items-center ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'} gap-3`}>
+                            <span className="font-medium truncate">{cam.name}</span>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-[10px] ${isRTL ? 'mr-auto' : 'ml-auto'} px-2 py-0.5`}
+                            >
+                              {cam.type === 'ptz' ? 'PTZ' : language === 'fa' ? 'ثابت' : 'Fixed'}
+                              {cam.direction ? ` — ${cam.direction}` : ''}
+                            </Badge>
+                          </div>
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="py-8 text-center text-sm text-slate-500">
+                        {t.noCameraDefined}
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
 
-
-              {/* تصویر بزرگ + کنترل‌های روی تصویر (بالا چپ/راست بسته به زبان) */}
+              {/* تصویر بزرگ + کنترل‌های روی تصویر */}
               <div className="flex-1 px-6 py-1 min-h-0 relative">
                 <div
                   className="relative bg-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 h-full shadow-inner"
@@ -249,7 +245,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                         <img
                           ref={imgRef}
                           src={intersection.imageUrl}
-                          alt="نمای دوربین"
+                          alt="Camera view"
                           className="max-w-none shadow-2xl rounded-lg"
                           draggable={false}
                         />
@@ -257,14 +253,13 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                     </div>
                   ) : (
                     <div className="h-full flex items-center justify-center text-slate-500">
-                      تصویری موجود نیست
+                      {t.noImageAvailable}
                     </div>
                   )}
 
-                  {/* کنترل‌های زوم و جابجایی — یک باکس واحد در بالا چپ/راست */}
+                  {/* کنترل‌های زوم و جابجایی */}
                   <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} bg-black/70 backdrop-blur-md rounded-xl px-3 shadow-2xl border border-slate-600`}>
-                    <div className="flex flex-col gap-3">
-                      {/* دکمه‌های زوم */}
+                    <div className="flex flex-col gap-3 py-0">
                       <div className="flex items-center gap-1">
                         <Button size="icon" variant="ghost" onClick={zoomOut} className="h-9 w-9 text-white hover:bg-white/20">
                           <ZoomOut className="w-5 h-5" />
@@ -275,25 +270,29 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                         <Button size="icon" variant="ghost" onClick={resetView} className="h-9 w-9 text-white hover:bg-white/20">
                           <Home className="w-5 h-5" />
                                               </Button>
-                                               <div className="flex items-center gap-2 text-white text-xs bg-white/10 rounded-lg px-3 py-1.5">
-                        <Move className="w-4 h-4" />
-                       
+                                                <div className="h-9 w-9 text-white hover:bg-white/20">
+                                                     <Button size="icon" variant="ghost" onClick={resetView} className="h-9 w-9 text-white hover:bg-white/20">
+                                                  <Move className="w-4 h-4" />
+                                              </Button>
+                        
                       </div>
                       </div>
-
-             
-                     
+                      {/* <div className="text-white text-xs bg-white/10 rounded-lg px-3 py-1.5 text-center">
+                        {t.zoomLabel} {(scale * 100).toFixed(0)}%
+                      </div> */}
+                    
                     </div>
                   </div>
 
-                  {/* نشانگر عکس گرفته شده — وسط بالا */}
+                  {/* نشانگر عکس گرفته شده */}
                   {snapshotTaken && (
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-2xl border border-green-400">
-                      عکس گرفته شد ✓
+                      {t.snapshotTaken} ✓
                     </div>
                   )}
                 </div>
               </div>
+
               {/* دکمه گرفتن عکس */}
               <div className="px-6 pb-6 flex-shrink-0">
                 <Button
@@ -303,7 +302,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                   size="lg"
                 >
                   <Crop className="w-5 h-5" />
-                  گرفتن عکس از منطقه انتخاب‌شده
+                  {t.takeSnapshotButton}
                 </Button>
               </div>
             </Card>
@@ -314,7 +313,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
             <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col flex-1 min-h-0">
               <div className="p-5 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  نوع تخلف
+                  {t.selectViolationTypeTitle}
                 </h3>
               </div>
               <div className="flex-1 overflow-y-auto p-5 pt-4 space-y-3 text-[11px]">
@@ -337,13 +336,13 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
 
             <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-5 flex-shrink-0">
               <Label htmlFor="plate" className="text-sm font-medium mb-3 block">
-                شماره پلاک (اختیاری)
+                {t.plateNumberLabel}
               </Label>
               <Input
                 id="plate"
                 value={plateNumber}
                 onChange={(e) => setPlateNumber(e.target.value)}
-                placeholder={language === 'fa' ? 'وارد کردن شماره پلاک' : 'Enter Plate Number'}
+                placeholder={language === 'fa' ? t.platePlaceholderFa : t.platePlaceholderEn}
                 dir={isRTL ? 'rtl' : 'ltr'}
                 className="mb-6"
               />
@@ -354,7 +353,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                 size="lg"
               >
                 <Save className="w-5 h-5" />
-                ذخیره تخلف
+                {t.saveViolationButton}
               </Button>
             </Card>
           </div>
