@@ -215,7 +215,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
     };
     return labels[dir] || dir;
   };
-
+ const isRTL = language === 'fa';
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
@@ -489,203 +489,235 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
           </div>
         )}
 
-        {/* --- مدال‌های دوربین (بدون تغییر — چون Select آن‌ها خارج از مدال دیگری هست) --- */}
-        <Dialog open={openCamerasModal} onOpenChange={setOpenCamerasModal}>
-          <DialogContent className="sm:max-w-lg p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                دوربین‌های {currentIntersection?.name}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="mt-5">
-              <Button
-                className="w-full mb-5 shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm py-1.5"
-                size="sm"
-                onClick={() => setOpenAddCamera(true)}
+       {/* --- مدال لیست دوربین‌ها --- */}
+<Dialog open={openCamerasModal} onOpenChange={setOpenCamerasModal}>
+  <DialogContent 
+    className="sm:max-w-lg p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" 
+    dir={isRTL ? 'rtl' : 'ltr'}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        {t.camerasOf} {currentIntersection?.name}
+      </DialogTitle>
+    </DialogHeader>
+    <div className="mt-5">
+      <Button
+        className="w-full mb-5 shadow-md hover:shadow-lg transition-shadow bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm py-1.5"
+        size="sm"
+        onClick={() => setOpenAddCamera(true)}
+      >
+        <Plus className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+        {t.addNewCamera}
+      </Button>
+      {currentIntersection && (mockCameras[currentIntersection.id]?.length || 0) === 0 ? (
+        <div className="py-8 text-center">
+          <CameraIcon className="w-10 h-10 mx-auto mb-3 text-slate-400 dark:text-slate-500" />
+          <p className="text-slate-500 dark:text-slate-400 text-sm">{t.noCameraDefined}</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {currentIntersection &&
+            mockCameras[currentIntersection.id]?.map((cam) => (
+              <div
+                key={cam.id}
+                className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Plus className="w-4 h-4 ml-2" />
-                دوربین جدید
-              </Button>
-              {currentIntersection && (mockCameras[currentIntersection.id]?.length || 0) === 0 ? (
-                <div className="py-8 text-center">
-                  <CameraIcon className="w-10 h-10 mx-auto mb-3 text-slate-400 dark:text-slate-500" />
-                  <p className="text-slate-500 dark:text-slate-400 text-sm">دوربینی برای این چهارراه تعریف نشده است</p>
+                <div className="flex-1">
+                  <div className="font-medium text-slate-900 dark:text-slate-100 text-base">{cam.name}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    {cam.ipAddress} • {cam.type === 'ptz' ? (language === 'fa' ? 'چرخان' : 'PTZ') : (language === 'fa' ? 'ثابت' : 'Fixed')} • {getDirectionLabel(cam.direction)}
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {currentIntersection &&
-                    mockCameras[currentIntersection.id]?.map((cam) => (
-                      <div
-                        key={cam.id}
-                        className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex-1">
-                          <div className="font-medium text-slate-900 dark:text-slate-100 text-base">{cam.name}</div>
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                            {cam.ipAddress} • {cam.type === 'ptz' ? 'چرخان' : 'ثابت'} • {getDirectionLabel(cam.direction)}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 mr-1">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20"
-                            onClick={() => openEditCameraModal(cam)}
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </Button>
+                <div className={`flex gap-2 ${isRTL ? 'mr-1' : 'ml-1'}`}>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20"
+                    onClick={() => openEditCameraModal(cam)}
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
 
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            onClick={() => handleDeleteCamera(cam.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    onClick={() => handleDeleteCamera(cam.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  </DialogContent>
+</Dialog>
 
-        <Dialog open={openAddCamera} onOpenChange={setOpenAddCamera}>
-          <DialogContent className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">دوربین جدید</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
-                <select
-                  value={cameraType}
-                  onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
-                >
-                  <option value="fixed">ثابت</option>
-                  <option value="ptz">چرخان</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="cam-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
-                <Input
-                  id="cam-name"
-                  value={cameraName}
-                  onChange={(e) => setCameraName(e.target.value)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
-                <select
-                  value={cameraDirection}
-                  onChange={(e) => setCameraDirection(e.target.value as any)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
-                >
-                  <option value="north"                   className="bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
->شمال</option>
-                  <option value="south">جنوب</option>
-                  <option value="east">شرق</option>
-                  <option value="west">غرب</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="cam-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">آدرس IP</Label>
-                <Input
-                  id="cam-ip"
-                  value={cameraIP}
-                  onChange={(e) => setCameraIP(e.target.value)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                />
-              </div>
-            </div>
-            <DialogFooter className="gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setOpenAddCamera(false)}
-                className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
-              >
-                انصراف
-              </Button>
-              <Button
-                onClick={handleAddCamera}
-                className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
-              >
-                اضافه کردن
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+{/* --- مدال اضافه کردن دوربین --- */}
+<Dialog open={openAddCamera} onOpenChange={setOpenAddCamera}>
+  <DialogContent 
+    className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" 
+    dir={isRTL ? 'rtl' : 'ltr'}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
+        {t.newCameraTitle}
+      </DialogTitle>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.cameraTypeLabel}
+        </Label>
+        <select
+          value={cameraType}
+          onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
+        >
+          <option value="fixed">{language === 'fa' ? 'ثابت' : 'Fixed'}</option>
+          <option value="ptz">{language === 'fa' ? 'چرخان' : 'PTZ'}</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="cam-name" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.cameraNameLabel}
+        </Label>
+        <Input
+          id="cam-name"
+          value={cameraName}
+          onChange={(e) => setCameraName(e.target.value)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50`}
+          placeholder={language === 'fa' ? 'نام دوربین' : 'Camera name'}
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.directionLabel}
+        </Label>
+        <select
+          value={cameraDirection}
+          onChange={(e) => setCameraDirection(e.target.value as any)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
+        >
+          <option value="north">{getDirectionLabel('north')}</option>
+          <option value="south">{getDirectionLabel('south')}</option>
+          <option value="east">{getDirectionLabel('east')}</option>
+          <option value="west">{getDirectionLabel('west')}</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="cam-ip" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.ipAddressLabel}
+        </Label>
+        <Input
+          id="cam-ip"
+          value={cameraIP}
+          onChange={(e) => setCameraIP(e.target.value)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50`}
+          placeholder="192.168.1.100"
+        />
+      </div>
+    </div>
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setOpenAddCamera(false)}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        {t.cancel}
+      </Button>
+      <Button
+        onClick={handleAddCamera}
+        className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+      >
+        {t.add}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
 
-        <Dialog open={openEditCamera} onOpenChange={setOpenEditCamera}>
-          <DialogContent className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">ویرایش دوربین</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">نوع</Label>
-                <select
-                  value={cameraType}
-                  onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
-                >
-                  <option value="fixed">ثابت</option>
-                  <option value="ptz">چرخان</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-name" className="text-right text-sm text-slate-700 dark:text-slate-300">نام</Label>
-                <Input
-                  id="edit-name"
-                  value={cameraName}
-                  onChange={(e) => setCameraName(e.target.value)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right text-sm text-slate-700 dark:text-slate-300">جهت</Label>
-                <select
-                  value={cameraDirection}
-                  onChange={(e) => setCameraDirection(e.target.value as any)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm"
-                >
-                  <option value="north">شمال</option>
-                  <option value="south">جنوب</option>
-                  <option value="east">شرق</option>
-                  <option value="west">غرب</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-ip" className="text-right text-sm text-slate-700 dark:text-slate-300">آدرس IP</Label>
-                <Input
-                  id="edit-ip"
-                  value={cameraIP}
-                  onChange={(e) => setCameraIP(e.target.value)}
-                  className="col-span-3 text-right bg-slate-50 dark:bg-slate-700/50"
-                />
-              </div>
-            </div>
-            <DialogFooter className="gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setOpenEditCamera(false)}
-                className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
-              >
-                انصراف
-              </Button>
-              <Button
-                onClick={handleUpdateCamera}
-                className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
-              >
-                ذخیره
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+{/* --- مدال ویرایش دوربین --- */}
+<Dialog open={openEditCamera} onOpenChange={setOpenEditCamera}>
+  <DialogContent 
+    className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" 
+    dir={isRTL ? 'rtl' : 'ltr'}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
+        {t.editCameraTitle}
+      </DialogTitle>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.cameraTypeLabel}
+        </Label>
+        <select
+          value={cameraType}
+          onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
+        >
+          <option value="fixed">{language === 'fa' ? 'ثابت' : 'Fixed'}</option>
+          <option value="ptz">{language === 'fa' ? 'چرخان' : 'PTZ'}</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="edit-name" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.cameraNameLabel}
+        </Label>
+        <Input
+          id="edit-name"
+          value={cameraName}
+          onChange={(e) => setCameraName(e.target.value)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50`}
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.directionLabel}
+        </Label>
+        <select
+          value={cameraDirection}
+          onChange={(e) => setCameraDirection(e.target.value as any)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
+        >
+          <option value="north">{getDirectionLabel('north')}</option>
+          <option value="south">{getDirectionLabel('south')}</option>
+          <option value="east">{getDirectionLabel('east')}</option>
+          <option value="west">{getDirectionLabel('west')}</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="edit-ip" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
+          {t.ipAddressLabel}
+        </Label>
+        <Input
+          id="edit-ip"
+          value={cameraIP}
+          onChange={(e) => setCameraIP(e.target.value)}
+          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50`}
+        />
+      </div>
+    </div>
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setOpenEditCamera(false)}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        {t.cancel}
+      </Button>
+      <Button
+        onClick={handleUpdateCamera}
+        className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+      >
+        {t.save}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
       </div>
     </div>
   );
