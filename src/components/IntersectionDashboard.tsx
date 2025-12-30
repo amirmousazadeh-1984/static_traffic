@@ -286,6 +286,7 @@ export function IntersectionDashboard({
                             };
                             return colors[id];
                           }),
+                          barThickness: 50,
                           borderWidth: 1,
                           borderRadius: 5,
                         },
@@ -336,7 +337,7 @@ export function IntersectionDashboard({
                             return colors[id];
                           }),
                           borderWidth: 0,
-                          cutout: '60%',
+                          cutout: '40%',
                         },
                       ],
                     }}
