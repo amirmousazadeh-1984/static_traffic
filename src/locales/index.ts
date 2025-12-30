@@ -193,7 +193,14 @@ platePlaceholderFa: 'شماره پلاک را وارد کنید',
 platePlaceholderEn: 'e.g. IR 12-345 B12',
 takeSnapshotButton: 'گرفتن عکس از منطقه انتخاب‌شده',
 saveViolationButton: 'ذخیره تخلف',
-noImageAvailable: 'تصویری موجود نیست',
+    noImageAvailable: 'تصویری موجود نیست',
+loginTitle: 'سیستم نظارت ترافیکی',
+loginSubtitle: 'برای ورود به سیستم اطلاعات خود را وارد کنید',
+usernameLabel: 'نام کاربری',
+passwordLabel: 'رمز عبور',
+loginButton: 'ورود به سیستم',
+loginError: 'نام کاربری یا رمز عبور اشتباه است',
+defaultCredentials: 'نام کاربری پیش‌فرض: admin — رمز عبور پیش‌فرض: admin',
 
   },
   en: {
@@ -393,6 +400,13 @@ takeSnapshotButton: 'Take Snapshot from Selected Area',
 saveViolationButton: 'Save Violation',
 noImageAvailable: 'No image available',
 
+loginTitle: 'Traffic Monitoring System',
+loginSubtitle: 'Please enter your credentials to access the system',
+usernameLabel: 'Username',
+passwordLabel: 'Password',
+loginButton: 'Login',
+loginError: 'Invalid username or password',
+defaultCredentials: 'Default credentials: username "admin" — password "admin"',
   }
 
  

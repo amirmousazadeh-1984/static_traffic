@@ -6,25 +6,28 @@ import { ZoneCalibration } from './components/ZoneCalibration';
 import { PTZCalibration } from './components/PTZCalibration';
 import { IntersectionDashboard } from './components/IntersectionDashboard';
 import { ViolationTypesManager } from './components/ViolationTypesManager';
+import { ManualViolationCapture } from './components/ManualViolationCapture';
+import { Login } from './components/Login'; // اضافه شد
 import { Intersection } from './types';
-import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe } from 'lucide-react';
+import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
-import { ManualViolationCapture } from './components/ManualViolationCapture';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
   const [selectedIntersection, setSelectedIntersection] = useState<Intersection | null>(null);
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState<Language>('fa');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const t = translations[language];
 
-  // بارگذاری تم و زبان از localStorage
+  // بارگذاری تم، زبان و وضعیت لاگین از localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const savedLang = localStorage.getItem('language') as Language | null;
+    const savedLogin = localStorage.getItem('isLoggedIn');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     // تم
@@ -40,17 +43,19 @@ function App() {
     if (savedLang && (savedLang === 'fa' || savedLang === 'en')) {
       setLanguage(savedLang);
     }
+
+    // وضعیت لاگین
+    if (savedLogin === 'true') {
+      setIsLoggedIn(true);
+    }
   }, []);
 
-  // اعمال جهت، زبان و فونت بر اساس زبان انتخابی
+  // اعمال جهت، زبان و فونت
   useEffect(() => {
     document.documentElement.dir = language === 'fa' ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
-
-    // ذخیره زبان
     localStorage.setItem('language', language);
 
-    // فونت مناسب
     if (language === 'fa') {
       document.documentElement.classList.add('font-vazirmatn');
     } else {
@@ -79,30 +84,42 @@ function App() {
     setActiveTab('dashboard');
   };
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+    setActiveTab('intersections');
+    setSelectedIntersection(null);
+  };
+
   const isIntersectionSelected = selectedIntersection !== null;
 
   const menuItems = [
     {
       id: 'intersections',
-      label: t.dashboard,
+      label: t.dashboard || 'لیست چهارراه‌ها',
       icon: <MapPin className="w-4 h-4" />,
       disabled: false,
     },
     {
       id: 'dashboard',
-      label: t.violationDashboard,
+      label: t.violationDashboard || 'داشبورد تخلفات',
       icon: <Monitor className="w-4 h-4" />,
       disabled: !isIntersectionSelected,
     },
     {
       id: 'ptz-calibration',
-      label: t.ptzCalibration,
+      label: t.ptzCalibration || 'کالیبراسیون PTZ',
       icon: <Camera className="w-4 h-4" />,
       disabled: !isIntersectionSelected,
     },
     {
       id: 'zone-calibration',
-      label: t.zoneCalibration,
+      label: t.zoneCalibration || 'کالیبراسیون مناطق',
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -115,29 +132,34 @@ function App() {
       ),
       disabled: !isIntersectionSelected,
     },
-   
     {
-    id: 'violations',
-    label: t.violationTypes,
-    icon: <AlertTriangle className="w-4 h-4" />,
-    disabled: false,
-  },
-  {
-    id: 'manual-violation',
-    label: t.manualViolationCapture, 
-    icon: <Camera className="w-5 h-5" />,
-    disabled: !isIntersectionSelected,
-  },
+      id: 'violations',
+      label: t.violationTypes || 'مدیریت انواع تخلف',
+      icon: <AlertTriangle className="w-4 h-4" />,
+      disabled: false,
+    },
+    {
+      id: 'manual-violation',
+      label: t.manualViolationCapture || 'ثبت دستی تخلف',
+      icon: <Camera className="w-5 h-5" />,
+      disabled: !isIntersectionSelected,
+    },
   ];
 
+  // اگر کاربر لاگین نکرده باشد → صفحه لاگین
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  // اگر لاگین کرده باشد → برنامه اصلی
   return (
     <div
       className={`min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300 flex ${
         language === 'fa' ? 'font-vazirmatn' : 'font-sans'
       }`}
     >
-      {/* ========== منوی عمودی (سمت راست در RTL، سمت چپ در LTR) ========== */}
-      <div className="w-full max-w-[280px] shadow-lgm flex-shrink-0 bg-slate-200 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
+      {/* منوی عمودی */}
+      <div className="w-full max-w-[280px] shadow-lg flex-shrink-0 bg-slate-200 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
         {/* هدر منو */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
@@ -146,7 +168,7 @@ function App() {
                 <Camera className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-                {t.appTitle}
+                {t.appTitle || 'سیستم نظارت ترافیکی'}
               </h1>
             </div>
 
@@ -177,7 +199,7 @@ function App() {
 
           {/* نمایش چهارراه انتخاب‌شده */}
           {selectedIntersection && (
-            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg  dark:border-blue-800 shadow-lg">
+            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg shadow-lg">
               <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
               <span className="text-sm font-medium text-blue-900 dark:text-blue-300 truncate">
                 {selectedIntersection.name}
@@ -198,21 +220,32 @@ function App() {
                   language === 'fa' ? 'text-right' : 'text-left'
                 } ${
                   activeTab === item.id
-                    ? 'bg-slate-300 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-medium shadow-lgm'
+                    ? 'bg-slate-300 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-medium shadow-lg'
                     : item.disabled
-                    ? 'text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-60 '
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 '
+                    ? 'text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-60'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700'
                 }`}
               >
                 <span className="text-slate-600 dark:text-slate-400">{item.icon}</span>
                 <span className="text-sm">{item.label}</span>
               </button>
             ))}
+
+            {/* آیتم خروج از حساب — همیشه در پایین منو */}
+            <button
+              onClick={handleLogout}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
+                language === 'fa' ? 'text-right' : 'text-left'
+              }`}
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-sm">{language === 'fa' ? 'خروج از حساب' : 'Logout'}</span>
+            </button>
           </div>
         </nav>
       </div>
 
-      {/* ========== محتوای اصلی ========== */}
+      {/* محتوای اصلی */}
       <div className="flex-1 overflow-auto">
         <main className="h-full p-4 md:p-6">
           {activeTab === 'intersections' && (
@@ -232,15 +265,10 @@ function App() {
           )}
 
           {activeTab === 'violations' && <ViolationTypesManager language={language} />}
-       
+
           {activeTab === 'manual-violation' && selectedIntersection && (
-  <ManualViolationCapture 
-    intersection={selectedIntersection} 
-    language={language} 
-  />
-)}
-       
-       
+            <ManualViolationCapture intersection={selectedIntersection} language={language} />
+          )}
         </main>
       </div>
 
