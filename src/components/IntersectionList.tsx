@@ -271,15 +271,15 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
         </div>
 
         {/* --- هدر: جستجو + فیلتر + دکمه اضافه --- */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
-          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+        <div className="flex flex-col  sm:flex-row gap-4 items-start sm:items-center justify-between mb-8">
+          <div className="flex align-center sm:flex-row gap-4 flex-1 ">
             <div className="relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/3 w-5 h-5 text-slate-400" />
+              <Search className="absolute  right-3 top-1/2 -translate-y-1/3 w-5 h-5 text-slate-400" />
               <Input
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 w-full sm:w-80 bg-slate-50 dark:bg-slate-700/50"
+                className="pr-10 w-full sm:w-80 bg-slate-50 dark:bg-slate-700/50 shadow-lgg border-slate-50 dark:border-slate-600"
               />
             </div>
 
@@ -287,13 +287,13 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
               {(['all', 'active', 'inactive', 'maintenance'] as const).map((filter) => (
                 <Button
                   key={filter}
-                  variant={statusFilter === filter ? 'default' : 'outline'}
+                  // variant={statusFilter === filter ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter(filter)}
                   className={
                     statusFilter === filter
-                      ? 'bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 shadow-sm'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-800'
+                      ? 'bg-slate-800 text-white px-4 hover:bg-slate-700  dark:bg-slate-700 shadow-lgg  dark:hover:bg-slate-600 shadow-sm'
+                      : 'bg-slate-100 px-4 text-slate-800 hover:bg-slate-200 shadow-lgg dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-800'
                   }
                 >
                  {filter === 'all' ? t.filterAll : filter === 'active' ? (language === 'fa' ? 'فعال' : 'Active') : filter === 'inactive' ? (language === 'fa' ? 'غیرفعال' : 'Inactive') : t.filterMaintenance}
