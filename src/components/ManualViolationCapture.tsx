@@ -198,7 +198,8 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                 </Select>
               </div>
 
-              {/* تصویر بزرگ + کنترل‌های روی تصویر */}
+
+              {/* تصویر بزرگ + کنترل‌های روی تصویر (بالا چپ/راست بسته به زبان) */}
               <div className="flex-1 px-6 py-6 min-h-0 relative">
                 <div
                   className="relative bg-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 h-full shadow-inner"
@@ -229,7 +230,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                           ref={imgRef}
                           src={intersection.imageUrl}
                           alt="نمای دوربین"
-                          className="max-w-none shadow-2xl"
+                          className="max-w-none shadow-2xl rounded-lg"
                           draggable={false}
                         />
                       </ReactCrop>
@@ -240,39 +241,39 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                     </div>
                   )}
 
-                  {/* کنترل‌های زوم — روی تصویر، پایین چپ */}
-                  <div className="absolute bottom-4 left-4 flex flex-col gap-2 bg-black/60 backdrop-blur-sm rounded-lg p-2 shadow-xl border border-slate-600">
-                    <div className="flex items-center gap-2">
-                      <Button size="icon" variant="ghost" onClick={zoomOut} className="h-8 w-8 text-white hover:bg-white/20">
-                        <ZoomOut className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={zoomIn} className="h-8 w-8 text-white hover:bg-white/20">
-                        <ZoomIn className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={resetView} className="h-8 w-8 text-white hover:bg-white/20">
-                        <Home className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="text-white text-xs px-2 py-1 bg-white/10 rounded">
-                      زوم: {(scale * 100).toFixed(0)}%
+                  {/* کنترل‌های زوم و جابجایی — یک باکس واحد در بالا چپ/راست */}
+                  <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} bg-black/70 backdrop-blur-md rounded-xl px-3 shadow-2xl border border-slate-600`}>
+                    <div className="flex flex-col gap-3">
+                      {/* دکمه‌های زوم */}
+                      <div className="flex items-center gap-1">
+                        <Button size="icon" variant="ghost" onClick={zoomOut} className="h-9 w-9 text-white hover:bg-white/20">
+                          <ZoomOut className="w-5 h-5" />
+                        </Button>
+                        <Button size="icon" variant="ghost" onClick={zoomIn} className="h-9 w-9 text-white hover:bg-white/20">
+                          <ZoomIn className="w-5 h-5" />
+                        </Button>
+                        <Button size="icon" variant="ghost" onClick={resetView} className="h-9 w-9 text-white hover:bg-white/20">
+                          <Home className="w-5 h-5" />
+                                              </Button>
+                                               <div className="flex items-center gap-2 text-white text-xs bg-white/10 rounded-lg px-3 py-1.5">
+                        <Move className="w-4 h-4" />
+                       
+                      </div>
+                      </div>
+
+             
+                     
                     </div>
                   </div>
 
-                  {/* راهنما جابجایی — پایین راست */}
-                  <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 text-white text-xs">
-                    <Move className="w-4 h-4" />
-                    درگ کنید برای جابجایی
-                  </div>
-
-                  {/* نشانگر عکس گرفته شده */}
+                  {/* نشانگر عکس گرفته شده — وسط بالا */}
                   {snapshotTaken && (
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                      عکس گرفته شد
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-2xl border border-green-400">
+                      عکس گرفته شد ✓
                     </div>
                   )}
                 </div>
               </div>
-
               {/* دکمه گرفتن عکس */}
               <div className="px-6 pb-6 flex-shrink-0">
                 <Button
