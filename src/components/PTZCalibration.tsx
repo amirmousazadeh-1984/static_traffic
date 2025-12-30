@@ -15,12 +15,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { addOrUpdatePreset, removePreset } from '../store/ptzPresetSlice';
 import { toast } from 'sonner';
+import { translations, type Language } from '../locales';
 
 interface PTZCalibrationProps {
   intersection: Intersection;
+  language: Language;
 }
 
-export function PTZCalibration({ intersection }: PTZCalibrationProps) {
+export function PTZCalibration({ intersection, language }: PTZCalibrationProps) {
+  const t = translations[language];
+
   const dispatch = useDispatch<AppDispatch>();
   const presets = useSelector((state: RootState) => state.ptzPresets[intersection.id] || []);
 
@@ -129,17 +133,19 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
     setPresetName('');
   };
 
+
+  const isRTL = language === 'fa';
+
   return (
  <div className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
         
         <div className="mb-8">
          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            کالیبراسیون PTZ — {intersection.name}
+           {t.ptzCalibrationTitle} — {intersection.name}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            تنظیم دید دوربین چرخان و ذخیره presetهای دلخواه
-          </p>
+{t.ptzCalibrationDesc}          </p>
         </div>
 
         <div
@@ -150,10 +156,10 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
           <div className="flex">
             <Card className="shadow-lg w-full border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl flex flex-col">
               <div className="p-4 pb-2 flex items-center justify-between">
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">نمای دوربین</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t.cameraView} </h3>
                 {isTesting && (
                   <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">
-                    تست فعال
+                {t.testingActive}
                   </span>
                 )}
               </div>
@@ -266,8 +272,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
             <Card className="shadow-lg p-5 border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl shrink-0">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-base font-medium text-slate-900 dark:text-slate-100">
-                  {editingPresetId ? 'ویرایش Preset' : 'ایجاد Preset جدید'}
-                </h3>
+{editingPresetId ? t.editPreset : t.createNewPreset}                </h3>
                 {editingPresetId ? (
                   <div className="flex gap-1">
                     <Button
@@ -300,7 +305,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label className="text-xs text-slate-700 dark:text-slate-300">نام Preset *</Label>
+                  <Label className="text-xs text-slate-700 dark:text-slate-300">{t.presetNameLabel}  </Label>
                   <Input
                     value={presetName}
                     onChange={(e) => setPresetName(e.target.value)}
@@ -314,7 +319,7 @@ export function PTZCalibration({ intersection }: PTZCalibrationProps) {
             {/* لیست presetها با اسکرول */}
             <Card className=" shadow-lg flex-1 border  border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-2">
-                Preset‌ها ({presets.length})
+                {t.presetsListTitle}({presets.length})
               </h3>
 
               <div className="overflow-y-auto pr-1 space-y-2 text-xs flex-1 min-h-0">
