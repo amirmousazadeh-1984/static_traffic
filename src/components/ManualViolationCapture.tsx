@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
-import { Crop, Save } from 'lucide-react';
+import { Crop, Save, ZoomIn, ZoomOut, Home, Move } from 'lucide-react';
 import ReactCrop, { Crop as CropType } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { toast } from 'sonner';
@@ -33,12 +33,18 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
   const [plateNumber, setPlateNumber] = useState('');
   const [snapshotTaken, setSnapshotTaken] = useState(false);
 
+  // حالت‌های زوم و پن
+  const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
   const [crop, setCrop] = useState<CropType>({
     unit: '%',
-    width: 35,
-    height: 35,
-    x: 32.5,
-    y: 32.5,
+    width: 30,
+    height: 30,
+    x: 35,
+    y: 35,
   });
   const [completedCrop, setCompletedCrop] = useState<CropType | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -53,6 +59,39 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
   ];
 
   const selectedCamera = cameras.find(c => c.id === selectedCameraId);
+
+  // زوم با اسکرول
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setScale(prev => Math.max(0.5, Math.min(6, prev * delta)));
+  }, []);
+
+  // درگ برای جابجایی
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 0) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isPanning) return;
+    setOffset({
+      x: e.clientX - panStart.x,
+      y: e.clientY - panStart.y,
+    });
+  };
+
+  const handleMouseUp = () => setIsPanning(false);
+
+  // کنترل‌های زوم
+  const zoomIn = () => setScale(prev => Math.min(6, prev * 1.2));
+  const zoomOut = () => setScale(prev => Math.max(0.5, prev / 1.2));
+  const resetView = () => {
+    setScale(1);
+    setOffset({ x: 0, y: 0 });
+  };
 
   const takeCroppedSnapshot = useCallback(() => {
     if (!completedCrop || !canvasRef.current || !imgRef.current) {
@@ -108,8 +147,9 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
     toast.success('تخلف با موفقیت ثبت شد', { duration: 5000 });
     setSnapshotTaken(false);
     setPlateNumber('');
-    setCrop({ unit: '%', width: 35, height: 35, x: 32.5, y: 32.5 });
+    setCrop({ unit: '%', width: 30, height: 30, x: 35, y: 35 });
     setCompletedCrop(null);
+    resetView();
   };
 
   return (
@@ -121,19 +161,21 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
             ثبت دستی تخلف — {intersection.name}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            با انتخاب دوربین و کشیدن منطقه روی تصویر، از خودرو متخلف عکس بگیرید.
+            با زوم، جابجایی و انتخاب منطقه دقیق، از خودرو متخلف عکس بگیرید.
           </p>
         </div>
 
-        {/* گرید اصلی — دقیقاً مثل ZoneCalibration */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"  >
-          {/* ستون چپ: تصویر و Crop — دقیقاً مثل canvas در ZoneCalibration */}
-          <div className="lg:col-span-2" style={{ height: '80vh' }}>
+        {/* گرید اصلی */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full" style={{ height: '80vh' }}>
+          {/* ستون چپ: تصویر با کنترل‌های روی تصویر */}
+          <div className="lg:col-span-2 flex flex-col h-full">
             <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col h-full">
-              {/* هدر: انتخاب دوربین */}
-              <div className="p-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm font-medium">انتخاب دوربین</Label>
+              {/* انتخاب دوربین */}
+              <div className="p-6 pb-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+                <div className="flex items-center justify-between mb-4">
+                  <Label className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    انتخاب دوربین
+                  </Label>
                   {selectedCamera && (
                     <Badge variant="secondary" className="text-xs">
                       {selectedCamera.type === 'ptz' ? 'PTZ' : 'ثابت'}
@@ -156,41 +198,83 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                 </Select>
               </div>
 
-              {/* تصویر اصلی با Crop */}
-              <div className="flex-1 px-6 ">
-                <div className="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-700 h-full" style={{ height: '55vh' }}>
+              {/* تصویر بزرگ + کنترل‌های روی تصویر */}
+              <div className="flex-1 px-6 py-6 min-h-0 relative">
+                <div
+                  className="relative bg-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 h-full shadow-inner"
+                  onWheel={handleWheel}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                >
+                  {/* تصویر با زوم و پن */}
                   {intersection.imageUrl ? (
-                    <ReactCrop
-                      crop={crop}
-                      onChange={c => setCrop(c)}
-                      onComplete={c => setCompletedCrop(c)}
-                      aspect={undefined}
-                      ruleOfThirds
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+                        transition: isPanning ? 'none' : 'transform 0.15s ease-out',
+                        transformOrigin: 'center center',
+                      }}
                     >
-                      <img
-                        ref={imgRef}
-                        src={intersection.imageUrl}
-                        alt="نمای دوربین"
-                        className="block max-w-full max-h-full object-contain mx-auto"
-                        draggable={false}
-                      />
-                    </ReactCrop>
+                      <ReactCrop
+                        crop={crop}
+                        onChange={c => setCrop(c)}
+                        onComplete={c => setCompletedCrop(c)}
+                        aspect={undefined}
+                        ruleOfThirds={scale > 1.2}
+                      >
+                        <img
+                          ref={imgRef}
+                          src={intersection.imageUrl}
+                          alt="نمای دوربین"
+                          className="max-w-none shadow-2xl"
+                          draggable={false}
+                        />
+                      </ReactCrop>
+                    </div>
                   ) : (
                     <div className="h-full flex items-center justify-center text-slate-500">
                       تصویری موجود نیست
                     </div>
                   )}
 
+                  {/* کنترل‌های زوم — روی تصویر، پایین چپ */}
+                  <div className="absolute bottom-4 left-4 flex flex-col gap-2 bg-black/60 backdrop-blur-sm rounded-lg p-2 shadow-xl border border-slate-600">
+                    <div className="flex items-center gap-2">
+                      <Button size="icon" variant="ghost" onClick={zoomOut} className="h-8 w-8 text-white hover:bg-white/20">
+                        <ZoomOut className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={zoomIn} className="h-8 w-8 text-white hover:bg-white/20">
+                        <ZoomIn className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={resetView} className="h-8 w-8 text-white hover:bg-white/20">
+                        <Home className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="text-white text-xs px-2 py-1 bg-white/10 rounded">
+                      زوم: {(scale * 100).toFixed(0)}%
+                    </div>
+                  </div>
+
+                  {/* راهنما جابجایی — پایین راست */}
+                  <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 text-white text-xs">
+                    <Move className="w-4 h-4" />
+                    درگ کنید برای جابجایی
+                  </div>
+
+                  {/* نشانگر عکس گرفته شده */}
                   {snapshotTaken && (
-                    <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
                       عکس گرفته شد
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* دکمه گرفتن عکس — پایین کارت */}
-              <div className="p-6 pt-4 ">
+              {/* دکمه گرفتن عکس */}
+              <div className="px-6 pb-6 flex-shrink-0">
                 <Button
                   onClick={takeCroppedSnapshot}
                   disabled={!completedCrop || !intersection.imageUrl}
@@ -204,11 +288,10 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
             </Card>
           </div>
 
-          {/* ستون راست: تنظیمات — دقیقاً مثل پنل راست در ZoneCalibration */}
-          <div className="flex flex-col gap-5" style={{ height: '80vh' }}>
-            {/* نوع تخلف — با اسکرول داخلی */}
-            <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col h-full">
-              <div className="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          {/* ستون راست */}
+          <div className="flex flex-col gap-6 h-full">
+            <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col flex-1 min-h-0">
+              <div className="p-5 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   نوع تخلف
                 </h3>
@@ -224,20 +307,14 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                         : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
                     }`}
                   >
-                    <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: vt.color }}
-                    />
-                    <span className="text-slate-900 dark:text-slate-100 truncate">
-                      {vt.name}
-                    </span>
+                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: vt.color }} />
+                    <span className="text-slate-900 dark:text-slate-100 truncate">{vt.name}</span>
                   </div>
                 ))}
               </div>
             </Card>
 
-            {/* پلاک و ذخیره — پایین صفحه */}
-            <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-5">
+            <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-5 flex-shrink-0">
               <Label htmlFor="plate" className="text-sm font-medium mb-3 block">
                 شماره پلاک (اختیاری)
               </Label>
@@ -245,11 +322,10 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                 id="plate"
                 value={plateNumber}
                 onChange={(e) => setPlateNumber(e.target.value)}
-                placeholder={language === 'fa' ? 'مثلاً: ایران ۱۲ - ۳۴۵ ب ۱۲' : 'e.g. IR 12-345 B12'}
+                placeholder={language === 'fa' ? 'وارد کردن شماره پلاک' : 'Enter Plate Number'}
                 dir={isRTL ? 'rtl' : 'ltr'}
                 className="mb-6"
               />
-
               <Button
                 onClick={saveViolation}
                 disabled={!snapshotTaken}
@@ -263,7 +339,6 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
           </div>
         </div>
 
-        {/* Canvas مخفی */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>
