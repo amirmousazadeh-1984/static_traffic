@@ -126,7 +126,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
         </div>
 
         {/* گرید اصلی — دقیقاً مثل ZoneCalibration */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"  >
           {/* ستون چپ: تصویر و Crop — دقیقاً مثل canvas در ZoneCalibration */}
           <div className="lg:col-span-2" style={{ height: '80vh' }}>
             <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col h-full">
