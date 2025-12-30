@@ -174,7 +174,16 @@ export const translations = {
   codeDuplicate: "کد تخلف تکراری است. لطفاً کد دیگری وارد کنید.",
   codeDuplicateShort: "کد تخلف تکراری است.",
   violationAdded: "تخلف جدید با موفقیت اضافه شد",
-  violationDeleted: "تخلف حذف شد",
+    violationDeleted: "تخلف حذف شد",
+  manualViolationCapture: 'ثبت دستی تخلفات',
+manualViolationTitle: 'ثبت دستی تخلف',
+selectCamera: 'انتخاب دوربین',
+takeSnapshot: 'گرفتن عکس',
+saveViolation: 'ذخیره تخلف',
+snapshotTaken: 'عکس گرفته شد',
+violationSaved: 'تخلف با موفقیت ثبت شد',
+selectViolationType: 'نوع تخلف را انتخاب کنید',
+plateNumber: 'شماره پلاک (اختیاری)',
 
   },
   en: {
@@ -354,6 +363,15 @@ export const translations = {
     codeDuplicateShort: "Violation code already exists.",
     violationAdded: "New violation added successfully",
     violationDeleted: "Violation deleted",
+manualViolationCapture: 'Manual Violation Capture',
+manualViolationTitle: 'Manual Violation Registration',
+selectCamera: 'Select Camera',
+takeSnapshot: 'Take Snapshot',
+saveViolation: 'Save Violation',
+snapshotTaken: 'Snapshot taken',
+violationSaved: 'Violation successfully saved',
+selectViolationType: 'Select violation type',
+plateNumber: 'License Plate (optional)',
 
   }
 

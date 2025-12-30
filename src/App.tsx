@@ -11,6 +11,7 @@ import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe } from 'lucide
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
+import { ManualViolationCapture } from './components/ManualViolationCapture';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
@@ -114,12 +115,19 @@ function App() {
       ),
       disabled: !isIntersectionSelected,
     },
+   
     {
-      id: 'violations',
-      label: t.violationTypes,
-      icon: <AlertTriangle className="w-4 h-4" />,
-      disabled: false,
-    },
+    id: 'violations',
+    label: t.violationTypes,
+    icon: <AlertTriangle className="w-4 h-4" />,
+    disabled: false,
+  },
+  {
+    id: 'manual-violation',
+    label: t.manualViolationCapture, 
+    icon: <Camera className="w-5 h-5" />,
+    disabled: !isIntersectionSelected,
+  },
   ];
 
   return (
@@ -224,6 +232,15 @@ function App() {
           )}
 
           {activeTab === 'violations' && <ViolationTypesManager language={language} />}
+       
+          {activeTab === 'manual-violation' && selectedIntersection && (
+  <ManualViolationCapture 
+    intersection={selectedIntersection} 
+    language={language} 
+  />
+)}
+       
+       
         </main>
       </div>
 
