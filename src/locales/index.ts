@@ -214,6 +214,10 @@ saveChanges: 'ذخیره تغییرات',
 emptyFields: 'نام کاربری و رمز عبور نمی‌توانند خالی باشند',
 passwordMismatch: 'رمز عبور و تکرار آن یکسان نیستند',
 
+logoutConfirmTitle: 'خروج از حساب',
+logoutConfirmMessage: 'مطمئنی می‌خوای از حساب خارج شی؟',
+confirmLogout: 'بله، خارج شو',
+
 
 
   },
@@ -431,7 +435,11 @@ newPassword: 'New Password',
 confirmPassword: 'Confirm Password',
 saveChanges: 'Save Changes',
 emptyFields: 'Username and password cannot be empty',
-passwordMismatch: 'Passwords do not match',
+    passwordMismatch: 'Passwords do not match',
+
+logoutConfirmTitle: 'Logout',
+logoutConfirmMessage: 'Are you sure you want to logout?',
+confirmLogout: 'Yes, Logout',
   }
 
  

@@ -14,6 +14,7 @@ import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut, Key }
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
+import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
@@ -51,6 +52,25 @@ function App() {
       setIsLoggedIn(true);
     }
   }, []);
+  // در بالای App() — state جدید اضافه کن
+const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+// تغییر handleLogout به این شکل:
+const handleLogoutClick = () => {
+  setShowLogoutConfirm(true);
+};
+
+const handleLogoutConfirm = () => {
+  setIsLoggedIn(false);
+  localStorage.removeItem('isLoggedIn');
+  setActiveTab('intersections');
+  setSelectedIntersection(null);
+  setShowLogoutConfirm(false);
+};
+
+const handleLogoutCancel = () => {
+  setShowLogoutConfirm(false);
+};
 
   // اعمال جهت، زبان و فونت
   useEffect(() => {
@@ -247,17 +267,18 @@ function App() {
             </button>
 
             {/* آیتم خروج از حساب */}
-            <button
-              onClick={handleLogout}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
-                language === 'fa' ? 'text-right' : 'text-left'
-              }`}
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="text-sm">
-                {language === 'fa' ? 'خروج از حساب' : 'Logout'}
-              </span>
-            </button>
+        {/* آیتم خروج از حساب */}
+<button
+  onClick={handleLogoutClick}
+  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
+    language === 'fa' ? 'text-right' : 'text-left'
+  }`}
+>
+  <LogOut className="w-4 h-4" />
+  <span className="text-sm">
+    {language === 'fa' ? 'خروج از حساب' : 'Logout'}
+  </span>
+</button>
           </div>
         </nav>
       </div>
@@ -295,6 +316,13 @@ function App() {
         onClose={() => setShowChangeCredentials(false)}
         language={language}
       />
+   {/* مدال تأیید خروج */}
+<LogoutConfirmModal
+  isOpen={showLogoutConfirm}
+  onClose={handleLogoutCancel}
+  onConfirm={handleLogoutConfirm}
+  language={language}
+/>
 
       <Toaster position="top-center" richColors dir={language === 'fa' ? 'rtl' : 'ltr'} />
     </div>
