@@ -40,9 +40,9 @@ export function ChangeCredentialsModal({ isOpen, onClose, language }: ChangeCred
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose} >
+      <DialogContent className="p-8 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+        <DialogHeader className="pb-6">
           <DialogTitle>{t.changeCredentialsTitle || 'تغییر نام کاربری و رمز عبور'}</DialogTitle>
         </DialogHeader>
 
@@ -55,7 +55,8 @@ export function ChangeCredentialsModal({ isOpen, onClose, language }: ChangeCred
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
               placeholder="admin"
-              className="mt-2"
+                             className="mt-2 bg-white dark:bg-slate-700"
+
             />
           </div>
 
@@ -67,7 +68,8 @@ export function ChangeCredentialsModal({ isOpen, onClose, language }: ChangeCred
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="••••••"
-              className="mt-2"
+                              className="mt-2 bg-white dark:bg-slate-700"
+
             />
           </div>
 
@@ -79,22 +81,23 @@ export function ChangeCredentialsModal({ isOpen, onClose, language }: ChangeCred
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••"
-              className="mt-2"
+                              className="mt-2 bg-white dark:bg-slate-700 "
+
             />
           </div>
 
           {error && (
-            <div className="text-red-600 dark:text-red-400 text-sm text-center font-medium">
+            <div className="text-red-600 dark:text-red-400 text-sm text-center font-medium ">
               {error}
             </div>
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className='mt-4 '>
           <Button variant="outline" onClick={onClose}>
             {t.cancel || 'انصراف'}
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave}  className="text-slate-100 dark:text-slate-900 hover:bg-slate-600 bg-slate-500 dark:bg-slate-400">
             {t.saveChanges || 'ذخیره تغییرات'}
           </Button>
         </DialogFooter>
@@ -102,3 +105,4 @@ export function ChangeCredentialsModal({ isOpen, onClose, language }: ChangeCred
     </Dialog>
   );
 }
+
