@@ -5,21 +5,17 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import {
-  Camera,
-  AlertTriangle,
-  Play,
-  Pause,
-  Plus,
-  Eye,
-  Download,
   FileText,
   CheckCircle,
   Clock,
   XCircle,
   Video,
+  AlertTriangle,
+  Play,
+  Pause,
 } from 'lucide-react';
 import { Intersection } from '../types';
-import { mockViolations, mockCameras } from '../data/mockDatabase';
+import { mockViolations } from '../data/mockDatabase';
 import { toast } from 'sonner';
 
 // Chart.js
@@ -34,8 +30,8 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar, Pie } from 'react-chartjs-2';
+import { translations, type Language } from '../locales';
 
-// رجیستر کردن پلاگین‌ها (یک‌بار در اپلیکیشن کافی است)
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -46,6 +42,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
+// فقط یک نقشه ثابت: نام فارسی → ID (چون دیتابیس فارسی است)
 const violationNameToId: Record<string, string> = {
   'عبور از چراغ قرمز': 'red-light',
   'تجاوز به خط عابر پیاده': 'crosswalk',
@@ -54,31 +51,47 @@ const violationNameToId: Record<string, string> = {
   'پارک در محل ممنوع': 'illegal-parking',
 };
 
-const violationTypeMap: Record<string, { name: string; color: string }> = {
-  'red-light': { name: 'عبور از چراغ قرمز', color: '#ef4444' },
-  'crosswalk': { name: 'تجاوز به خط عابر پیاده', color: '#f59e0b' },
-  'speed': { name: 'سرعت غیرمجاز', color: '#8b5cf6' },
-  'lane-change': { name: 'تغییر خط ممنوع', color: '#ec4899' },
-  'illegal-parking': { name: 'پارک در محل ممنوع', color: '#10b981' },
+// نقشه دو زبانه فقط برای نمایش نام در نمودارها
+const getViolationDisplayName = (id: string, language: Language): string => {
+  const names = {
+    'red-light': language === 'fa' ? 'عبور از چراغ قرمز' : 'Red Light Violation',
+    'crosswalk': language === 'fa' ? 'تجاوز به خط عابر پیاده' : 'Crosswalk Violation',
+    'speed': language === 'fa' ? 'سرعت غیرمجاز' : 'Speeding',
+    'lane-change': language === 'fa' ? 'تغییر خط ممنوع' : 'Illegal Lane Change',
+    'illegal-parking': language === 'fa' ? 'پارک در محل ممنوع' : 'Illegal Parking',
+  };
+  return names[id as keyof typeof names] || id;
 };
+
+// لیست ثابت IDها (ترتیب مهم است برای نمایش ثابت در نمودار)
+const violationTypeIds = ['red-light', 'crosswalk', 'speed', 'lane-change', 'illegal-parking'] as const;
 
 interface IntersectionDashboardProps {
   intersection: Intersection;
   onChangeTab?: (tab: string) => void;
+  language: Language;
 }
 
-export function IntersectionDashboard({ intersection, onChangeTab }: IntersectionDashboardProps) {
-  const [liveMonitoring, setLiveMonitoring] = useState(true);
-  const [ptzTracking, setPtzTracking] = useState(true);
+export function IntersectionDashboard({
+  intersection,
+  onChangeTab,
+  language,
+}: IntersectionDashboardProps) {
+  const t = translations[language];
 
+  const [liveMonitoring, setLiveMonitoring] = useState(true);
+  const [ptzTracking] = useState(true);
+
+  // فیلتر تخلفات این چهارراه
   const violations = mockViolations.filter(v => v.intersectionId === intersection.id);
+
+  // تبدیل نام فارسی به ID
   const violationsWithId = violations.map(v => ({
     ...v,
     violationTypeId: violationNameToId[v.violationType] || 'unknown',
   }));
 
-  const validTypeIds = Object.keys(violationTypeMap);
-
+  // محاسبه آمار بر اساس ID ثابت
   const stats = {
     total: violations.length,
     byStatus: {
@@ -86,44 +99,40 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
       pending: violations.filter(v => v.status === 'pending').length,
       rejected: violations.filter(v => v.status === 'rejected').length,
     },
-    byType: validTypeIds.reduce((acc, id) => {
+    byType: violationTypeIds.reduce((acc, id) => {
       acc[id] = violationsWithId.filter(v => v.violationTypeId === id).length;
       return acc;
     }, {} as Record<string, number>),
   };
 
+  // شبیه‌سازی تشخیص تخلف جدید
   useEffect(() => {
     if (!liveMonitoring) return;
 
     const interval = setInterval(() => {
       if (Math.random() > 0.85) {
-        toast.warning('تخلف جدید شناسایی شد', { duration: 5000 });
+        toast.warning(t.newViolationDetected, { duration: 5000 });
       }
     }, 18000);
 
     return () => clearInterval(interval);
-  }, [liveMonitoring]);
+  }, [liveMonitoring, t.newViolationDetected]);
 
+  // بج وضعیت
   const getStatusBadge = (status: string) => {
+    const texts = {
+      verified: language === 'fa' ? 'تایید شده' : 'Verified',
+      pending: language === 'fa' ? 'در انتظار' : 'Pending',
+      rejected: language === 'fa' ? 'رد شده' : 'Rejected',
+    };
+
     switch (status) {
       case 'verified':
-        return (
-          <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs">
-            تایید شده
-          </Badge>
-        );
+        return <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs">{texts.verified}</Badge>;
       case 'pending':
-        return (
-          <Badge className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs">
-            در انتظار
-          </Badge>
-        );
+        return <Badge className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs">{texts.pending}</Badge>;
       case 'rejected':
-        return (
-          <Badge className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs">
-            رد شده
-          </Badge>
-        );
+        return <Badge className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs">{texts.rejected}</Badge>;
       default:
         return null;
     }
@@ -132,12 +141,15 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
   return (
     <div className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
+        {/* هدر */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               {intersection.name}
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">نظارت زنده و آمار لحظه‌ای</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              {t.liveMonitoringAndStats}
+            </p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -148,7 +160,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
                 }`}
               />
               <span className="text-sm text-slate-700 dark:text-slate-300">
-                {liveMonitoring ? 'فعال' : 'متوقف'}
+                {liveMonitoring ? t.active : t.inactive}
               </span>
             </div>
             <Button
@@ -157,254 +169,213 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
               className="gap-2"
               onClick={() => {
                 setLiveMonitoring(!liveMonitoring);
-                toast.info(liveMonitoring ? 'نظارت متوقف شد' : 'نظارت فعال شد');
+                toast.info(liveMonitoring ? t.monitoringStopped : t.monitoringStarted);
               }}
             >
               {liveMonitoring ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              {liveMonitoring ? 'توقف' : 'شروع'}
+              {liveMonitoring ? t.stopMonitoring : t.startMonitoring}
             </Button>
           </div>
         </div>
 
         {/* کارت‌های آمار */}
-<div className="grid grid-cols-2 md:grid-cols-5 gap-5 mb-8">
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-          کل تخلفات امروز
-        </p>
-        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{stats.total}</p>
-      </div>
-      <FileText className="w-9 h-9 text-slate-600 dark:text-slate-400" />
-    </div>
-  </Card>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-5 mb-8">
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                  {t.totalViolationsToday}
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{stats.total}</p>
+              </div>
+              <FileText className="w-9 h-9 text-slate-600 dark:text-slate-400" />
+            </div>
+          </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">
-          تخلفات تایید شده
-        </p>
-        <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">
-          {stats.byStatus.verified}
-        </p>
-      </div>
-      <CheckCircle className="w-9 h-9 text-green-600 dark:text-green-400" />
-    </div>
-  </Card>
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-green-600 dark:text-green-400 uppercase tracking-wider">
+                  {t.verifiedViolations}
+                </p>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-1">
+                  {stats.byStatus.verified}
+                </p>
+              </div>
+              <CheckCircle className="w-9 h-9 text-green-600 dark:text-green-400" />
+            </div>
+          </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-          تخلفات در حال انتظار
-        </p>
-        <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-1">
-          {stats.byStatus.pending}
-        </p>
-      </div>
-      <Clock className="w-9 h-9 text-amber-600 dark:text-amber-400" />
-    </div>
-  </Card>
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                  {t.pendingViolations}
+                </p>
+                <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-1">
+                  {stats.byStatus.pending}
+                </p>
+              </div>
+              <Clock className="w-9 h-9 text-amber-600 dark:text-amber-400" />
+            </div>
+          </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-xs text-red-600 dark:text-red-400 uppercase tracking-wider">
-          تخلفات رد شده
-        </p>
-        <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-1">
-          {stats.byStatus.rejected}
-        </p>
-      </div>
-      <XCircle className="w-9 h-9 text-red-600 dark:text-red-400" />
-    </div>
-  </Card>
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-red-600 dark:text-red-400 uppercase tracking-wider">
+                  {t.rejectedViolations}
+                </p>
+                <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-1">
+                  {stats.byStatus.rejected}
+                </p>
+              </div>
+              <XCircle className="w-9 h-9 text-red-600 dark:text-red-400" />
+            </div>
+          </Card>
 
-  <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">
-          وضعیت دوربین چرخان (PTZ)
-        </p>
-        <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">
-          {ptzTracking ? 'فعال' : 'غیرفعال'}
-        </p>
-      </div>
-      <Video className="w-9 h-9 text-purple-600 dark:text-purple-400" />
-    </div>
-  </Card>
-</div>
-        {/* نمودارها — در کنار هم */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* نمودار ستونی */}
-          <Card className="shadow-lg  p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-  <h3 className=" text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-    تعداد تخلفات بر اساس نوع
-  </h3>
-            {/* 👇 این دیو 20% کوتاه‌تر از ارتفاع کارت است */}
-            <div className="flex-1 w-full flex items-center justify-center">
-
-
-            
-   <div className="w-[85%] h-[75%]">
-    {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
-      <Bar
-        data={{
-          labels: validTypeIds.map(id => violationTypeMap[id].name),
-          datasets: [
-            {
-              label: 'تعداد تخلفات',
- data: validTypeIds.map(id => stats.byType[id] || 0),
-              backgroundColor: validTypeIds.map(id => violationTypeMap[id].color + '80'),
-              borderColor: validTypeIds.map(id => violationTypeMap[id].color),
-              borderWidth: 0.5,
-              borderRadius: 5,
-              borderSkipped: false,
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          barThickness: 35,
-          categoryPercentage: 0.7,
-          barPercentage: 0.85,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.95)',
-              titleColor: '#fff',
-              bodyColor: '#e2e8f0',
-              titleFont: { size: 13, weight: 'bold' },
-              bodyFont: { size: 12 },
-              padding: 12,
-              cornerRadius: 8,
-            },
-          },
-          scales: {
-            x: {
-              ticks: {
-                color: '#94a3b8',
-                font: { size: 11 },
-                maxRotation: 0,
-                autoSkip: true,
-              },
-              grid: { display: false },
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#94a3b8',
-                font: { size: 11 },
-                stepSize: 1,
-              },
-              grid: {
-                color: 'rgba(148, 163, 184, 0.1)',
-              },
-            },
-          },
-        }}
-      />
-    ) : (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <AlertTriangle className="w-10 h-10 mx-auto mb-2 text-slate-400" />
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            هیچ تخلفی برای نمایش وجود ندارد
-          </p>
+          <Card className="p-5 bg-white dark:bg-slate-800 shadow-lg hover:shadow-lg transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                  {t.ptzCameraStatus}
+                </p>
+                <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">
+                  {ptzTracking ? t.active : t.inactive}
+                </p>
+              </div>
+              <Video className="w-9 h-9 text-purple-600 dark:text-purple-400" />
+            </div>
+          </Card>
         </div>
-      </div>
-    )}
-  </div></div>
-</Card>
+
+        {/* نمودارها */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* نمودار میله‌ای */}
+          <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+              {t.violationsByTypeTitle}
+            </h3>
+            <div className="flex-1 w-full flex items-center justify-center">
+              <div className="w-[85%] h-[75%]">
+                {violationTypeIds.some(id => stats.byType[id] > 0) ? (
+                  <Bar
+                    data={{
+                      labels: violationTypeIds.map(id => getViolationDisplayName(id, language)),
+                      datasets: [
+                        {
+                          label: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
+                          data: violationTypeIds.map(id => stats.byType[id]),
+                          backgroundColor: violationTypeIds.map(id => {
+                            const colors = {
+                              'red-light': '#ef444480',
+                              'crosswalk': '#f59e0b80',
+                              'speed': '#8b5cf680',
+                              'lane-change': '#ec489980',
+                              'illegal-parking': '#10b98180',
+                            };
+                            return colors[id];
+                          }),
+                          borderColor: violationTypeIds.map(id => {
+                            const colors = {
+                              'red-light': '#ef4444',
+                              'crosswalk': '#f59e0b',
+                              'speed': '#8b5cf6',
+                              'lane-change': '#ec4899',
+                              'illegal-parking': '#10b981',
+                            };
+                            return colors[id];
+                          }),
+                          borderWidth: 1,
+                          borderRadius: 5,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { display: false } },
+                      scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                      },
+                    }}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
+                    <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
 
           {/* نمودار دونات */}
-          <Card className="shadow-lg  p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+          <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-              درصد تخلفات بر اساس نوع            </h3>
-           <div className="flex-1 w-full flex items-center justify-center">
-
-
-            
-      <div className="w-[85%] h-[75%]">
-              {validTypeIds.some(id => (stats.byType[id] || 0) > 0) ? (
-                <Pie
-                  data={{
-                    labels: validTypeIds.map(id => violationTypeMap[id].name),
-                    datasets: [
-                      {
-                        label: 'درصد تخلفات',
- data: validTypeIds.map(id => stats.byType[id] || 0),
-                        backgroundColor: validTypeIds.map(id => violationTypeMap[id].color + 'B0'),
-                        borderWidth: 0,
-                        borderColor: 'transparent',
-                        cutout: '50%',
-                        borderRadius: 5,
-                      },
-                    ],
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'right' as const,
-                        labels: {
-                          color: '#cbd5e1',
-                          font: { size: 11 },
-                          padding: 12,
-                          usePointStyle: true,
-                          pointStyle: 'circle',
+              {t.violationsPercentageTitle}
+            </h3>
+            <div className="flex-1 w-full flex items-center justify-center">
+              <div className="w-[85%] h-[75%]">
+                {violationTypeIds.some(id => stats.byType[id] > 0) ? (
+                  <Pie
+                    data={{
+                      labels: violationTypeIds.map(id => getViolationDisplayName(id, language)),
+                      datasets: [
+                        {
+                          data: violationTypeIds.map(id => stats.byType[id]),
+                          backgroundColor: violationTypeIds.map(id => {
+                            const colors = {
+                              'red-light': '#ef4444B0',
+                              'crosswalk': '#f59e0bB0',
+                              'speed': '#8b5cf6B0',
+                              'lane-change': '#ec4899B0',
+                              'illegal-parking': '#10b981B0',
+                            };
+                            return colors[id];
+                          }),
+                          borderWidth: 0,
+                          cutout: '60%',
                         },
-                      },
-                      tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                        titleColor: '#fff',
-                        bodyColor: '#e2e8f0',
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 12,
-                        cornerRadius: 8,
-                        callbacks: {
-                          label: (context) => {
-                            const total = context.dataset.data.reduce((a, b) => a + (b as number), 0);
-                            const value = context.raw as number;
-                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                            return `${context.label}: ${percent}% (${value})`;
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: language === 'fa' ? 'left' : 'right' as const,
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: (context) => {
+                              const total = context.dataset.data.reduce((a: any, b: any) => a + b, 0);
+                              const value = context.raw as number;
+                              const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+                              return `${context.label}: ${percent}% (${value})`;
+                            },
+                          },
+                        },
+                        datalabels: {
+                          color: '#fff',
+                          font: { weight: 'bold' },
+                          formatter: (value: number) => {
+                            const total = violationTypeIds.reduce((sum, id) => sum + stats.byType[id], 0);
+                            return total > 0 ? Math.round((value / total) * 100) + '%' : '';
                           },
                         },
                       },
-                      datalabels: {
-                        color: '#fff',
-                        font: {
-                          weight: 'bold',
-                          size: 12,
-                        },
-                        formatter: (value, context) => {
-                          const total = context.dataset.data.reduce((a, b) => a + (b as number), 0);
-                          const percent = total > 0 ? ((value as number) / total * 100).toFixed(0) + '%' : '';
-                          return percent;
-                        },
-                        anchor: 'center',
-                        align: 'center',
-                      },
-                    },
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <AlertTriangle className="w-10 h-10 mx-auto mb-2 text-slate-400" />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">
-                      هیچ تخلفی برای نمایش وجود ندارد
-                    </p>
+                    }}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
+                    <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
                   </div>
-                </div>
-              )}
+                )}
               </div>
-              </div>
+            </div>
           </Card>
         </div>
       </div>

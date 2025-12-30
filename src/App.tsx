@@ -129,7 +129,7 @@ function App() {
       }`}
     >
       {/* ========== منوی عمودی (سمت راست در RTL، سمت چپ در LTR) ========== */}
-      <div className="w-full max-w-[280px] shadow-lgg flex-shrink-0 bg-slate-200 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
+      <div className="w-full max-w-[280px] shadow-lgm flex-shrink-0 bg-slate-200 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col">
         {/* هدر منو */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
