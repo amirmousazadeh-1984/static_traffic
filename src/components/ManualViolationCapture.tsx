@@ -213,7 +213,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
 
 
               {/* تصویر بزرگ + کنترل‌های روی تصویر (بالا چپ/راست بسته به زبان) */}
-              <div className="flex-1 px-6 py-6 min-h-0 relative">
+              <div className="flex-1 px-6 py-1 min-h-0 relative">
                 <div
                   className="relative bg-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 h-full shadow-inner"
                   onWheel={handleWheel}

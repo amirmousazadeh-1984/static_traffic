@@ -177,7 +177,7 @@ function App() {
 
           {/* نمایش چهارراه انتخاب‌شده */}
           {selectedIntersection && (
-            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg  dark:border-blue-800 shadow-lgg">
+            <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg  dark:border-blue-800 shadow-lgm">
               <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
               <span className="text-sm font-medium text-blue-900 dark:text-blue-300 truncate">
                 {selectedIntersection.name}
