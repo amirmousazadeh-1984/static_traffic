@@ -132,7 +132,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
             <Card className="shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl flex flex-col h-full">
               {/* هدر: انتخاب دوربین */}
               <div className="p-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <Label className="text-sm font-medium">انتخاب دوربین</Label>
                   {selectedCamera && (
                     <Badge variant="secondary" className="text-xs">
@@ -157,8 +157,8 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
               </div>
 
               {/* تصویر اصلی با Crop */}
-              <div className="flex-1 p-6">
-                <div className="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-700 h-full">
+              <div className="flex-1 px-6 ">
+                <div className="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-700 h-full" style={{ height: '55vh' }}>
                   {intersection.imageUrl ? (
                     <ReactCrop
                       crop={crop}
@@ -190,7 +190,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
               </div>
 
               {/* دکمه گرفتن عکس — پایین کارت */}
-              <div className="p-6 pt-0">
+              <div className="p-6 pt-4 ">
                 <Button
                   onClick={takeCroppedSnapshot}
                   disabled={!completedCrop || !intersection.imageUrl}
