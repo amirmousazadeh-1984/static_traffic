@@ -203,7 +203,18 @@ passwordLabel: 'رمز عبور',
 interusername: 'نام کاربری را وارد کنید',
 enterpassword: 'رمز عبور را وارد کنید',
 loginError: 'نام کاربری یا رمز عبور اشتباه است',
-defaultCredentials: 'نام کاربری پیش‌فرض: admin — رمز عبور پیش‌فرض: admin',
+    defaultCredentials: 'نام کاربری پیش‌فرض: admin — رمز عبور پیش‌فرض: admin',
+
+changeCredentials: 'تغییر رمز عبور',
+changeCredentialsTitle: 'تغییر نام کاربری و رمز عبور',
+newUsername: 'نام کاربری جدید',
+newPassword: 'رمز عبور جدید',
+confirmPassword: 'تکرار رمز عبور',
+saveChanges: 'ذخیره تغییرات',
+emptyFields: 'نام کاربری و رمز عبور نمی‌توانند خالی باشند',
+passwordMismatch: 'رمز عبور و تکرار آن یکسان نیستند',
+
+
 
   },
   en: {
@@ -411,7 +422,16 @@ passwordLabel: 'Password',
 interusername: 'Enter username',
 enterpassword: 'Enter password',
 loginError: 'Invalid username or password',
-defaultCredentials: 'Default credentials: username "admin" — password "admin"',
+    defaultCredentials: 'Default credentials: username "admin" — password "admin"',
+
+    changeCredentials: 'Change Credentials',
+changeCredentialsTitle: 'Change Username and Password',
+newUsername: 'New Username',
+newPassword: 'New Password',
+confirmPassword: 'Confirm Password',
+saveChanges: 'Save Changes',
+emptyFields: 'Username and password cannot be empty',
+passwordMismatch: 'Passwords do not match',
   }
 
  

@@ -7,9 +7,10 @@ import { PTZCalibration } from './components/PTZCalibration';
 import { IntersectionDashboard } from './components/IntersectionDashboard';
 import { ViolationTypesManager } from './components/ViolationTypesManager';
 import { ManualViolationCapture } from './components/ManualViolationCapture';
-import { Login } from './components/Login'; // اضافه شد
+import { Login } from './components/Login';
+import { ChangeCredentialsModal } from './components/ChangeCredentialsModal'; // اضافه شد
 import { Intersection } from './types';
-import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut } from 'lucide-react';
+import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut, Key } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
@@ -20,8 +21,9 @@ function App() {
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState<Language>('fa');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showChangeCredentials, setShowChangeCredentials] = useState(false);
 
-  const t = translations[language];
+  const t = translations[language] || {};
 
   // بارگذاری تم، زبان و وضعیت لاگین از localStorage
   useEffect(() => {
@@ -231,7 +233,20 @@ function App() {
               </button>
             ))}
 
-            {/* آیتم خروج از حساب — همیشه در پایین منو */}
+            {/* آیتم تغییر رمز عبور */}
+            <button
+              onClick={() => setShowChangeCredentials(true)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 ${
+                language === 'fa' ? 'text-right' : 'text-left'
+              }`}
+            >
+              <Key className="w-4 h-4" />
+              <span className="text-sm">
+                {language === 'fa' ? 'تغییر رمز عبور' : 'Change Credentials'}
+              </span>
+            </button>
+
+            {/* آیتم خروج از حساب */}
             <button
               onClick={handleLogout}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
@@ -239,7 +254,9 @@ function App() {
               }`}
             >
               <LogOut className="w-4 h-4" />
-              <span className="text-sm">{language === 'fa' ? 'خروج از حساب' : 'Logout'}</span>
+              <span className="text-sm">
+                {language === 'fa' ? 'خروج از حساب' : 'Logout'}
+              </span>
             </button>
           </div>
         </nav>
@@ -271,6 +288,13 @@ function App() {
           )}
         </main>
       </div>
+
+      {/* مدال تغییر رمز عبور */}
+      <ChangeCredentialsModal
+        isOpen={showChangeCredentials}
+        onClose={() => setShowChangeCredentials(false)}
+        language={language}
+      />
 
       <Toaster position="top-center" richColors dir={language === 'fa' ? 'rtl' : 'ltr'} />
     </div>

@@ -21,13 +21,16 @@ export function Login({ onLogin, language }: LoginProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (username.trim() === 'admin' && password.trim() === 'admin') {
-      onLogin();
-    } else {
-      setError(t.loginError);
-    }
-  };
+ const handleLogin = () => {
+  const savedUsername = localStorage.getItem('appUsername') || 'admin';
+  const savedPassword = localStorage.getItem('appPassword') || 'admin';
+
+  if (username.trim() === savedUsername && password.trim() === savedPassword) {
+    onLogin();
+  } else {
+    setError(t.loginError || 'نام کاربری یا رمز عبور اشتباه است');
+  }
+};
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
