@@ -217,7 +217,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
         <div className="mb-10">
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">

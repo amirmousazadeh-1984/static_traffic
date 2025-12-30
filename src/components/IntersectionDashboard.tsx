@@ -130,7 +130,7 @@ export function IntersectionDashboard({ intersection, onChangeTab }: Intersectio
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
       <div className="max-w-[1800px] mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
