@@ -14,7 +14,7 @@ interface LoginProps {
 }
 
 export function Login({ onLogin, language }: LoginProps) {
-  const t = translations[language] || {}; 
+  const t = translations[language] ; 
     const isRTL = language === 'fa';
     
   const [username, setUsername] = useState('');
@@ -44,33 +44,31 @@ export function Login({ onLogin, language }: LoginProps) {
               <Camera className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              سیستم نظارت ترافیکی
+             {t.loginTitle}
             </h1>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-              برای ورود به سیستم اطلاعات خود را وارد کنید
-            </p>
+              {t.loginSubtitle}            </p>
           </div>
 
           <div className="space-y-5">
             <div>
               <Label htmlFor="username" className="text-sm font-medium">
-                نام کاربری
-              </Label>
+                              {t.usernameLabel}              </Label>
               <Input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="admin"
-                className="mt-2"
+                placeholder={t.interusername}
+                className="mt-2 bg-white dark:bg-slate-700"
                 autoFocus
               />
             </div>
 
             <div>
               <Label htmlFor="password" className="text-sm font-medium">
-                رمز عبور
+        {t.passwordLabel }
               </Label>
               <Input
                 id="password"
@@ -78,8 +76,8 @@ export function Login({ onLogin, language }: LoginProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="admin"
-                className="mt-2"
+                placeholder={t.enterpassword}
+                className="mt-2 bg-white dark:bg-slate-700 mb-6"
               />
             </div>
 
@@ -89,9 +87,8 @@ export function Login({ onLogin, language }: LoginProps) {
               </div>
             )}
 
-            <Button onClick={handleLogin} className="w-full mt-6" size="lg">
-              ورود به سیستم
-            </Button>
+            <Button onClick={handleLogin} className="w-full mt-6 hover:bg-slate-600 bg-slate-500 dark:bg-slate-400" size="lg">
+{t.loginButton }            </Button>
           </div>
 
         </div>

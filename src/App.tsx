@@ -148,7 +148,7 @@ function App() {
 
   // اگر کاربر لاگین نکرده باشد → صفحه لاگین
   if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
+    return <Login onLogin={handleLogin} language={language} />;
   }
 
   // اگر لاگین کرده باشد → برنامه اصلی
