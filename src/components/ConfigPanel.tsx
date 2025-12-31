@@ -30,19 +30,19 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
   const [activeTab, setActiveTab] = React.useState('object-detector');
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} className="h-[80vh] flex flex-col">
-      {/* هدر صفحه تنظیمات */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+    <div dir={isRTL ? 'rtl' : 'ltr'}   className="min-h-[calc(100vh-140px)] bg-slate-100 dark:bg-slate-900 p-4">
+      <div className="max-w-[1800px] mx-auto">
+          <div className="mb-8">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           {t.configTitle || (language === 'fa' ? 'تنظیمات سیستم' : 'System Settings')}
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400">
+        </h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           {t.configDesc || (language === 'fa' ? 'مدیریت تنظیمات کلی سیستم نظارت ترافیکی' : 'Manage global settings of the traffic monitoring system')}
         </p>
       </div>
+        <div style={{ height: '80vh' }}>
 
-      {/* کارت اصلی شامل تب‌ها و محتوا */}
-      <Card className="flex-1 shadow-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col overflow-hidden">
+          <Card className="p-6 border border-slate-200 dark:border-slate-700 shadow-lg bg-white dark:bg-slate-800">
         {/* تب‌ها */}
         <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
           <div className="flex flex-wrap">
@@ -50,10 +50,10 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-4 font-medium text-sm transition-all border-b-2 -mb-px ${
+                className={`px-6 py-4 font-medium text-sm transition-all border-b-2  -mb-px ${
                   activeTab === tab.id
                     ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 bg-slate-50 dark:bg-slate-900/50'
                 }`}
               >
                 {tab.label}
@@ -65,11 +65,11 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
         {/* محتوای تب */}
         <div className="flex-1 overflow-y-auto p-8">
           {activeTab === 'object-detector' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <div>
                 <h3 className="text-xl font-semibold mb-6">{t.objectDetector || 'تنظیمات تشخیص اشیاء و پلاک'}</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Card className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                     <Label className="text-base font-medium mb-4 block">دقت تشخیص پلاک (Confidence Threshold)</Label>
                     <div className="space-y-4">
                       <Slider defaultValue={[75]} max={100} step={1} className="w-full" />
@@ -81,7 +81,7 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
                     </div>
                   </Card>
 
-                  <Card className="p-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                     <Label className="text-base font-medium mb-4 block">حداکثر تعداد تشخیص در هر فریم</Label>
                     <div className="space-y-4">
                       <Slider defaultValue={[10]} max={20} step={1} className="w-full" />
@@ -93,7 +93,7 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
                   </Card>
                 </div>
 
-                <Card className="p-6 mt-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label className="text-base font-medium">فعال‌سازی تشخیص پلاک در شب</Label>
@@ -107,24 +107,24 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'cameras' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">{t.cameras || 'وضعیت و مشخصات دوربین‌ها'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="p-8 text-center">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                   <div className="text-4xl font-bold text-green-600 mb-2">28</div>
                   <p className="text-slate-600 dark:text-slate-400">میانگین FPS</p>
                 </Card>
-                <Card className="p-8 text-center">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                   <div className="text-4xl font-bold text-blue-600 mb-2">12</div>
                   <p className="text-slate-600 dark:text-slate-400">دوربین فعال</p>
                 </Card>
-                <Card className="p-8 text-center">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                   <div className="text-3xl font-bold mb-2">Full HD</div>
                   <p className="text-slate-600 dark:text-slate-400">رزولوشن متوسط</p>
                 </Card>
               </div>
 
-              <Card className="p-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <h4 className="font-medium mb-4">لیست دوربین‌های PTZ</h4>
                 <Table>
                   <TableHeader>
@@ -155,9 +155,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'main' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">{t.mainConfig || 'تنظیمات اصلی سیستم'}</h3>
-              <Card className="p-8 space-y-8">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <div>
                   <Label className="text-base font-medium mb-3 block">فاصله ثبت لاگ سیستم (ثانیه)</Label>
                   <select className="w-full max-w-xs p-3 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700">
@@ -188,9 +188,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'ocr' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">تنظیمات تشخیص متن (OCR)</h3>
-              <Card className="p-8">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <Label className="text-base font-medium mb-6 block">دقت فعلی تشخیص پلاک</Label>
                 <div className="space-y-4">
                   <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-12 relative overflow-hidden">
@@ -202,7 +202,7 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
                 </div>
               </Card>
 
-              <Card className="p-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-base font-medium">فعال‌سازی OCR پیشرفته (Tesseract)</Label>
@@ -215,9 +215,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'vehicle' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">{t.vehicle || 'تنظیمات تشخیص خودرو'}</h3>
-              <Card className="p-8">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                   تنظیمات تشخیص نوع خودرو (سدان، وانت، کامیون)، رنگ، برند و مدل در نسخه‌های آینده اضافه خواهد شد.
                 </p>
@@ -227,9 +227,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'imaging' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">{t.imaging || 'تنظیمات تصویربرداری'}</h3>
-              <Card className="p-8 space-y-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <div>
                   <Label className="text-base font-medium mb-3 block">کیفیت ذخیره تصاویر</Label>
                   <select className="w-full max-w-xs p-3 border rounded-lg dark:bg-slate-700">
@@ -251,9 +251,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
           )}
 
           {activeTab === 'saving' && (
-            <div className="space-y-8">
+            <div className="space-y-8" style={{ height: '60vh' }}>
               <h3 className="text-xl font-semibold mb-6">{t.saving || 'تنظیمات ذخیره‌سازی'}</h3>
-              <Card className="p-8 space-y-6">
+            <Card className="p-6 shadow-md w-full border border-slate-200 dark:border-slate-700  bg-slate-50 dark:bg-slate-700 rounded-xl flex flex-col">
                 <div>
                   <Label className="text-base font-medium mb-3 block">مدت نگهداری فایل‌ها (روز)</Label>
                   <Slider defaultValue={[30]} max={365} step={10} className="w-full max-w-md" />
@@ -276,7 +276,9 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
             </div>
           )}
         </div>
-      </Card>
+              </Card>
+              </div>
+              </div>
     </div>
   );
 }
