@@ -18,30 +18,13 @@ import { Intersection } from '../types';
 import { mockViolations } from '../data/mockDatabase';
 import { toast } from 'sonner';
 
-// Chart.js
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Bar, Pie } from 'react-chartjs-2';
 import { translations, type Language } from '../locales';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
+import 'highcharts/highcharts-3d';
 
+const chartColors = ['#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#10b981'];
 // فقط یک نقشه ثابت: نام فارسی → ID (چون دیتابیس فارسی است)
 const violationNameToId: Record<string, string> = {
   'عبور از چراغ قرمز': 'red-light',
@@ -249,136 +232,133 @@ export function IntersectionDashboard({
           </Card>
         </div>
 
-        {/* نمودارها */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* نمودار میله‌ای */}
-          <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-              {t.violationsByTypeTitle}
-            </h3>
-            <div className="flex-1 w-full flex items-center justify-center">
-              <div className="w-[85%] h-[75%]">
-                {violationTypeIds.some(id => stats.byType[id] > 0) ? (
-                  <Bar
-                    data={{
-                      labels: violationTypeIds.map(id => getViolationDisplayName(id, language)),
-                      datasets: [
-                        {
-                          label: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
-                          data: violationTypeIds.map(id => stats.byType[id]),
-                          backgroundColor: violationTypeIds.map(id => {
-                            const colors = {
-                              'red-light': '#ef444480',
-                              'crosswalk': '#f59e0b80',
-                              'speed': '#8b5cf680',
-                              'lane-change': '#ec489980',
-                              'illegal-parking': '#10b98180',
-                            };
-                            return colors[id];
-                          }),
-                          borderColor: violationTypeIds.map(id => {
-                            const colors = {
-                              'red-light': '#ef4444',
-                              'crosswalk': '#f59e0b',
-                              'speed': '#8b5cf6',
-                              'lane-change': '#ec4899',
-                              'illegal-parking': '#10b981',
-                            };
-                            return colors[id];
-                          }),
-                          barThickness: 50,
-                          borderWidth: 1,
-                          borderRadius: 5,
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: { legend: { display: false } },
-                      scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
-                      },
-                    }}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
-                    <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-
-          {/* نمودار دونات */}
-          <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
-              {t.violationsPercentageTitle}
-            </h3>
-            <div className="flex-1 w-full flex items-center justify-center">
-              <div className="w-[85%] h-[75%]">
-                {violationTypeIds.some(id => stats.byType[id] > 0) ? (
-                  <Pie
-                    data={{
-                      labels: violationTypeIds.map(id => getViolationDisplayName(id, language)),
-                      datasets: [
-                        {
-                          data: violationTypeIds.map(id => stats.byType[id]),
-                          backgroundColor: violationTypeIds.map(id => {
-                            const colors = {
-                              'red-light': '#ef4444B0',
-                              'crosswalk': '#f59e0bB0',
-                              'speed': '#8b5cf6B0',
-                              'lane-change': '#ec4899B0',
-                              'illegal-parking': '#10b981B0',
-                            };
-                            return colors[id];
-                          }),
-                          borderWidth: 0,
-                          cutout: '40%',
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: language === 'fa' ? 'left' : 'right' as const,
-                        },
-                        tooltip: {
-                          callbacks: {
-                            label: (context) => {
-                              const total = context.dataset.data.reduce((a: any, b: any) => a + b, 0);
-                              const value = context.raw as number;
-                              const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
-                              return `${context.label}: ${percent}% (${value})`;
-                            },
-                          },
-                        },
-                        datalabels: {
-                          color: '#fff',
-                          font: { weight: 'bold' },
-                          formatter: (value: number) => {
-                            const total = violationTypeIds.reduce((sum, id) => sum + stats.byType[id], 0);
-                            return total > 0 ? Math.round((value / total) * 100) + '%' : '';
-                          },
-                        },
-                      },
-                    }}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
-                    <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
+     {/* نمودارها */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  {/* نمودار میله‌ای سه‌بعدی */}
+  <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+      {t.violationsByTypeTitle}
+    </h3>
+    <div className="flex-1 w-full">
+      {stats.total > 0 ? (
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={{
+            chart: {
+              type: 'column',
+              options3d: {
+                enabled: true,
+                alpha: 15,
+                beta: 15,
+                depth: 50,
+                viewDistance: 25,
+                frame: {
+                  bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                  back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                  side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+                }
+              },
+              backgroundColor: 'transparent',
+              height: '100%'
+            },
+            title: { text: null },
+            plotOptions: {
+              column: {
+                depth: 40,
+                grouping: false,
+                groupZPadding: 10
+              }
+            },
+            xAxis: {
+              categories: violationTypeIds.map(id => getViolationDisplayName(id, language)),
+              labels: { skew3d: true, style: { fontSize: '12px' } }
+            },
+            yAxis: {
+              title: { text: null },
+              min: 0,
+              tickInterval: 1
+            },
+            tooltip: {
+              formatter: function(this: any) {
+                return `<b>${this.x}</b><br/>تعداد: <b>${this.y}</b>`;
+              }
+            },
+            series: [{
+              name: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
+              data: violationTypeIds.map((id, index) => ({
+                y: stats.byType[id],
+                color: chartColors[index]
+              })),
+            }]
+          }}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center h-full text-center">
+          <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
+          <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
         </div>
+      )}
+    </div>
+  </Card>
+
+  {/* نمودار دایره‌ای (Pie) سه‌بعدی */}
+  <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+      {t.violationsPercentageTitle}
+    </h3>
+    <div className="flex-1 w-full">
+      {stats.total > 0 ? (
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={{
+            chart: {
+              type: 'pie',
+              options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+              },
+              backgroundColor: 'transparent',
+              height: '100%'
+            },
+            title: { text: null },
+            tooltip: {
+              pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y})'
+            },
+            plotOptions: {
+              pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 45,
+                innerSize: '40%',
+                dataLabels: {
+                  enabled: true,
+                  format: '{point.percentage:.1f}%',
+                  distance: 20,
+                  style: { fontWeight: 'bold', color: 'white', textOutline: '1px black' }
+                }
+              }
+            },
+            series: [{
+              name: 'تخلفات',
+              colorByPoint: true,
+              colors: chartColors,
+              data: violationTypeIds.map((id, index) => ({
+                name: getViolationDisplayName(id, language),
+                y: stats.byType[id]
+              }))
+            }]
+          }}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center h-full text-center">
+          <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
+          <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
+        </div>
+      )}
+    </div>
+  </Card>
+</div>
       </div>
     </div>
   );
