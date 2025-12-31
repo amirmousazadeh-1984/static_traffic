@@ -629,7 +629,7 @@ export function IntersectionDashboard({
     <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
       {t.violationsByTypeTitle}
     </h3>
-    <div className="flex-1 w-full">
+    <div className="flex-1 w-[80%] h-[80%]">
       {stats.total > 0 ? (
         <HighchartsReact
           highcharts={Highcharts}
@@ -638,8 +638,8 @@ export function IntersectionDashboard({
               type: 'column',
               options3d: {
                 enabled: true,
-                alpha: 15,
-                beta: 15,
+                alpha: 1,
+                beta: 10,
                 depth: 50,
                 viewDistance: 25,
                 frame: {
@@ -696,7 +696,7 @@ export function IntersectionDashboard({
     <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
       {t.violationsPercentageTitle}
     </h3>
-    <div className="flex-1 w-full">
+    <div className="flex-1 w-[80%] h-[80%]">
       {stats.total > 0 ? (
         <HighchartsReact
           highcharts={Highcharts}
