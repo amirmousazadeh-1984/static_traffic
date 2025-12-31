@@ -611,7 +611,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                   className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${
                     selectedShapeId === shape.id
                       ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700'
-                      : 'bg-slate-100 dark:bg-slate-700 border border-slate-300'
+                      : 'bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600'
                   }`}
                   onClick={() => {
                     if (!editingShapeId) {
@@ -668,7 +668,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-[10px] h-5 px-1.5 bg-blue-50 dark:bg-blue-900/20 text-slate-600 dark:text-blue-300 border border-slate-300"
+                            className="text-[10px] h-5 px-1.5 bg-blue-50 dark:bg-blue-900/20 text-slate-600 dark:text-blue-300 border border-slate-300 dark:border-blue-500"
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowSubPresetModal({ maskId: shape.id, maskName: shape.name });

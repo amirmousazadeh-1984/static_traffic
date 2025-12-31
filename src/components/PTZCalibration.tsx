@@ -319,7 +319,7 @@ export function PTZCalibration({ intersection, language }: PTZCalibrationProps) 
             {/* لیست presetها با اسکرول */}
             <Card className=" shadow-lg flex-1 border  border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 rounded-xl flex flex-col min-h-0 p-4">
               <h3 className="text-base font-medium text-slate-900 dark:text-slate-100 mb-2">
-                {t.presetsListTitle}({presets.length})
+                {t.presetsListTitle}
               </h3>
 
               <div className="overflow-y-auto pr-1 space-y-2 text-xs flex-1 min-h-0">
@@ -332,10 +332,10 @@ export function PTZCalibration({ intersection, language }: PTZCalibrationProps) 
                     <div
                       key={preset.id}
                       onClick={() => selectPreset(preset)}
-                      className={`p-3.5 rounded-lg border cursor-pointer transition-colors ${
+                      className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                         selectedPresetId === preset.id
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                          : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-700/50'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-2">
@@ -408,13 +408,13 @@ export function PTZCalibration({ intersection, language }: PTZCalibrationProps) 
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-1">
-                        <div className="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
+                        <div className="bg-slate-300 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
                           pan: {preset.pan.toFixed(0)}
                         </div>
-                        <div className="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
+                        <div className="bg-slate-300 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
                           tilt: {preset.tilt.toFixed(0)}
                         </div>
-                        <div className="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
+                        <div className="bg-slate-300 dark:bg-slate-700 px-1 py-0.5 rounded text-[9px] text-center">
                           zoom: {preset.zoom.toFixed(1)}x
                         </div>
                       </div>
