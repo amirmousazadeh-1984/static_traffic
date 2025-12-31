@@ -3,6 +3,10 @@
 import React from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
+import { Slider } from './ui/slider';
+import { Switch } from './ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Label } from './ui/label';
 import { translations, type Language } from '../locales';
 
 interface ConfigPanelProps {
@@ -14,165 +18,265 @@ export function ConfigPanel({ language }: ConfigPanelProps) {
   const isRTL = language === 'fa';
 
   const tabs = [
-    { id: 'object-detector', label: t.objectDetector || 'Object Detector' },
-    { id: 'cameras', label: t.cameras || 'Cameras' },
-    { id: 'main', label: t.mainConfig || 'Main' },
+    { id: 'object-detector', label: t.objectDetector || (language === 'fa' ? 'تشخیص اشیاء' : 'Object Detector') },
+    { id: 'cameras', label: t.cameras || (language === 'fa' ? 'دوربین‌ها' : 'Cameras') },
+    { id: 'main', label: t.mainConfig || (language === 'fa' ? 'تنظیمات اصلی' : 'Main') },
     { id: 'ocr', label: t.ocr || 'OCR' },
-    { id: 'vehicle', label: t.vehicle || 'Vehicle' },
-    { id: 'imaging', label: t.imaging || 'Imaging' },
-    { id: 'saving', label: t.saving || 'Saving' },
+    { id: 'vehicle', label: t.vehicle || (language === 'fa' ? 'خودرو' : 'Vehicle') },
+    { id: 'imaging', label: t.imaging || (language === 'fa' ? 'تصویربرداری' : 'Imaging') },
+    { id: 'saving', label: t.saving || (language === 'fa' ? 'ذخیره‌سازی' : 'Saving') },
   ];
 
   const [activeTab, setActiveTab] = React.useState('object-detector');
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'object-detector':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.objectDetector || 'تشخیص پلاک خودرو'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h4 className="font-medium mb-3">دقت تشخیص (Confidence Threshold)</h4>
-                <div className="flex items-center gap-4">
-                  <input type="range" min="0" max="100" defaultValue="75" className="flex-1" />
-                  <Badge variant="secondary">75%</Badge>
-                </div>
-              </Card>
-              <Card className="p-6">
-                <h4 className="font-medium mb-3">حداکثر تعداد تشخیص در فریم</h4>
-                <div className="text-3xl font-bold text-blue-600">10</div>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 'cameras':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.cameras || 'دوربین‌ها'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="p-6 text-center">
-                <h4 className="font-medium mb-2">میانگین FPS</h4>
-                <div className="text-3xl font-bold text-green-600">28</div>
-              </Card>
-              <Card className="p-6 text-center">
-                <h4 className="font-medium mb-2">رزولوشن متوسط</h4>
-                <div className="text-2xl font-bold">1920x1080</div>
-              </Card>
-              <Card className="p-6 text-center">
-                <h4 className="font-medium mb-2">تعداد دوربین فعال</h4>
-                <div className="text-3xl font-bold text-blue-600">12</div>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 'main':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.mainConfig || 'تنظیمات اصلی'}</h3>
-            <Card className="p-6 space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">فاصله ثبت لاگ (ثانیه)</h4>
-                <select className="w-full p-2 border rounded-lg dark:bg-slate-700">
-                  <option>30 ثانیه</option>
-                  <option selected>60 ثانیه</option>
-                  <option>120 ثانیه</option>
-                </select>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2">حالت خودکار ثبت تخلف</h4>
-                <Badge variant="default" className="bg-green-600">فعال</Badge>
-              </div>
-            </Card>
-          </div>
-        );
-
-      case 'ocr':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.ocr || 'تشخیص متن (OCR)'}</h3>
-            <Card className="p-6">
-              <h4 className="font-medium mb-4">دقت OCR فعلی</h4>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-8">
-                <div className="bg-blue-600 h-8 rounded-full flex items-center justify-center text-white font-bold" style={{width: '88%'}}>
-                  88%
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      case 'vehicle':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.vehicle || 'تنظیمات خودرو'}</h3>
-            <Card className="p-6">
-              <p className="text-slate-600 dark:text-slate-400">تنظیمات مربوط به تشخیص نوع خودرو، رنگ، مدل و غیره در آینده اضافه خواهد شد.</p>
-            </Card>
-          </div>
-        );
-
-      case 'imaging':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.imaging || 'تصویربرداری'}</h3>
-            <Card className="p-6">
-              <p className="text-slate-600 dark:text-slate-400">تنظیمات کیفیت تصویر، فشرده‌سازی و فرمت ذخیره‌سازی.</p>
-            </Card>
-          </div>
-        );
-
-      case 'saving':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold">{t.saving || 'ذخیره‌سازی'}</h3>
-            <Card className="p-6">
-              <p className="text-slate-600 dark:text-slate-400">تنظیمات مسیر ذخیره، مدت نگهداری فایل‌ها و پشتیبان‌گیری.</p>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} className="h-full flex flex-col">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-          {t.configTitle || 'تنظیمات سیستم'}
-        </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          {t.configDesc || 'مدیریت تنظیمات کلی سیستم نظارت ترافیکی'}
+    <div dir={isRTL ? 'rtl' : 'ltr'} className="h-[80vh] flex flex-col">
+      {/* هدر صفحه تنظیمات */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          {t.configTitle || (language === 'fa' ? 'تنظیمات سیستم' : 'System Settings')}
+        </h1>
+        <p className="text-slate-600 dark:text-slate-400">
+          {t.configDesc || (language === 'fa' ? 'مدیریت تنظیمات کلی سیستم نظارت ترافیکی' : 'Manage global settings of the traffic monitoring system')}
         </p>
       </div>
 
-      {/* تب‌ها */}
-      <div className="border-b border-slate-200 dark:border-slate-700 mb-6">
-        <div className="flex flex-wrap gap-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 font-medium transition-colors border-b-2 ${
-                activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* کارت اصلی شامل تب‌ها و محتوا */}
+      <Card className="flex-1 shadow-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col overflow-hidden">
+        {/* تب‌ها */}
+        <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+          <div className="flex flex-wrap">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-6 py-4 font-medium text-sm transition-all border-b-2 -mb-px ${
+                  activeTab === tab.id
+                    ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800'
+                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* محتوای تب انتخاب‌شده */}
-      <div className="flex-1 overflow-y-auto">
-        {renderContent()}
-      </div>
+        {/* محتوای تب */}
+        <div className="flex-1 overflow-y-auto p-8">
+          {activeTab === 'object-detector' && (
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-xl font-semibold mb-6">{t.objectDetector || 'تنظیمات تشخیص اشیاء و پلاک'}</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="p-6">
+                    <Label className="text-base font-medium mb-4 block">دقت تشخیص پلاک (Confidence Threshold)</Label>
+                    <div className="space-y-4">
+                      <Slider defaultValue={[75]} max={100} step={1} className="w-full" />
+                      <div className="flex justify-between text-sm">
+                        <span>0%</span>
+                        <Badge variant="secondary" className="text-lg px-4">75%</Badge>
+                        <span>100%</span>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card className="p-6">
+                    <Label className="text-base font-medium mb-4 block">حداکثر تعداد تشخیص در هر فریم</Label>
+                    <div className="space-y-4">
+                      <Slider defaultValue={[10]} max={20} step={1} className="w-full" />
+                      <div className="text-center">
+                        <span className="text-3xl font-bold text-blue-600">10</span>
+                        <span className="text-slate-500 ml-2">خودرو</span>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+
+                <Card className="p-6 mt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-base font-medium">فعال‌سازی تشخیص پلاک در شب</Label>
+                      <p className="text-sm text-slate-500 mt-1">بهبود تشخیص در شرایط نور کم</p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'cameras' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">{t.cameras || 'وضعیت و مشخصات دوربین‌ها'}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="p-8 text-center">
+                  <div className="text-4xl font-bold text-green-600 mb-2">28</div>
+                  <p className="text-slate-600 dark:text-slate-400">میانگین FPS</p>
+                </Card>
+                <Card className="p-8 text-center">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">12</div>
+                  <p className="text-slate-600 dark:text-slate-400">دوربین فعال</p>
+                </Card>
+                <Card className="p-8 text-center">
+                  <div className="text-3xl font-bold mb-2">Full HD</div>
+                  <p className="text-slate-600 dark:text-slate-400">رزولوشن متوسط</p>
+                </Card>
+              </div>
+
+              <Card className="p-6">
+                <h4 className="font-medium mb-4">لیست دوربین‌های PTZ</h4>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>نام دوربین</TableHead>
+                      <TableHead>وضعیت</TableHead>
+                      <TableHead>FPS</TableHead>
+                      <TableHead>رزولوشن</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>دوربین شمالی</TableCell>
+                      <TableCell><Badge className="bg-green-600">فعال</Badge></TableCell>
+                      <TableCell>30</TableCell>
+                      <TableCell>1920x1080</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>دوربین شرقی</TableCell>
+                      <TableCell><Badge className="bg-green-600">فعال</Badge></TableCell>
+                      <TableCell>25</TableCell>
+                      <TableCell>1920x1080</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'main' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">{t.mainConfig || 'تنظیمات اصلی سیستم'}</h3>
+              <Card className="p-8 space-y-8">
+                <div>
+                  <Label className="text-base font-medium mb-3 block">فاصله ثبت لاگ سیستم (ثانیه)</Label>
+                  <select className="w-full max-w-xs p-3 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700">
+                    <option>30 ثانیه</option>
+                    <option selected>60 ثانیه</option>
+                    <option>120 ثانیه</option>
+                    <option>300 ثانیه</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between py-4">
+                  <div>
+                    <Label className="text-base font-medium">ثبت خودکار تخلفات</Label>
+                    <p className="text-sm text-slate-500">تخلفات به صورت خودکار ذخیره شوند</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+
+                <div className="flex items-center justify-between py-4">
+                  <div>
+                    <Label className="text-base font-medium">ارسال نوتیفیکیشن تخلفات مهم</Label>
+                    <p className="text-sm text-slate-500">برای تخلفات جدی هشدار ارسال شود</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'ocr' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">تنظیمات تشخیص متن (OCR)</h3>
+              <Card className="p-8">
+                <Label className="text-base font-medium mb-6 block">دقت فعلی تشخیص پلاک</Label>
+                <div className="space-y-4">
+                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-12 relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-green-500 to-blue-600 h-12 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg" style={{ width: '88%' }}>
+                      88%
+                    </div>
+                  </div>
+                  <p className="text-center text-slate-600 dark:text-slate-400">دقت بسیار بالا — مناسب برای شرایط روز و شب</p>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-base font-medium">فعال‌سازی OCR پیشرفته (Tesseract)</Label>
+                    <p className="text-sm text-slate-500">دقت بالاتر با مصرف منابع بیشتر</p>
+                  </div>
+                  <Switch />
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'vehicle' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">{t.vehicle || 'تنظیمات تشخیص خودرو'}</h3>
+              <Card className="p-8">
+                <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                  تنظیمات تشخیص نوع خودرو (سدان، وانت، کامیون)، رنگ، برند و مدل در نسخه‌های آینده اضافه خواهد شد.
+                </p>
+                <Badge variant="secondary" className="mt-4">به‌زودی</Badge>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'imaging' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">{t.imaging || 'تنظیمات تصویربرداری'}</h3>
+              <Card className="p-8 space-y-6">
+                <div>
+                  <Label className="text-base font-medium mb-3 block">کیفیت ذخیره تصاویر</Label>
+                  <select className="w-full max-w-xs p-3 border rounded-lg dark:bg-slate-700">
+                    <option>بالا (بدون فشرده‌سازی)</option>
+                    <option selected>متوسط (فشرده‌سازی 80%)</option>
+                    <option>پایین (فشرده‌سازی 50%)</option>
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-base font-medium mb-3 block">فرمت ذخیره تصاویر</Label>
+                  <div className="flex gap-4">
+                    <Badge variant="default">JPEG</Badge>
+                    <Badge variant="secondary">PNG</Badge>
+                    <Badge variant="outline">WEBP</Badge>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'saving' && (
+            <div className="space-y-8">
+              <h3 className="text-xl font-semibold mb-6">{t.saving || 'تنظیمات ذخیره‌سازی'}</h3>
+              <Card className="p-8 space-y-6">
+                <div>
+                  <Label className="text-base font-medium mb-3 block">مدت نگهداری فایل‌ها (روز)</Label>
+                  <Slider defaultValue={[30]} max={365} step={10} className="w-full max-w-md" />
+                  <p className="text-sm text-slate-500 mt-2">فایل‌های قدیمی‌تر از 30 روز به صورت خودکار حذف شوند</p>
+                </div>
+                <div>
+                  <Label className="text-base font-medium mb-3 block">مسیر ذخیره‌سازی</Label>
+                  <div className="p-4 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-sm">
+                    /storage/traffic_violations/2025/
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-base font-medium">پشتیبان‌گیری خودکار</Label>
+                    <p className="text-sm text-slate-500">به سرور پشتیبان هر 24 ساعت</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </Card>
+            </div>
+          )}
+        </div>
+      </Card>
     </div>
   );
 }
