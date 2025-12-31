@@ -11,10 +11,11 @@ import { Login } from './components/Login';
 import { ChangeCredentialsModal } from './components/ChangeCredentialsModal';
 import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 import { Intersection } from './types';
-import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut, Key } from 'lucide-react';
+import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut, Key, Settings } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
+import { ConfigPanel } from './components/ConfigPanel';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
@@ -150,6 +151,12 @@ function App() {
       icon: <Camera className="w-5 h-5" />,
       disabled: !isIntersectionSelected,
     },
+    {
+  id: 'config',
+  label: t.config || (language === 'fa' ? 'تنظیمات' : 'Config'),
+  icon: <Settings className="w-4 h-4" />,
+  disabled: false,
+},
   ];
 
   // همیشه اول صفحه لاگین نشان داده می‌شود
@@ -280,6 +287,7 @@ function App() {
           {activeTab === 'manual-violation' && selectedIntersection && (
             <ManualViolationCapture intersection={selectedIntersection} language={language} />
           )}
+          {activeTab === 'config' && <ConfigPanel language={language} />}
         </main>
       </div>
 

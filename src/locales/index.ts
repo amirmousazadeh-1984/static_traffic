@@ -219,7 +219,16 @@ logoutConfirmMessage: 'مطمئنی می‌خوای از حساب خارج شی�
 confirmLogout: 'بله، خارج شو',
 selectCameraPlaceholder: 'دوربینی انتخاب کنید',
 
-
+config: 'تنظیمات',
+configTitle: 'تنظیمات سیستم',
+configDesc: 'مدیریت تنظیمات کلی سیستم نظارت ترافیکی',
+objectDetector: 'تشخیص پلاک خودرو',
+cameras: 'دوربین‌ها',
+mainConfig: 'تنظیمات اصلی',
+ocr: 'تشخیص متن (OCR)',
+vehicle: 'خودرو',
+imaging: 'تصویربرداری',
+saving: 'ذخیره‌سازی',
   },
   en: {
     selectCameraPlaceholder: 'Select a camera',
@@ -440,7 +449,18 @@ emptyFields: 'Username and password cannot be empty',
 
 logoutConfirmTitle: 'Logout',
 logoutConfirmMessage: 'Are you sure you want to logout?',
-confirmLogout: 'Yes, Logout',
+    confirmLogout: 'Yes, Logout',
+
+    config: 'Config',
+configTitle: 'System Settings',
+configDesc: 'Manage global settings of the traffic monitoring system',
+objectDetector: 'Object Detector',
+cameras: 'Cameras',
+mainConfig: 'Main',
+ocr: 'OCR',
+vehicle: 'Vehicle',
+imaging: 'Imaging',
+saving: 'Saving',
   }
 
  
