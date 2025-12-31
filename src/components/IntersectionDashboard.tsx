@@ -622,130 +622,140 @@ export function IntersectionDashboard({
           </Card>
         </div>
 
-     {/* نمودارها */}
+  {/* نمودارها */}
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  {/* نمودار میله‌ای سه‌بعدی */}
-  <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+  {/* نمودار میله‌ای سه‌بعدی - کاملاً وسط کارت */}
+  <Card className="shadow-lg p-8 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-6 text-center">
       {t.violationsByTypeTitle}
     </h3>
-    <div className="flex-1 w-[80%] h-[80%]">
-      {stats.total > 0 ? (
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={{
-            chart: {
-              type: 'column',
-              options3d: {
-                enabled: true,
-                alpha: 1,
-                beta: 10,
-                depth: 50,
-                viewDistance: 25,
-                frame: {
-                  bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
-                  back: { size: 1, color: 'rgba(0,0,0,0.04)' },
-                  side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+    
+    <div className="flex-1 flex items-center justify-center">
+      <div className="w-[100%] h-[100%] "> {/* اندازه مناسب + وسط چین */}
+        {stats.total > 0 ? (
+          <HighchartsReact
+            highcharts={Highcharts}
+            containerProps={{ style: { height: '100%', width: '100%' } }}
+            options={{
+              chart: {
+                type: 'column',
+                options3d: {
+                  enabled: true,
+                  alpha: 5,
+                  beta: 15,
+                  depth: 50,
+                  viewDistance: 100,
+                  frame: {
+                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+                  }
+                },
+                backgroundColor: 'transparent'
+              },
+              title: { text: null },
+              plotOptions: {
+                column: {
+                  depth: 60,
+                  grouping: false
                 }
               },
-              backgroundColor: 'transparent',
-              height: '100%'
-            },
-            title: { text: null },
-            plotOptions: {
-              column: {
-                depth: 40,
-                grouping: false,
-                groupZPadding: 10
-              }
-            },
-            xAxis: {
-              categories: violationTypeIds.map(id => getViolationDisplayName(id, language)),
-              labels: { skew3d: true, style: { fontSize: '12px' } }
-            },
-            yAxis: {
-              title: { text: null },
-              min: 0,
-              tickInterval: 1
-            },
-            tooltip: {
-              formatter: function(this: any) {
-                return `<b>${this.x}</b><br/>تعداد: <b>${this.y}</b>`;
-              }
-            },
-            series: [{
-              name: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
-              data: violationTypeIds.map((id, index) => ({
-                y: stats.byType[id],
-                color: chartColors[index]
-              })),
-            }]
-          }}
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
-          <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
-        </div>
-      )}
+              xAxis: {
+                categories: violationTypeIds.map(id => getViolationDisplayName(id, language)),
+                labels: { skew3d: true, style: { fontSize: '12px' } }
+              },
+              yAxis: {
+                title: { text: null },
+                min: 0,
+                tickInterval: 1
+              },
+              tooltip: {
+                formatter: function(this: any) {
+                  return `<b>${this.x}</b><br/>تعداد: <b>${this.y}</b>`;
+                }
+              },
+              series: [{
+                name: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
+                data: violationTypeIds.map((id, index) => ({
+                  y: stats.byType[id],
+                  color: chartColors[index]
+                })),
+              }]
+            }}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <AlertTriangle className="w-16 h-16 text-slate-400 mb-4" />
+            <p className="text-slate-500 dark:text-slate-400 text-lg">{t.noViolationsToDisplay}</p>
+          </div>
+        )}
+      </div>
     </div>
   </Card>
 
-  {/* نمودار دایره‌ای (Pie) سه‌بعدی */}
-  <Card className="shadow-lg p-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4 text-center">
+  {/* نمودار دایره‌ای سه‌بعدی - کاملاً وسط کارت */}
+  <Card className="shadow-lg p-8 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
+    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-6 text-center">
       {t.violationsPercentageTitle}
     </h3>
-    <div className="flex-1 w-[80%] h-[80%]">
-      {stats.total > 0 ? (
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={{
-            chart: {
-              type: 'pie',
-              options3d: {
-                enabled: true,
-                alpha: 45,
-                beta: 0
-              },
-              backgroundColor: 'transparent',
-              height: '100%'
-            },
-            title: { text: null },
-            tooltip: {
-              pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y})'
-            },
-            plotOptions: {
-              pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                depth: 45,
-                innerSize: '40%',
-                dataLabels: {
+    
+    <div className="flex-1 flex items-center justify-center">
+      <div className="w-[100%] h-[100%] "> {/* کمی کوچکتر برای زیبایی pie */}
+        {stats.total > 0 ? (
+          <HighchartsReact
+            highcharts={Highcharts}
+            containerProps={{ style: { height: '100%', width: '100%' } }}
+            options={{
+              chart: {
+                type: 'pie',
+                options3d: {
                   enabled: true,
-                  format: '{point.percentage:.1f}%',
-                  distance: 20,
-                  style: { fontWeight: 'bold', color: 'white', textOutline: '1px black' }
+                  alpha: 45,
+                  beta: 0
+                },
+                backgroundColor: 'transparent'
+              },
+              title: { text: null },
+              tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y})'
+              },
+              plotOptions: {
+                pie: {
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  depth: 45,
+                  innerSize: '40%',
+                  dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage:.1f}%',
+                    distance: 40,
+                    style: {
+                      fontWeight: 'bold',
+                      color: 'white',
+                      textOutline: '2px black',
+                      fontSize: '13px'
+                    }
+                  }
                 }
-              }
-            },
-            series: [{
-              name: 'تخلفات',
-              colorByPoint: true,
-              colors: chartColors,
-              data: violationTypeIds.map((id, index) => ({
-                name: getViolationDisplayName(id, language),
-                y: stats.byType[id]
-              }))
-            }]
-          }}
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <AlertTriangle className="w-12 h-12 text-slate-400 mb-3" />
-          <p className="text-slate-500 dark:text-slate-400">{t.noViolationsToDisplay}</p>
-        </div>
-      )}
+              },
+              series: [{
+                name: 'تخلفات',
+                colorByPoint: true,
+                colors: chartColors,
+                data: violationTypeIds.map((id, index) => ({
+                  name: getViolationDisplayName(id, language),
+                  y: stats.byType[id]
+                })).filter(item => item.y > 0) // حذف موارد صفر برای زیبایی
+              }]
+            }}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <AlertTriangle className="w-16 h-16 text-slate-400 mb-4" />
+            <p className="text-slate-500 dark:text-slate-400 text-lg">{t.noViolationsToDisplay}</p>
+          </div>
+        )}
+      </div>
     </div>
   </Card>
 </div>
