@@ -48,7 +48,13 @@ function App() {
       setLanguage(savedLang);
     }
   }, []);
-
+useEffect(() => {
+  const handleNavigate = () => {
+    setActiveTab('violations');
+  };
+  window.addEventListener('navigate-to-violations', handleNavigate);
+  return () => window.removeEventListener('navigate-to-violations', handleNavigate);
+}, []);
   // اعمال جهت و فونت بر اساس زبان
   useEffect(() => {
     document.documentElement.dir = language === 'fa' ? 'rtl' : 'ltr';

@@ -9,6 +9,9 @@ import { Textarea } from './ui/textarea';
 import { AlertCircle, Plus, Trash2, Edit3, X, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { translations, type Language } from '../locales';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { addViolationType, updateViolationType, deleteViolationType } from '../store/violationSlice';
 
 interface ViolationType {
   id: string;
@@ -34,8 +37,10 @@ interface ViolationTypesManagerProps {
 export function ViolationTypesManager({ language }: ViolationTypesManagerProps) {
   const t = translations[language];
   const isRTL = language === 'fa';
+  const dispatch = useDispatch();
 
-  const [violationTypes, setViolationTypes] = useState<ViolationType[]>(initialViolationTypes);
+  const violationTypes = useSelector((state: RootState) => state.violations.types);
+
   const [formData, setFormData] = useState({
     code: '',
     name: '',
@@ -63,7 +68,7 @@ export function ViolationTypesManager({ language }: ViolationTypesManagerProps) 
       return;
     }
 
-    const newId = String(Math.max(...violationTypes.map(v => Number(v.id)), 0) + 1);
+   const newId = String(Math.max(...violationTypes.map(v => Number(v.id)), 0) + 1);
     const newColor = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 
     const newViolation: ViolationType = {
@@ -75,13 +80,13 @@ export function ViolationTypesManager({ language }: ViolationTypesManagerProps) 
       color: newColor,
     };
 
-    setViolationTypes([...violationTypes, newViolation]);
+    dispatch(addViolationType(newViolation));
     setFormData({ code: '', name: '', description: '', validDuration: 30 });
     toast.success(t.violationAdded);
   };
 
-  const handleDelete = (id: string) => {
-    setViolationTypes(violationTypes.filter(v => v.id !== id));
+ const handleDelete = (id: string) => {
+    dispatch(deleteViolationType(id));
     toast.success(t.violationDeleted);
   };
 
@@ -117,7 +122,8 @@ export function ViolationTypesManager({ language }: ViolationTypesManagerProps) 
       return;
     }
 
-    setViolationTypes(violationTypes.map(v => (v.id === id ? { ...editForm, code: code.trim(), name: name.trim(), description: editForm.description.trim() } : v)));
+    dispatch(updateViolationType({ ...editForm, code: code.trim(), name: name.trim(), description: editForm.description.trim() }));
+
     setEditingId(null);
     setEditForm(null);
     toast.success(t.changesSaved);

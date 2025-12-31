@@ -7,12 +7,13 @@ import { Badge } from './ui/badge';
 import { Label } from './ui/label';
 import { Intersection, Mask } from '../types';
 import { mockMasks, mockCameras } from '../data/mockDatabase';
-import { MousePointer2, Trash2, Save, AlertTriangle, Edit3 } from 'lucide-react';
+import { MousePointer2, Trash2, Save, AlertTriangle, Edit3, Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { SubPresetCalibration } from './SubPresetCalibration';
 import { translations, type Language } from '../locales';
+
 
 interface ZoneCalibrationProps {
   intersection: Intersection;
@@ -42,7 +43,9 @@ interface Shape {
 export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps) {
   const t = translations[language];
   const isRTL = language === 'fa';
-
+const dispatch = useDispatch();
+const violationTypesFromRedux = useSelector((state: RootState) => state.violations.types);
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ptzPresetsFromRedux = useSelector((state: RootState) => state.ptzPresets[intersection.id] || []);
 
@@ -97,8 +100,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
     { id: 'illegal-parking', name: language === 'fa' ? 'پارک ممنوع' : 'Illegal Parking', color: '#10b981' },
   ];
 
-  const [selectedViolationType, setSelectedViolationType] = useState(violationTypes[0].id);
-
+const [selectedViolationType, setSelectedViolationType] = useState(violationTypes[0]?.id || '');
   const startEditing = (shapeId: string, currentName: string) => {
     setEditingShapeId(shapeId);
     setEditedName(currentName);
@@ -530,61 +532,79 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
             </Card>
 
             <Card className="shadow-lg p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
-                {t.calibrationAreasTitle}
-              </Label>
-              <div className="flex gap-1 mb-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`text-[10px] h-7 flex-1 px-1 ${
-                    calibrationStep === 'direction'
-                      ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
-                  }`}
-                  onClick={() => setCalibrationStep('direction')}
-                >
-                  {t.drawMainMask}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`text-[10px] h-7 flex-1 px-1 ${
-                    calibrationStep === 'violation'
-                      ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
-                  }`}
-                  onClick={() => setCalibrationStep('violation')}
-                >
-                  {t.drawViolationMask}
-                </Button>
-              </div>
+  <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+    {t.calibrationAreasTitle}
+  </Label>
+  <div className="flex gap-1 mb-2">
+    <Button
+      variant="outline"
+      size="sm"
+      className={`text-[10px] h-7 flex-1 px-1 ${
+        calibrationStep === 'direction'
+          ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+          : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
+      }`}
+      onClick={() => setCalibrationStep('direction')}
+    >
+      {t.drawMainMask}
+    </Button>
+    <Button
+      variant="outline"
+      size="sm"
+      className={`text-[10px] h-7 flex-1 px-1 ${
+        calibrationStep === 'violation'
+          ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+          : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
+      }`}
+      onClick={() => setCalibrationStep('violation')}
+    >
+      {t.drawViolationMask}
+    </Button>
+  </div>
 
-              {calibrationStep === 'violation' && (
-                <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
-                  <Label className="text-[10px] text-slate-700 dark:text-slate-300 mb-1">{t.violationTypeLabel}</Label>
-                  {violationTypes.map(vType => {
-                    const isSelected = selectedViolationType === vType.id;
-                    return (
-                      <Button
-                        key={vType.id}
-                        variant="outline"
-                        size="sm"
-                        className={`w-full justify-start text-[10px] h-7 px-1.5 flex items-center ${
-                          isSelected
-                            ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                            : 'border border-slate-300 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                        }`}
-                        onClick={() => setSelectedViolationType(vType.id)}
-                      >
-                        <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: vType.color }} />
-                        {vType.name}
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-            </Card>
+  {calibrationStep === 'violation' && (
+    <>
+      <div className="flex justify-between items-center mb-2">
+        <Label className="text-[10px] text-slate-700 dark:text-slate-300">
+          {t.violationTypeLabel}
+        </Label>
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-[10px] h-6 px-2"
+          onClick={() => {
+          window.dispatchEvent(new CustomEvent('navigate-to-violations'));
+          }}
+        >
+          <Plus className="w-3 h-3 mr-1" />
+          {language === 'fa' ? 'افزودن تخلف جدید' : 'Add New Violation'}
+        </Button>
+      </div>
+
+      <div className="space-y-1 flex-1 overflow-y-auto">
+        {violationTypes.map(vType => {
+          const isSelected = selectedViolationType === vType.id;
+          return (
+            <Button
+              key={vType.id}
+              variant="outline"
+              size="sm"
+              className={`w-full justify-start text-[10px] h-7 px-1.5 flex items-center ${
+                isSelected
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+                  : 'border border-slate-300 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+              }`}
+              onClick={() => setSelectedViolationType(vType.id)}
+            >
+              <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: vType.color }} />
+              {vType.name}
+            </Button>
+          );
+        })}
+      </div>
+    </>
+  )}
+</Card>
           </div>
 
           <Card className="shadow-lg flex flex-col border border-slate-200 dark:border-slate-700 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
