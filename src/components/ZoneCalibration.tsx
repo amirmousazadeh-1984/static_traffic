@@ -43,8 +43,10 @@ interface Shape {
 export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps) {
   const t = translations[language];
   const isRTL = language === 'fa';
-const dispatch = useDispatch();
-const violationTypesFromRedux = useSelector((state: RootState) => state.violations.types);
+  const dispatch = useDispatch();
+  
+  const violationTypesFromRedux = useSelector((state: RootState) => state.violations.types);
+  
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ptzPresetsFromRedux = useSelector((state: RootState) => state.ptzPresets[intersection.id] || []);
@@ -92,15 +94,17 @@ const violationTypesFromRedux = useSelector((state: RootState) => state.violatio
   const [editedName, setEditedName] = useState('');
   const [showSubPresetModal, setShowSubPresetModal] = useState<{ maskId: string; maskName: string } | null>(null);
 
-  const violationTypes = [
-    { id: 'red-light', name: language === 'fa' ? 'عبور از چراغ قرمز' : 'Red Light Violation', color: '#ef4444' },
-    { id: 'crosswalk', name: language === 'fa' ? 'تجاوز به خط عابر' : 'Crosswalk Violation', color: '#f97316' },
-    { id: 'speed', name: language === 'fa' ? 'سرعت غیرمجاز' : 'Speeding', color: '#8b5cf6' },
-    { id: 'lane-change', name: language === 'fa' ? 'تغییر خط ممنوع' : 'Illegal Lane Change', color: '#ec4899' },
-    { id: 'illegal-parking', name: language === 'fa' ? 'پارک ممنوع' : 'Illegal Parking', color: '#10b981' },
-  ];
+  
+const violationTypes = violationTypesFromRedux.length > 0 
+  ? violationTypesFromRedux 
+  : [
+      { id: 'fallback', code: '000', name: language === 'fa' ? 'در حال بارگذاری...' : 'Loading...', description: '', validDuration: 30, color: '#94a3b8' }
+    ];
 
-const [selectedViolationType, setSelectedViolationType] = useState(violationTypes[0]?.id || '');
+const [selectedViolationType, setSelectedViolationType] = useState<string>(
+  violationTypesFromRedux.length > 0 ? violationTypesFromRedux[0].id : 'fallback'
+);
+
   const startEditing = (shapeId: string, currentName: string) => {
     setEditingShapeId(shapeId);
     setEditedName(currentName);
@@ -432,8 +436,8 @@ const [selectedViolationType, setSelectedViolationType] = useState(violationType
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[50%_24%_24%] gap-4" style={{ height: '80vh' }}>
-          <Card className=" p-2 flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg">
-            <div className="flex items-center justify-between p-3">
+          <Card className=" p-5 flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg">
+            <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
                 {currentView?.label || t.noViewSelected}
               </h3>
