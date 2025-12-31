@@ -8,29 +8,29 @@ import { IntersectionDashboard } from './components/IntersectionDashboard';
 import { ViolationTypesManager } from './components/ViolationTypesManager';
 import { ManualViolationCapture } from './components/ManualViolationCapture';
 import { Login } from './components/Login';
-import { ChangeCredentialsModal } from './components/ChangeCredentialsModal'; // اضافه شد
+import { ChangeCredentialsModal } from './components/ChangeCredentialsModal';
+import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 import { Intersection } from './types';
 import { AlertTriangle, Camera, MapPin, Monitor, Moon, Sun, Globe, LogOut, Key } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Button } from './components/ui/button';
 import { translations, type Language } from './locales';
-import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 
 function App() {
   const [activeTab, setActiveTab] = useState('intersections');
   const [selectedIntersection, setSelectedIntersection] = useState<Intersection | null>(null);
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState<Language>('fa');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // همیشه false در شروع
   const [showChangeCredentials, setShowChangeCredentials] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const t = translations[language] || {};
 
-  // بارگذاری تم، زبان و وضعیت لاگین از localStorage
+  // فقط تم و زبان از localStorage بارگذاری بشن — لاگین نه!
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const savedLang = localStorage.getItem('language') as Language | null;
-    const savedLogin = localStorage.getItem('isLoggedIn');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     // تم
@@ -46,33 +46,9 @@ function App() {
     if (savedLang && (savedLang === 'fa' || savedLang === 'en')) {
       setLanguage(savedLang);
     }
-
-    // وضعیت لاگین
-    if (savedLogin === 'true') {
-      setIsLoggedIn(true);
-    }
   }, []);
-  // در بالای App() — state جدید اضافه کن
-const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-// تغییر handleLogout به این شکل:
-const handleLogoutClick = () => {
-  setShowLogoutConfirm(true);
-};
-
-const handleLogoutConfirm = () => {
-  setIsLoggedIn(false);
-  localStorage.removeItem('isLoggedIn');
-  setActiveTab('intersections');
-  setSelectedIntersection(null);
-  setShowLogoutConfirm(false);
-};
-
-const handleLogoutCancel = () => {
-  setShowLogoutConfirm(false);
-};
-
-  // اعمال جهت، زبان و فونت
+  // اعمال جهت و فونت بر اساس زبان
   useEffect(() => {
     document.documentElement.dir = language === 'fa' ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
@@ -108,14 +84,22 @@ const handleLogoutCancel = () => {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');
+    // لاگین در localStorage ذخیره نمی‌شه → هر بار باید وارد بشه
   };
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleLogoutConfirm = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('isLoggedIn');
     setActiveTab('intersections');
     setSelectedIntersection(null);
+    setShowLogoutConfirm(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutConfirm(false);
   };
 
   const isIntersectionSelected = selectedIntersection !== null;
@@ -168,12 +152,12 @@ const handleLogoutCancel = () => {
     },
   ];
 
-  // اگر کاربر لاگین نکرده باشد → صفحه لاگین
+  // همیشه اول صفحه لاگین نشان داده می‌شود
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} language={language} />;
   }
 
-  // اگر لاگین کرده باشد → برنامه اصلی
+  // بعد از لاگین → برنامه اصلی
   return (
     <div
       className={`min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300 flex ${
@@ -194,14 +178,12 @@ const handleLogoutCancel = () => {
               </h1>
             </div>
 
-            {/* دکمه‌های تم و زبان */}
             <div className="flex gap-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleLanguage}
                 className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                aria-label={language === 'fa' ? 'Change to English' : 'تغییر به فارسی'}
               >
                 <Globe className="w-5 h-5" />
               </Button>
@@ -211,7 +193,6 @@ const handleLogoutCancel = () => {
                 size="icon"
                 onClick={toggleTheme}
                 className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 <Sun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute w-5 h-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -219,7 +200,6 @@ const handleLogoutCancel = () => {
             </div>
           </div>
 
-          {/* نمایش چهارراه انتخاب‌شده */}
           {selectedIntersection && (
             <div className="mt-4 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg shadow-lg">
               <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
@@ -230,7 +210,6 @@ const handleLogoutCancel = () => {
           )}
         </div>
 
-        {/* آیتم‌های منو */}
         <nav className="flex-1 overflow-y-auto py-3">
           <div className="space-y-2 px-3">
             {menuItems.map((item) => (
@@ -253,7 +232,7 @@ const handleLogoutCancel = () => {
               </button>
             ))}
 
-            {/* آیتم تغییر رمز عبور */}
+            {/* تغییر رمز عبور */}
             <button
               onClick={() => setShowChangeCredentials(true)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 ${
@@ -262,23 +241,22 @@ const handleLogoutCancel = () => {
             >
               <Key className="w-4 h-4" />
               <span className="text-sm">
-                {language === 'fa' ? 'تغییر رمز عبور' : 'Change Credentials'}
+                {t.changeCredentials || (language === 'fa' ? 'تغییر رمز عبور' : 'Change Credentials')}
               </span>
             </button>
 
-            {/* آیتم خروج از حساب */}
-        {/* آیتم خروج از حساب */}
-<button
-  onClick={handleLogoutClick}
-  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
-    language === 'fa' ? 'text-right' : 'text-left'
-  }`}
->
-  <LogOut className="w-4 h-4" />
-  <span className="text-sm">
-    {language === 'fa' ? 'خروج از حساب' : 'Logout'}
-  </span>
-</button>
+            {/* خروج از حساب */}
+            <button
+              onClick={handleLogoutClick}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mt-8 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
+                language === 'fa' ? 'text-right' : 'text-left'
+              }`}
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-sm">
+                {t.logout || (language === 'fa' ? 'خروج از حساب' : 'Logout')}
+              </span>
+            </button>
           </div>
         </nav>
       </div>
@@ -289,21 +267,16 @@ const handleLogoutCancel = () => {
           {activeTab === 'intersections' && (
             <IntersectionList onSelectIntersection={handleSelectIntersection} language={language} />
           )}
-
           {activeTab === 'dashboard' && selectedIntersection && (
             <IntersectionDashboard intersection={selectedIntersection} language={language} />
           )}
-
           {activeTab === 'ptz-calibration' && selectedIntersection && (
             <PTZCalibration intersection={selectedIntersection} language={language} />
           )}
-
           {activeTab === 'zone-calibration' && selectedIntersection && (
             <ZoneCalibration intersection={selectedIntersection} language={language} />
           )}
-
           {activeTab === 'violations' && <ViolationTypesManager language={language} />}
-
           {activeTab === 'manual-violation' && selectedIntersection && (
             <ManualViolationCapture intersection={selectedIntersection} language={language} />
           )}
@@ -316,13 +289,14 @@ const handleLogoutCancel = () => {
         onClose={() => setShowChangeCredentials(false)}
         language={language}
       />
-   {/* مدال تأیید خروج */}
-<LogoutConfirmModal
-  isOpen={showLogoutConfirm}
-  onClose={handleLogoutCancel}
-  onConfirm={handleLogoutConfirm}
-  language={language}
-/>
+
+      {/* مدال تأیید خروج */}
+      <LogoutConfirmModal
+        isOpen={showLogoutConfirm}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        language={language}
+      />
 
       <Toaster position="top-center" richColors dir={language === 'fa' ? 'rtl' : 'ltr'} />
     </div>

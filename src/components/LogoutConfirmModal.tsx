@@ -14,12 +14,13 @@ interface LogoutConfirmModalProps {
 
 export function LogoutConfirmModal({ isOpen, onClose, onConfirm, language }: LogoutConfirmModalProps) {
   const t = translations[language] || {};
-
+ const isRTL = language === 'fa';
   return (
     <Dialog open={isOpen} onOpenChange={onClose} >
       <DialogContent className="sm:max-w-sm shadow-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
+        <DialogHeader >
+          <DialogTitle className="text-lg font-semibold" 
+                    >
             {t.logoutConfirmTitle || (language === 'fa' ? 'خروج از حساب' : 'Logout Confirmation')}
           </DialogTitle>
         </DialogHeader>
