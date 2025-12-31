@@ -24,10 +24,9 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
   const t = translations[language] || {};
   const isRTL = language === 'fa';
 
-  const cameras = mockCameras[intersection.id] || [];
-
+const ptzCameras = mockCameras[intersection.id]?.filter(cam => cam.type === 'ptz') || [];
   const [selectedCameraId, setSelectedCameraId] = useState<string | null>(
-    cameras.length > 0 ? cameras[0].id : null
+    ptzCameras.length > 0 ? ptzCameras[0].id : null
   );
   const [selectedViolationType, setSelectedViolationType] = useState<string>('red-light');
   const [plateNumber, setPlateNumber] = useState('');
@@ -58,8 +57,7 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
     { id: 'illegal-parking', name: language === 'fa' ? 'پارک در محل ممنوع' : 'Illegal Parking', color: '#10b981' },
   ];
 
-  const selectedCamera = cameras.find(c => c.id === selectedCameraId);
-
+const selectedCamera = ptzCameras.find(c => c.id === selectedCameraId);
   // زوم با اسکرول
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
@@ -178,21 +176,26 @@ export function ManualViolationCapture({ intersection, language }: ManualViolati
                   </Label>
                 </div>
                 <Select value={selectedCameraId || ''} onValueChange={setSelectedCameraId}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t.selectCameraPlaceholder || 'دوربینی انتخاب کنید'} />
+                  <SelectTrigger
+                  
+                    align={isRTL ? 'end' : 'start'}  
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                    className="text-sm  py-3 px-4 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
+>
+                    <SelectValue placeholder={t.selectCameraPlaceholder } />
                   </SelectTrigger>
                   <SelectContent 
-                    className="z-50 min-w-[260px] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
+                    className="z-50 min-w-[260px] bg-white dark:bg-slate-800 border  border-slate-300 dark:border-slate-600 shadow-2xl rounded-lg"
                     sideOffset={8}
                     align={isRTL ? 'end' : 'start'}  
                     dir={isRTL ? 'rtl' : 'ltr'}       
                   >
-                    {cameras.length > 0 ? (
-                      cameras.map(cam => (
+                    {ptzCameras.length > 0 ? (
+                      ptzCameras.map(cam => (
                         <SelectItem 
                           key={cam.id} 
                           value={cam.id}
-                          className="text-sm py-3 px-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
+                          className="text-sm py-3 px-4 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700"
                         >
                           <div className={`flex items-center ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'} gap-3`}>
                             <span className="font-medium truncate">{cam.name}</span>
