@@ -430,7 +430,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[50%_24%_24%] gap-4" style={{ height: '80vh' }}>
-          <Card className="flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+          <Card className=" p-2 flex flex-col border border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg">
             <div className="flex items-center justify-between p-3">
               <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
                 {currentView?.label || t.noViewSelected}
@@ -449,7 +449,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
             </div>
 
             {selectedViewId ? (
-              <div className="relative bg-slate-900 flex-1 overflow-hidden">
+              <div className="relative bg-slate-900 flex-1 overflow-hidden rounded-lg">
                 <canvas
                   ref={canvasRef}
                   width={1000}
@@ -468,12 +468,12 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
           </Card>
 
           <div className="flex flex-col gap-4 h-full">
-            <Card className="shadow-lg p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+            <Card className="shadow-lg p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+              <Label className=" text-xs font-medium text-slate-900 dark:text-slate-100  block">
                 {t.fixedDirectionsTitle}
               </Label>
               {fixedDirections.length > 0 ? (
-                <div className="space-y-1.5 mb-3 overflow-y-auto flex-1">
+                <div className="space-y-1.5 mb-3 overflow-y-auto flex-1 px-2 ">
                   {fixedDirections.map(dir => {
                     const isSelected = selectedViewId === dir;
                     return (
@@ -484,7 +484,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                         className={`text-[11px] justify-start h-8 px-2 w-full text-left ${
                           isSelected
                             ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                            : 'bg-slate-100 dark:bg-slate-700 border border-slate-300 text-slate-700 dark:text-slate-300'
                         }`}
                         onClick={() => setSelectedViewId(dir)}
                       >
@@ -497,11 +497,11 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3">{t.noFixedCamera}</p>
               )}
 
-              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
+              <Label className="text-xs font-medium text-slate-900 dark:text-slate-100  block">
                 {t.ptzPresetsTitle}
               </Label>
               {ptzPresets.length > 0 ? (
-                <div className="space-y-1.5 overflow-y-auto flex-1">
+                <div className="space-y-1.5 overflow-y-auto flex-1 px-2">
                   {ptzPresets.map(preset => {
                     const isSelected = selectedViewId === preset.id;
                     return (
@@ -512,7 +512,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                         className={`text-[11px] justify-start h-8 px-2 w-full text-left flex items-center ${
                           isSelected
                             ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300  border border-slate-300'
                         }`}
                         onClick={() => setSelectedViewId(preset.id)}
                       >
@@ -529,7 +529,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
               )}
             </Card>
 
-            <Card className="shadow-lg p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
+            <Card className="shadow-lg p-5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg flex flex-col" style={{ height: 'calc(50% - 8px)' }}>
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100 mb-2 block">
                 {t.calibrationAreasTitle}
               </Label>
@@ -540,7 +540,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                   className={`text-[10px] h-7 flex-1 px-1 ${
                     calibrationStep === 'direction'
                       ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
                   }`}
                   onClick={() => setCalibrationStep('direction')}
                 >
@@ -552,7 +552,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                   className={`text-[10px] h-7 flex-1 px-1 ${
                     calibrationStep === 'violation'
                       ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300'
                   }`}
                   onClick={() => setCalibrationStep('violation')}
                 >
@@ -573,7 +573,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                         className={`w-full justify-start text-[10px] h-7 px-1.5 flex items-center ${
                           isSelected
                             ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                            : 'border border-slate-300 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                         }`}
                         onClick={() => setSelectedViolationType(vType.id)}
                       >
@@ -588,7 +588,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
           </div>
 
           <Card className="shadow-lg flex flex-col border border-slate-200 dark:border-slate-700 dark:border-s slate-700 bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
-            <div className="p-3 flex justify-between items-center">
+            <div className="p-5 flex justify-between items-center">
               <Label className="text-xs font-medium text-slate-900 dark:text-slate-100">
                 {t.definedAreas} ({shapes.filter(s => s.viewId === selectedViewId).length})
               </Label>
@@ -611,7 +611,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                   className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${
                     selectedShapeId === shape.id
                       ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700'
-                      : 'bg-slate-100 dark:bg-slate-700'
+                      : 'bg-slate-100 dark:bg-slate-700 border border-slate-300'
                   }`}
                   onClick={() => {
                     if (!editingShapeId) {
@@ -668,7 +668,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-[10px] h-5 px-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+                            className="text-[10px] h-5 px-1.5 bg-blue-50 dark:bg-blue-900/20 text-slate-600 dark:text-blue-300 border border-slate-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowSubPresetModal({ maskId: shape.id, maskName: shape.name });
@@ -680,7 +680,7 @@ export function ZoneCalibration({ intersection, language }: ZoneCalibrationProps
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0"
+                          className="text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 h-5 w-5 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             startEditing(shape.id, shape.name);
