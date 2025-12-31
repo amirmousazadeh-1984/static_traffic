@@ -564,14 +564,14 @@ const [selectedViolationType, setSelectedViolationType] = useState(violationType
 
   {calibrationStep === 'violation' && (
     <>
-      <div className="flex justify-between items-center mb-2">
-        <Label className="text-[10px] text-slate-700 dark:text-slate-300">
+      <div className="flex justify-between items-center mb-1">
+        <Label className="text-[12px] text-slate-700 dark:text-slate-300">
           {t.violationTypeLabel}
         </Label>
         <Button
           size="sm"
           variant="outline"
-          className="text-[10px] h-6 px-2"
+          className="text-[10px] h-6 px-2  border border-slate-400 dark:border-slate-600 flex items-center"
           onClick={() => {
           window.dispatchEvent(new CustomEvent('navigate-to-violations'));
           }}
