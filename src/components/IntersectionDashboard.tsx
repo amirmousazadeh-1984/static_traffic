@@ -633,59 +633,78 @@ export function IntersectionDashboard({
     <div className="flex-1 flex items-center justify-center">
       <div className="w-[100%] h-[100%] "> {/* اندازه مناسب + وسط چین */}
         {stats.total > 0 ? (
-          <HighchartsReact
-            highcharts={Highcharts}
-            containerProps={{ style: { height: '100%', width: '100%' } }}
-            options={{
-              chart: {
-                type: 'column',
-                options3d: {
-                  enabled: true,
-                  alpha: 5,
-                  beta: 15,
-                  depth: 50,
-                  viewDistance: 100,
-                  frame: {
-                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
-                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
-                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
-                  }
-                },
-                backgroundColor: 'transparent'
-              },
-              title: { text: null },
-              credits: { enabled: false },
-              legend: { enabled: false },
-              plotOptions: {
-                column: {
-                  depth: 60,
-                  grouping: false
-                }
-              },
-              xAxis: {
-                categories: violationTypeIds.map(id => getViolationDisplayName(id, language)),
-                labels: { skew3d: true, style: { fontSize: '12px' } }
-              },
-              yAxis: {
-                title: { text: null },
-                min: 0,
-                tickInterval: 1
-              },
-              tooltip: {
-                formatter: function(this: any) {
-                  return `<b>${this.x}</b><br/>تعداد: <b>${this.y}</b>`;
-                }
-              },
-              series: [{
-              // اینجا دیگه name رو نذاشته‌ایم یا خالی گذاشتیم (اختیاری)
-              data: violationTypeIds.map((id, index) => ({
-                y: stats.byType[id],
-                color: chartColors[index],
-                name: getViolationDisplayName(id, language) // فقط برای tooltip
-              })),
-            }]
-            }}
-          />
+       <HighchartsReact
+  highcharts={Highcharts}
+  containerProps={{ style: { height: '100%', width: '100%' } }}
+  options={{
+    chart: {
+      type: 'column',
+      options3d: {
+        enabled: true,
+        alpha: 0.5,
+        beta: 0.5,
+        depth: 0,
+        viewDistance: 100,
+        frame: {
+          bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+          back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+          side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+        }
+      },
+      backgroundColor: 'transparent'
+    },
+    title: { text: null },
+    credits: { enabled: false },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        depth: 1000,
+        grouping: false
+      }
+    },
+    xAxis: {
+      categories: violationTypeIds.map(id => getViolationDisplayName(id, language)),
+      lineColor: language === 'fa' ? (document.documentElement.classList.contains('dark') ? '#475569' : '#cbd5e1') : (document.documentElement.classList.contains('dark') ? '#475569' : '#94a3b8'),
+      gridLineColor: document.documentElement.classList.contains('dark') ? '#334155' : '#e2e8f0',
+      labels: {
+        skew3d: true,
+        style: {
+          fontSize: '12px',
+          color: document.documentElement.classList.contains('dark') ? '#cbd5e1' : '#334155'
+        }
+      }
+    },
+    yAxis: {
+      title: { text: null },
+      min: 0,
+      tickInterval: 1,
+      lineColor: document.documentElement.classList.contains('dark') ? '#475569' : '#94a3b8',
+      gridLineColor: document.documentElement.classList.contains('dark') ? '#334155' : '#e2e8f0',
+      labels: {
+        style: {
+          color: document.documentElement.classList.contains('dark') ? '#cbd5e1' : '#334155'
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+      style: {
+        color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#0f172a',
+        fontSize: '12px'
+      },
+      formatter: function (this: any) {
+        return `<br>${this.key}<br/><br></br> تعداد تخلف: <b>${this.y}</b>`;
+      }
+    },
+    series: [{
+      data: violationTypeIds.map((id, index) => ({
+        y: stats.byType[id],
+        color: chartColors[index],
+        name: getViolationDisplayName(id, language)
+      })),
+    }]
+  }}
+/>
         ) : (
           <div className="flex flex-col items-center justify-center h-full">
             <AlertTriangle className="w-16 h-16 text-slate-400 mb-4" />
