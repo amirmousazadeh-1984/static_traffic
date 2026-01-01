@@ -15,6 +15,9 @@ import { Intersection } from '../types';
 import { mockCameras } from '../data/mockDatabase';
 import { translations, type Language } from '../locales';
 
+ import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+
 interface ManualViolationCaptureProps {
   intersection: Intersection;
   language: Language;
@@ -28,7 +31,7 @@ const ptzCameras = mockCameras[intersection.id]?.filter(cam => cam.type === 'ptz
   const [selectedCameraId, setSelectedCameraId] = useState<string | null>(
     ptzCameras.length > 0 ? ptzCameras[0].id : null
   );
-  const [selectedViolationType, setSelectedViolationType] = useState<string>('red-light');
+
   const [plateNumber, setPlateNumber] = useState('');
   const [snapshotTaken, setSnapshotTaken] = useState(false);
 
@@ -49,13 +52,18 @@ const ptzCameras = mockCameras[intersection.id]?.filter(cam => cam.type === 'ptz
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const violationTypes = [
-    { id: 'red-light', name: language === 'fa' ? 'عبور از چراغ قرمز' : 'Red Light Violation', color: '#ef4444' },
-    { id: 'crosswalk', name: language === 'fa' ? 'تجاوز به خط عابر پیاده' : 'Crosswalk Violation', color: '#f97316' },
-    { id: 'speed', name: language === 'fa' ? 'سرعت غیرمجاز' : 'Speeding', color: '#8b5cf6' },
-    { id: 'lane-change', name: language === 'fa' ? 'تغییر خط ممنوع' : 'Illegal Lane Change', color: '#ec4899' },
-    { id: 'illegal-parking', name: language === 'fa' ? 'پارک در محل ممنوع' : 'Illegal Parking', color: '#10b981' },
-  ];
+
+const violationTypesFromStore = useSelector((state: RootState) => state.violations.types);
+
+const violationTypes = violationTypesFromStore.map(v => ({
+  id: v.id,
+  name: v.name,
+  color: v.color,
+}));
+  
+  const [selectedViolationType, setSelectedViolationType] = useState<string>(
+  violationTypes.length > 0 ? violationTypes[0].id : ''
+  );
 
 const selectedCamera = ptzCameras.find(c => c.id === selectedCameraId);
   // زوم با اسکرول
@@ -121,12 +129,12 @@ const selectedCamera = ptzCameras.find(c => c.id === selectedCameraId);
     );
 
     setSnapshotTaken(true);
-    toast.success(t.snapshotTaken || 'عکس از منطقه انتخاب‌شده گرفته شد', { duration: 4000 });
+    toast.success(t.snapshotTaken , { duration: 4000 });
   }, [completedCrop, t]);
 
   const saveViolation = () => {
     if (!snapshotTaken) {
-      toast.error(t.takeSnapshotFirst || 'ابتدا عکس بگیرید');
+      toast.error(t.takeSnapshotFirst);
       return;
     }
 

@@ -218,7 +218,7 @@ logoutConfirmTitle: 'خروج از حساب',
 logoutConfirmMessage: 'مطمئنی می‌خوای از برنامه خارج شی؟',
 confirmLogout: 'بله، خارج شو',
 selectCameraPlaceholder: 'دوربینی انتخاب کنید',
-
+takeSnapshotFirst: 'ابتدا باید عکس گرفته شود',
 config: 'تنظیمات',
 configTitle: 'تنظیمات سیستم',
 configDesc: 'مدیریت تنظیمات کلی سیستم نظارت ترافیکی',
@@ -231,6 +231,8 @@ imaging: 'تصویربرداری',
 saving: 'ذخیره‌سازی',
   },
   en: {
+    
+takeSnapshotFirst: 'You need to take a snapshot first',
     selectCameraPlaceholder: 'Select a camera',
     appTitle: "Traffic App",
     dashboard: "Dashboard",
