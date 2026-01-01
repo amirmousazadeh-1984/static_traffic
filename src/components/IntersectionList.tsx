@@ -569,19 +569,44 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
       </DialogTitle>
     </DialogHeader>
     <div className="grid gap-4 py-4">
+      {/* Camera Type */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.cameraTypeLabel}
         </Label>
-        <select
-          value={cameraType}
-          onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
-          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
-        >
-          <option value="fixed">{language === 'fa' ? 'ثابت' : 'Fixed'}</option>
-          <option value="ptz">{language === 'fa' ? 'چرخان' : 'PTZ'}</option>
-        </select>
+        <SelectNoModal value={cameraType} onValueChange={(v) => setCameraType(v as 'fixed' | 'ptz')} dir={isRTL ? 'rtl' : 'ltr'}>
+          <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
+            <SelectPrimitive.Value>
+              {cameraType === 'fixed' ? (language === 'fa' ? 'ثابت' : 'Fixed') : (language === 'fa' ? 'چرخان' : 'PTZ')}
+            </SelectPrimitive.Value>
+            <SelectPrimitive.Icon asChild>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+          </SelectPrimitive.Trigger>
+          <SelectPrimitive.Content
+            className="z-[1600] min-w-[--radix-select-trigger-width] overflow-hidden rounded-md border bg-white shadow-md dark:bg-slate-800"
+            position="popper"
+            sideOffset={5}
+          >
+            <SelectPrimitive.Viewport>
+              <SelectPrimitive.Item
+                value="fixed"
+                className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+              >
+                <SelectPrimitive.ItemText>{language === 'fa' ? 'ثابت' : 'Fixed'}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+              <SelectPrimitive.Item
+                value="ptz"
+                className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+              >
+                <SelectPrimitive.ItemText>{language === 'fa' ? 'چرخان' : 'PTZ'}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+            </SelectPrimitive.Viewport>
+          </SelectPrimitive.Content>
+        </SelectNoModal>
       </div>
+
+      {/* Camera Name */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="cam-name" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.cameraNameLabel}
@@ -594,21 +619,42 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
           placeholder={language === 'fa' ? 'نام دوربین' : 'Camera name'}
         />
       </div>
+
+      {/* Direction */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.directionLabel}
         </Label>
-        <select
-          value={cameraDirection}
-          onChange={(e) => setCameraDirection(e.target.value as any)}
-          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
-        >
-          <option value="north">{getDirectionLabel('north')}</option>
-          <option value="south">{getDirectionLabel('south')}</option>
-          <option value="east">{getDirectionLabel('east')}</option>
-          <option value="west">{getDirectionLabel('west')}</option>
-        </select>
+        <SelectNoModal value={cameraDirection} onValueChange={(v) => setCameraDirection(v as any)} dir={isRTL ? 'rtl' : 'ltr'}>
+          <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
+            <SelectPrimitive.Value>
+              {getDirectionLabel(cameraDirection)}
+            </SelectPrimitive.Value>
+            <SelectPrimitive.Icon asChild>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+          </SelectPrimitive.Trigger>
+          <SelectPrimitive.Content
+            className="z-[1600] min-w-[--radix-select-trigger-width] overflow-hidden rounded-md border bg-white shadow-md dark:bg-slate-800"
+            position="popper"
+            sideOffset={5}
+          >
+            <SelectPrimitive.Viewport>
+              {(['north', 'south', 'east', 'west'] as const).map((dir) => (
+                <SelectPrimitive.Item
+                  key={dir}
+                  value={dir}
+                  className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+                >
+                  <SelectPrimitive.ItemText>{getDirectionLabel(dir)}</SelectPrimitive.ItemText>
+                </SelectPrimitive.Item>
+              ))}
+            </SelectPrimitive.Viewport>
+          </SelectPrimitive.Content>
+        </SelectNoModal>
       </div>
+
+      {/* IP Address */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="cam-ip" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.ipAddressLabel}
@@ -652,19 +698,44 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
       </DialogTitle>
     </DialogHeader>
     <div className="grid gap-4 py-4">
+      {/* Camera Type */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.cameraTypeLabel}
         </Label>
-        <select
-          value={cameraType}
-          onChange={(e) => setCameraType(e.target.value as 'fixed' | 'ptz')}
-          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
-        >
-          <option value="fixed">{language === 'fa' ? 'ثابت' : 'Fixed'}</option>
-          <option value="ptz">{language === 'fa' ? 'چرخان' : 'PTZ'}</option>
-        </select>
+        <SelectNoModal value={cameraType} onValueChange={(v) => setCameraType(v as 'fixed' | 'ptz')} dir={isRTL ? 'rtl' : 'ltr'}>
+          <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
+            <SelectPrimitive.Value>
+              {cameraType === 'fixed' ? (language === 'fa' ? 'ثابت' : 'Fixed') : (language === 'fa' ? 'چرخان' : 'PTZ')}
+            </SelectPrimitive.Value>
+            <SelectPrimitive.Icon asChild>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+          </SelectPrimitive.Trigger>
+          <SelectPrimitive.Content
+            className="z-[1600] min-w-[--radix-select-trigger-width] overflow-hidden rounded-md border bg-white shadow-md dark:bg-slate-800"
+            position="popper"
+            sideOffset={5}
+          >
+            <SelectPrimitive.Viewport>
+              <SelectPrimitive.Item
+                value="fixed"
+                className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+              >
+                <SelectPrimitive.ItemText>{language === 'fa' ? 'ثابت' : 'Fixed'}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+              <SelectPrimitive.Item
+                value="ptz"
+                className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+              >
+                <SelectPrimitive.ItemText>{language === 'fa' ? 'چرخان' : 'PTZ'}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+            </SelectPrimitive.Viewport>
+          </SelectPrimitive.Content>
+        </SelectNoModal>
       </div>
+
+      {/* Camera Name */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="edit-name" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.cameraNameLabel}
@@ -676,21 +747,42 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
           className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50`}
         />
       </div>
+
+      {/* Direction */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.directionLabel}
         </Label>
-        <select
-          value={cameraDirection}
-          onChange={(e) => setCameraDirection(e.target.value as any)}
-          className={`col-span-3 ${isRTL ? 'text-right' : 'text-left'} bg-slate-50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm`}
-        >
-          <option value="north">{getDirectionLabel('north')}</option>
-          <option value="south">{getDirectionLabel('south')}</option>
-          <option value="east">{getDirectionLabel('east')}</option>
-          <option value="west">{getDirectionLabel('west')}</option>
-        </select>
+        <SelectNoModal value={cameraDirection} onValueChange={(v) => setCameraDirection(v as any)} dir={isRTL ? 'rtl' : 'ltr'}>
+          <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
+            <SelectPrimitive.Value>
+              {getDirectionLabel(cameraDirection)}
+            </SelectPrimitive.Value>
+            <SelectPrimitive.Icon asChild>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+          </SelectPrimitive.Trigger>
+          <SelectPrimitive.Content
+            className="z-[1600] min-w-[--radix-select-trigger-width] overflow-hidden rounded-md border bg-white shadow-md dark:bg-slate-800"
+            position="popper"
+            sideOffset={5}
+          >
+            <SelectPrimitive.Viewport>
+              {(['north', 'south', 'east', 'west'] as const).map((dir) => (
+                <SelectPrimitive.Item
+                  key={dir}
+                  value={dir}
+                  className="relative flex w-full cursor-default select-none items-center px-3 py-2 text-sm outline-none hover:bg-slate-100 data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:hover:bg-slate-700 dark:data-[highlighted]:bg-slate-700"
+                >
+                  <SelectPrimitive.ItemText>{getDirectionLabel(dir)}</SelectPrimitive.ItemText>
+                </SelectPrimitive.Item>
+              ))}
+            </SelectPrimitive.Viewport>
+          </SelectPrimitive.Content>
+        </SelectNoModal>
       </div>
+
+      {/* IP Address */}
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="edit-ip" className={`text-${isRTL ? 'right' : 'left'} text-sm text-slate-700 dark:text-slate-300`}>
           {t.ipAddressLabel}
