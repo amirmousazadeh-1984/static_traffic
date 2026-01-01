@@ -626,9 +626,9 @@ export function IntersectionDashboard({
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
   {/* نمودار میله‌ای سه‌بعدی - کاملاً وسط کارت */}
   <Card className="shadow-lg p-8 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg h-[65vh] flex flex-col">
-    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-6 text-center">
-      {t.violationsByTypeTitle}
-    </h3>
+  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-6 text-center">
+    {t.violationsByTypeTitle}
+  </h3>
     
     <div className="flex-1 flex items-center justify-center">
       <div className="w-[100%] h-[100%] "> {/* اندازه مناسب + وسط چین */}
@@ -654,6 +654,8 @@ export function IntersectionDashboard({
                 backgroundColor: 'transparent'
               },
               title: { text: null },
+              credits: { enabled: false },
+              legend: { enabled: false },
               plotOptions: {
                 column: {
                   depth: 60,
@@ -675,12 +677,13 @@ export function IntersectionDashboard({
                 }
               },
               series: [{
-                name: language === 'fa' ? 'تعداد تخلفات' : 'Violation Count',
-                data: violationTypeIds.map((id, index) => ({
-                  y: stats.byType[id],
-                  color: chartColors[index]
-                })),
-              }]
+              // اینجا دیگه name رو نذاشته‌ایم یا خالی گذاشتیم (اختیاری)
+              data: violationTypeIds.map((id, index) => ({
+                y: stats.byType[id],
+                color: chartColors[index],
+                name: getViolationDisplayName(id, language) // فقط برای tooltip
+              })),
+            }]
             }}
           />
         ) : (
@@ -716,6 +719,7 @@ export function IntersectionDashboard({
                 backgroundColor: 'transparent'
               },
               title: { text: null },
+              credits: { enabled: false },
               tooltip: {
                 pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y})'
               },
