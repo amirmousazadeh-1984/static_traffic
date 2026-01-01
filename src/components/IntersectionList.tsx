@@ -309,8 +309,10 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
              {t.addNewIntersection}
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" dir="rtl">
-              <DialogHeader>
+<DialogContent 
+  dir={isRTL ? 'rtl' : 'ltr'} 
+  className="sm:max-w-md p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+>              <DialogHeader>
                 <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.newIntersectionTitle}</DialogTitle>
               </DialogHeader>
 
