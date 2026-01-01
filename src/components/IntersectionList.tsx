@@ -81,7 +81,26 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
 
   const [openEditCamera, setOpenEditCamera] = useState(false);
   const [editingCamera, setEditingCamera] = useState<Camera | null>(null);
+// --- اضافه کردن state های جدید برای مدال حذف چهارراه ---
+const [openDeleteIntersection, setOpenDeleteIntersection] = useState(false);
+const [intersectionToDelete, setIntersectionToDelete] = useState<Intersection | null>(null);
 
+// --- تابع جدید برای باز کردن مدال حذف ---
+const openDeleteConfirmation = (intersection: Intersection) => {
+  setIntersectionToDelete(intersection);
+  setOpenDeleteIntersection(true);
+};
+
+// --- تابع تأیید حذف ---
+const confirmDeleteIntersection = () => {
+  if (intersectionToDelete) {
+    removeIntersection(intersectionToDelete.id);
+    setUpdateTrigger({});
+    toast.success('چهارراه حذف شد');
+  }
+  setOpenDeleteIntersection(false);
+  setIntersectionToDelete(null);
+};
   const filteredIntersections = mockIntersections.filter((intersection) => {
     const matchesSearch =
       intersection.name.includes(searchQuery) ||
@@ -436,8 +455,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                       className="h-8 w-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteIntersection(intersection.id);
-                      }}
+openDeleteConfirmation(intersection);                      }}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -808,6 +826,47 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
         className="bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
       >
         {t.save}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+        
+        {/* --- مدال تأیید حذف چهارراه --- */}
+<Dialog open={openDeleteIntersection} onOpenChange={setOpenDeleteIntersection}>
+  <DialogContent 
+    className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" 
+    dir={isRTL ? 'rtl' : 'ltr'}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
+        <AlertTriangle className="w-5 h-5" />
+        {t.confirmDelete}
+      </DialogTitle>
+    </DialogHeader>
+    <div className="py-4">
+      <p className="text-sm text-slate-700 dark:text-slate-300">
+       {t.confirmdeletp1} <span className="font-bold">"{intersectionToDelete?.name}"</span> {t.confirmdeletp2}
+      </p>
+      <p className="text-xs text-red-600 dark:text-red-400 mt-3">
+        {t.confirmdeletp3}
+      </p>
+    </div>
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setOpenDeleteIntersection(false);
+          setIntersectionToDelete(null);
+        }}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        {t.cancel}
+      </Button>
+      <Button
+        onClick={confirmDeleteIntersection}
+        className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+      >
+        {t.delete}
       </Button>
     </DialogFooter>
   </DialogContent>

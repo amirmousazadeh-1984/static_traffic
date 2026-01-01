@@ -228,10 +228,19 @@ mainConfig: 'تنظیمات اصلی',
 ocr: 'تشخیص متن (OCR)',
 vehicle: 'خودرو',
 imaging: 'تصویربرداری',
-saving: 'ذخیره‌سازی',
+    saving: 'ذخیره‌سازی',
+    confirmDelete: 'تأیید حذف چهارراه',
+    confirmdeletp1: ' آیا مطمئن هستید که می‌خواهید ',
+  confirmdeletp2:' را حذف کنید؟',
+
+    confirmdeletp3:'    این عمل تمام دوربین‌های مرتبط با این چهارراه را نیز حذف خواهد کرد و قابل بازگشت نیست.',
+
+
   },
   en: {
     
+confirmDelete: 'Confirm Intersection Deletion',
+
 takeSnapshotFirst: 'You need to take a snapshot first',
     selectCameraPlaceholder: 'Select a camera',
     appTitle: "Traffic App",
@@ -462,7 +471,12 @@ mainConfig: 'Main',
 ocr: 'OCR',
 vehicle: 'Vehicle',
 imaging: 'Imaging',
-saving: 'Saving',
+    saving: 'Saving',
+    confirmdeletp1: ' Are you sure you want to ',
+  confirmdeletp2:' delete this intersection?',
+
+    confirmdeletp3:'   This action will also delete all cameras associated with this intersection and is irreversible.',
+
   }
 
  
