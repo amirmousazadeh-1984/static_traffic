@@ -363,7 +363,7 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right text-sm text-slate-700 dark:text-slate-300">{t.status}</Label>
-                  <SelectNoModal value={newIntStatus} onValueChange={(v) => setNewIntStatus(v as any)}>
+                  <SelectNoModal value={newIntStatus} onValueChange={(v) => setNewIntStatus(v as any)} dir={isRTL ? 'rtl' : 'ltr'} >
                     <SelectPrimitive.Trigger className="col-span-3 text-right flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-50">
                       <SelectPrimitive.Value placeholder="وضعیت را انتخاب کنید" />
                       <SelectPrimitive.Icon asChild>
