@@ -84,7 +84,9 @@ export function IntersectionList({ onSelectIntersection, language }: Intersectio
 // --- اضافه کردن state های جدید برای مدال حذف چهارراه ---
 const [openDeleteIntersection, setOpenDeleteIntersection] = useState(false);
 const [intersectionToDelete, setIntersectionToDelete] = useState<Intersection | null>(null);
-
+// --- state های جدید برای مدال حذف دوربین ---
+const [openDeleteCamera, setOpenDeleteCamera] = useState(false);
+const [cameraToDelete, setCameraToDelete] = useState<Camera | null>(null);
 // --- تابع جدید برای باز کردن مدال حذف ---
 const openDeleteConfirmation = (intersection: Intersection) => {
   setIntersectionToDelete(intersection);
@@ -108,6 +110,23 @@ const confirmDeleteIntersection = () => {
     const matchesStatus = statusFilter === 'all' || intersection.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // --- تابع باز کردن مدال تأیید حذف دوربین ---
+const openDeleteCameraConfirmation = (camera: Camera) => {
+  setCameraToDelete(camera);
+  setOpenDeleteCamera(true);
+};
+
+// --- تابع تأیید نهایی حذف ---
+const confirmDeleteCamera = () => {
+  if (currentIntersection && cameraToDelete) {
+    removeCameraFromIntersection(currentIntersection.id, cameraToDelete.id);
+    setUpdateTrigger({});
+    toast.success('دوربین حذف شد');
+  }
+  setOpenDeleteCamera(false);
+  setCameraToDelete(null);
+};
 
   const getStatusBadge = (status: Intersection['status']) => {
     switch (status) {
@@ -562,7 +581,7 @@ openDeleteConfirmation(intersection);                      }}
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    onClick={() => handleDeleteCamera(cam.id)}
+                    onClick={() => openDeleteCameraConfirmation(cam)}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -866,6 +885,45 @@ openDeleteConfirmation(intersection);                      }}
         onClick={confirmDeleteIntersection}
         className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
       >
+        {t.delete}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+        </Dialog>
+        {/* --- مدال تأیید حذف دوربین --- */}
+<Dialog open={openDeleteCamera} onOpenChange={setOpenDeleteCamera}>
+  <DialogContent 
+    className="sm:max-w-sm p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" 
+    dir={isRTL ? 'rtl' : 'ltr'}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-base font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
+        <AlertTriangle className="w-5 h-5" />
+        {t.confirmDeleteCamera || 'تأیید حذف دوربین'}
+      </DialogTitle>
+    </DialogHeader>
+    <div className="py-4">
+      <p className="text-sm text-slate-700 dark:text-slate-300">
+        {t.confirmdeletcp1}
+        <span className="font-bold"> "{cameraToDelete?.name}"</span> {t.confirmdeletcp2}
+      </p>
+    </div>
+    <DialogFooter className="gap-2 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setOpenDeleteCamera(false);
+          setCameraToDelete(null);
+        }}
+        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        {t.cancel}
+      </Button>
+      <Button
+        onClick={confirmDeleteCamera}
+        className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+      >
+        <Trash2 className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
         {t.delete}
       </Button>
     </DialogFooter>

@@ -236,6 +236,11 @@ imaging: 'تصویربرداری',
     confirmdeletp3:'    این عمل تمام دوربین‌های مرتبط با این چهارراه را نیز حذف خواهد کرد و قابل بازگشت نیست.',
 
 
+    confirmdeletcp1: ' آیا مطمئن هستید که می‌خواهید ',
+  confirmdeletcp2:' را حذف کنید؟',
+
+
+
   },
   en: {
     
@@ -476,6 +481,10 @@ imaging: 'Imaging',
   confirmdeletp2:' delete this intersection?',
 
     confirmdeletp3:'   This action will also delete all cameras associated with this intersection and is irreversible.',
+
+    confirmdeletcp1: ' Are you sure you want to ',
+  confirmdeletcp2:' delete this camera?',
+
 
   }
 
